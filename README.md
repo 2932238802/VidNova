@@ -1,0 +1,2 @@
+# VidNova
+C++ vedio system
