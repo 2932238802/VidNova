@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/logo.png</file>
+        <file>image/minBtn.png</file>
+        <file>image/closeBtn.png</file>
+        <file>image/homePage.png</file>
+        <file>image/homePagexuan.png</file>
+        <file>image/myPage.png</file>
+        <file>image/myPagexuan.png</file>
+        <file>image/sysPage.png</file>
+        <file>image/sysPagexuan.png</file>
+        <file>image/search.png</file>
+        <file>image/toTop.png</file>
+        <file>image/refresh.png</file>
+        <file>image/vedioFirstPage.png</file>
+        <file>image/run.png</file>
+        <file>image/likeImage.png</file>
+        <file>image/txMan.png</file>
+        <file>image/del.png</file>
+    </qresource>
+</RCC>
