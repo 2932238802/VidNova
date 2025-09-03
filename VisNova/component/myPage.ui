@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MyPage</class>
+ <widget class="QWidget" name="MyPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1341</width>
+    <height>784</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color:#FFFFFF;</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>7</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="baseInfo" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>1310</width>
+       <height>120</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1310</width>
+       <height>120</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>24</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>64</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="userInfo" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>808</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>808</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>7</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="MyPageAvatarBtn" name="avatarBtn">
+           <property name="minimumSize">
+            <size>
+             <width>60</width>
+             <height>60</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>60</width>
+             <height>60</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">#avatarBtn{
+
+	background-color: transparent;
+	border: none;
+	border-radius: 30px;
+	border-image: url(&quot;:/image/txMan.png&quot;);
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>60</width>
+             <height>60</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="nickNameLabel">
+           <property name="minimumSize">
+            <size>
+             <width>125</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>125</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">#nickNameLabel {
+font-family : 微软雅⿊;
+font-size: 18px;
+color: #222222;
+}</string>
+           </property>
+           <property name="text">
+            <string>用户1231111112313</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="modifyBtn">
+           <property name="minimumSize">
+            <size>
+             <width>36</width>
+             <height>36</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>36</width>
+             <height>36</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">#modifyBtn{
+	border:none;
+	border-image: url(&quot;:/image/modify.png&quot;);
+
+}
+</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>563</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="vedioNum" native="true">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>31</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>31</number>
+         </property>
+         <property name="horizontalSpacing">
+          <number>7</number>
+         </property>
+         <property name="verticalSpacing">
+          <number>14</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="attentionLabel">
+           <property name="styleSheet">
+            <string notr="true">#attentionLabel{
+	font-family: '微软雅黑';
+	font-size: 16px;
+	color: #999999;
+
+}</string>
+           </property>
+           <property name="text">
+            <string>关注数</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="fansLabel">
+           <property name="styleSheet">
+            <string notr="true">#fansLabel{
+	font-family: '微软雅黑';
+	font-size: 16px;
+	color: #999999;
+
+}</string>
+           </property>
+           <property name="text">
+            <string>粉丝数</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="likeLabel">
+           <property name="styleSheet">
+            <string notr="true">#likeLabel{
+	font-family: '微软雅黑';
+	font-size: 16px;
+	color: #999999;
+
+}</string>
+           </property>
+           <property name="text">
+            <string>点赞数</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLabel" name="playLabel">
+           <property name="styleSheet">
+            <string notr="true">#playLabel{
+	font-family: '微软雅黑';
+	font-size: 16px;
+	color: #999999;
+
+}</string>
+           </property>
+           <property name="text">
+            <string>播放数</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="attentionCtLabel">
+           <property name="styleSheet">
+            <string notr="true">#attentionCtLabel {
+font-family : 微软雅⿊;
+font-size: 18px;
+color: #222222;
+}</string>
+           </property>
+           <property name="text">
+            <string>123</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="fansCtLabel">
+           <property name="styleSheet">
+            <string notr="true">#fansCtLabel {
+font-family : 微软雅⿊;
+font-size: 18px;
+color: #222222;
+}</string>
+           </property>
+           <property name="text">
+            <string>123</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="likeCtLabel">
+           <property name="styleSheet">
+            <string notr="true">#likeCtLabel {
+font-family : 微软雅⿊;
+font-size: 18px;
+color: #222222;
+}</string>
+           </property>
+           <property name="text">
+            <string>123</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QLabel" name="playCtLabel">
+           <property name="styleSheet">
+            <string notr="true">#playCtLabel {
+font-family : 微软雅⿊;
+font-size: 18px;
+color: #222222;
+}</string>
+           </property>
+           <property name="text">
+            <string>123</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="opBtn" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>94</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>94</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <widget class="QPushButton" name="attentionBtn">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>41</y>
+           <width>94</width>
+           <height>38</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#attentionBtn{
+	border-radius: 15px;
+	border: 1px solid #DDDDDD;
+	font-family: '微软雅黑';
+	color: #999999;
+	font-size: 14px;
+}</string>
+         </property>
+         <property name="text">
+          <string>关注</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="exitBtn">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>38</y>
+           <width>94</width>
+           <height>30</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#exitBtn{
+	border-radius: 15px;
+	border: 1px solid #DDDDDD;
+	font-family: '微软雅黑';
+	color: #999999;
+	font-size: 14px;
+}</string>
+         </property>
+         <property name="text">
+          <string>退出</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="titleBar" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>1310</width>
+       <height>76</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1310</width>
+       <height>76</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>30</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="myVideoLabel">
+        <property name="styleSheet">
+         <string notr="true">#myVideoLabel {
+font-family : 微软雅⿊;
+font-size: 18px;
+line-height: 24px;
+color:black;
+}</string>
+        </property>
+        <property name="text">
+         <string>我的视频</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>1172</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="uploadVedioBtn">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">#uploadVedioBtn{
+	border-radius: 15px;
+	border-image: url(&quot;:/image/upload.png&quot;);
+
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="uploadLabel">
+        <property name="styleSheet">
+         <string notr="true">#uploadLabel {
+font-family : ‘微软雅⿊’;
+font-size: 12px;
+line-height: 24px;
+color:black;
+}</string>
+        </property>
+        <property name="text">
+         <string>上传</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="videoInfo" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>1310</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1310</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color:rgb(218, 218, 218);</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QScrollArea" name="scrollArea">
+        <property name="styleSheet">
+         <string notr="true">#scrollArea{
+	border: none;
+	background-color: rgb(163, 163, 163);
+}
+
+QScrollBar:vertical
+{
+	border:none;
+	background-color: #FFFFFF;	
+	width: 10px;
+}
+
+
+
+QScrollBar::handle:vertical{
+	border: none;
+	border-radius: 5px;
+	background-color: #E8E8E8;
+	min-height: 134px;
+}
+
+QScrollBar::up-arrow:vertical,
+QScrollBar::down-arrow:vertical
+{
+	border: none;
+	width: 0px;
+	height: 0px;
+}
+
+
+</string>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>1310</width>
+           <height>574</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QWidget" name="container" native="true">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QGridLayout" name="layout">
+               <property name="leftMargin">
+                <number>5</number>
+               </property>
+               <property name="spacing">
+                <number>20</number>
+               </property>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyPageAvatarBtn</class>
+   <extends>QPushButton</extends>
+   <header location="global">mypageavatarbtn.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

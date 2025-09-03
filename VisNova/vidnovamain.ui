@@ -477,36 +477,9 @@
                <string notr="true"/>
               </property>
               <widget class="homePageCpt" name="homePage"/>
-              <widget class="QWidget" name="myPage">
-               <widget class="QLabel" name="label_2">
-                <property name="geometry">
-                 <rect>
-                  <x>10</x>
-                  <y>10</y>
-                  <width>161</width>
-                  <height>81</height>
-                 </rect>
-                </property>
-                <property name="text">
-                 <string>第二个页面</string>
-                </property>
-               </widget>
-              </widget>
-              <widget class="QWidget" name="sysPage">
-               <widget class="QLabel" name="label_3">
-                <property name="geometry">
-                 <rect>
-                  <x>20</x>
-                  <y>20</y>
-                  <width>81</width>
-                  <height>31</height>
-                 </rect>
-                </property>
-                <property name="text">
-                 <string>第三个界面</string>
-                </property>
-               </widget>
-              </widget>
+              <widget class="MyPage" name="myPage"/>
+              <widget class="QWidget" name="sysPage"/>
+              <widget class="UploadVediuPage" name="uploadVedioPage"/>
              </widget>
             </item>
            </layout>
@@ -530,6 +503,18 @@
    <class>homePageCpt</class>
    <extends>QWidget</extends>
    <header>homepagecpt.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MyPage</class>
+   <extends>QWidget</extends>
+   <header location="global">mypage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>UploadVediuPage</class>
+   <extends>QWidget</extends>
+   <header location="global">uploadvediupage.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

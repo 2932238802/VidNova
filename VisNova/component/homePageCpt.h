@@ -2,11 +2,12 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include"style/btnStyle.h"
-#include "ui_homePageCpt.h"
+#include <QVBoxLayout>
 #include <QButtonGroup>
 #include "common/myLog.h"
-#include <QVBoxLayout>
+#include"style/style.h"
+#include "ui_homePageCpt.h"
+
 namespace Ui {
 class homePageCpt;
 }

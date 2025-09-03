@@ -1,6 +1,6 @@
 #include "homePageCpt.h"
 #include "ui_homePageCpt.h"
-#include "vedioBox.h"
+#include "videoBox.h"
 
 
 homePageCpt::homePageCpt(QWidget *parent)
@@ -175,7 +175,7 @@ void homePageCpt::initVedios()
 {
     for(int i  =0 ;i < 16 ;i++)
     {
-        VedioBox* vedioBox = new VedioBox();
+        VideoBox* vedioBox = new VideoBox();
 
         // 一行显示四个
         ui->vedioGLayout->addWidget(vedioBox,i/4,i%4,1,1); // 行 列

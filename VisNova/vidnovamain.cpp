@@ -15,7 +15,6 @@ VidNovaMain::VidNovaMain(QWidget *parent)
     connectSignalAndSlot();
 }
 
-
 ///
 /// \brief VidNovaMain::initUi
 /// 初始化 阴影 边框 一些图标
@@ -32,7 +31,6 @@ void VidNovaMain::initUi()
 
     // 设置阴影效果
     // 弄到对象树上面
-
     QGraphicsDropShadowEffect* dropShodow = new QGraphicsDropShadowEffect(this);
     dropShodow->setColor(Qt::black);
     dropShodow->setBlurRadius(5);
@@ -62,7 +60,6 @@ void VidNovaMain::initUi()
         );
 }
 
-
 ///
 /// \brief VidNovaMain::connectSignalAndSlot
 /// 1. 绑定信号槽
@@ -75,8 +72,10 @@ void VidNovaMain::connectSignalAndSlot()
     connect(ui->homePageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPage);
     connect(ui->myPageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPage);
     connect(ui->sysPageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPage);
-}
+    connect(ui->myPage,&MyPage::switchUploadVedioPage,this,&VidNovaMain::onSwitchPage);
+    connect(ui->uploadVedioPage,&UploadVedioPage::returnMyPage,this,&VidNovaMain::onSwitchPage);
 
+}
 
 
 
@@ -113,16 +112,11 @@ void VidNovaMain::resetSwitchButton(int page_id)
         ui->sysPageBtn->setImage(":/image/sysPage.png");
     }
     else{
-
         ui->homePageBtn->setImage(":/image/homePage.png");
         ui->myPageBtn->setImage(":/image/myPage.png");
         ui->sysPageBtn->setImage(":/image/sysPagexuan.png");
-
     }
 }
-
-
-
 
 ///
 /// \brief VidNovaMain::mousePressEvent
@@ -142,9 +136,7 @@ void VidNovaMain::mousePressEvent(QMouseEvent *event)
         event->accept(); // 表示我自己处理 掉了
         return;
     }
-
     isDragging = false;
-
 }
 
 ///
@@ -173,7 +165,6 @@ void VidNovaMain::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-
 ///
 /// \brief VidNovaMain::onSwitchPage
 /// \param page_id
@@ -185,7 +176,6 @@ void VidNovaMain::onSwitchPage(int page_id)
     resetSwitchButton(page_id);
     qDebug()<<"[info] 切换界面 "<<page_id;
 }
-
 
 ///
 /// \brief VidNovaMain::~VidNovaMain

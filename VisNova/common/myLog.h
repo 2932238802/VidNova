@@ -16,3 +16,6 @@ inline static QString getFileName(const QString& path)
 
 
 #define LOG() qDebug().noquote()<<TAG
+
+
+#define DE_TEST

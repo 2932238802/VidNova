@@ -1,11 +1,13 @@
 #pragma once
-#include<QGraphicsDropShadowEffect>
+#include <QGraphicsDropShadowEffect>
 #include <QWidget>
 #include <QMouseEvent>
-#include"btnStyle.h"
+#include "myPage.h"
+#include"style.h"
+#include"uploadVedioPage.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
+namespace Ui{
 class VidNovaMain;
 }
 QT_END_NAMESPACE
@@ -13,7 +15,8 @@ QT_END_NAMESPACE
 enum StackWidgetPage{
     HOME_PAGE,
     MY_PAGE,
-    SYSTEM_PAGE
+    SYSTEM_PAGE,
+    UPLOADVEDIO_PAGE
 };
 
 class VidNovaMain : public QWidget
@@ -38,9 +41,7 @@ private:
 private slots:
     void onSwitchPage(int page_id);
 
-
 private:
     Ui::VidNovaMain *ui;
-
 };
 
