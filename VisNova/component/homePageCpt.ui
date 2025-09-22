@@ -342,7 +342,7 @@ QScrollBar::add-page:vertical {
   <customwidget>
    <class>SearchLineEdit</class>
    <extends>QLineEdit</extends>
-   <header location="global">searchlineedit.h</header>
+   <header>searchlineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

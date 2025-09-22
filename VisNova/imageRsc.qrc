@@ -31,5 +31,13 @@
         <file>image/download.png</file>
         <file>image/ok.png</file>
         <file>image/more.png</file>
+        <file>image/select.png</file>
+        <file>image/addrole.png</file>
+        <file>image/selected.png</file>
+        <file>image/unselected.png</file>
+        <file>image/left-hover.png</file>
+        <file>image/left-unhover.png</file>
+        <file>image/right-hover.png</file>
+        <file>image/right-unhover.png</file>
     </qresource>
 </RCC>

@@ -14,7 +14,7 @@
    <string>VidNovaMain</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(240,240, 240);</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="leftMargin">
@@ -32,7 +32,7 @@
    <item>
     <widget class="QWidget" name="VidNovabg" native="true">
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">background-color: #FFFFFF;</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
@@ -478,8 +478,8 @@
               </property>
               <widget class="homePageCpt" name="homePage"/>
               <widget class="MyPage" name="myPage"/>
-              <widget class="QWidget" name="sysPage"/>
-              <widget class="UploadVediuPage" name="uploadVedioPage"/>
+              <widget class="AdminPage" name="sysPage"/>
+              <widget class="UploadVideoPage" name="uploadVedioPage"/>
              </widget>
             </item>
            </layout>
@@ -512,9 +512,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>UploadVediuPage</class>
+   <class>UploadVideoPage</class>
    <extends>QWidget</extends>
-   <header location="global">uploadvediupage.h</header>
+   <header location="global">uploadvideopage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AdminPage</class>
+   <extends>QWidget</extends>
+   <header location="global">adminpage.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

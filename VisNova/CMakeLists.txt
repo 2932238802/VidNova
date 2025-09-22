@@ -2,10 +2,16 @@ cmake_minimum_required(VERSION 3.19)
 project(VisNova LANGUAGES CXX)
 
 # ==================== 依赖查找 ====================
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools)
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6
+    REQUIRED
+    COMPONENTS
+    Core
+    Widgets
+    LinguistTools
+    Multimedia
+    MultimediaWidgets
+)
+
 
 qt_standard_project_setup()
 
@@ -17,6 +23,7 @@ set(START_PAGE_DIR startPage)
 set(COMPONENT_DIR component)
 set(STYLE_DIR style)
 set(COMMON_DIR common)
+set(LRPAGR_DIR lrPage)
 
 set(SOURCES
     main.cpp
@@ -25,7 +32,6 @@ set(SOURCES
     ${COMPONENT_DIR}/pageSwitchBtn.cpp
     ${COMPONENT_DIR}/homePageCpt.cpp
     ${COMPONENT_DIR}/searchLineEdit.cpp
-
     ${COMPONENT_DIR}/playerPage.cpp
     ${COMPONENT_DIR}/playerSlider.cpp
     ${COMPONENT_DIR}/volume.cpp
@@ -34,9 +40,20 @@ set(SOURCES
     ${COMPONENT_DIR}/myPage.cpp
     ${COMPONENT_DIR}/myPageAvatarBtn.cpp
     ${COMPONENT_DIR}/modifySelfInfo.cpp
-    ${COMPONENT_DIR}/uploadVedioPage.cpp
+    ${COMPONENT_DIR}/uploadVideoPage.cpp
     ${COMPONENT_DIR}/modifyPd.cpp
     ${COMPONENT_DIR}/videoBox.cpp
+    ${COMPONENT_DIR}/adminPage.cpp
+    ${COMPONENT_DIR}/rolePageForAp.cpp
+    ${COMPONENT_DIR}/checkPageForAp.cpp
+    ${COMPONENT_DIR}/checkPageItem.cpp
+    ${COMPONENT_DIR}/rolePageItem.cpp
+    ${COMPONENT_DIR}/editUserForAp.cpp
+    ${COMPONENT_DIR}/pageBtn.cpp
+    ${COMPONENT_DIR}/paginator.cpp
+    ${COMPONENT_DIR}/toast.cpp
+    ${LRPAGR_DIR}/login.cpp
+
 )
 
 set(HEADERS
@@ -47,7 +64,6 @@ set(HEADERS
     ${COMPONENT_DIR}/searchLineEdit.h
     ${COMPONENT_DIR}/playerPage.h
     ${COMPONENT_DIR}/playerSlider.h
-
     ${COMPONENT_DIR}/volume.h
     ${COMPONENT_DIR}/playSpeed.h
     ${STYLE_DIR}/style.h
@@ -58,8 +74,18 @@ set(HEADERS
     ${COMPONENT_DIR}/myPageAvatarBtn.h
     ${COMPONENT_DIR}/modifySelfInfo.h
     ${COMPONENT_DIR}/modifyPd.h
-    ${COMPONENT_DIR}/uploadVedioPage.h
+    ${COMPONENT_DIR}/uploadVideoPage.h
     ${COMPONENT_DIR}/videoBox.h
+    ${COMPONENT_DIR}/adminPage.h
+    ${COMPONENT_DIR}/checkPageForAp.h
+    ${COMPONENT_DIR}/rolePageForAp.h
+    ${COMPONENT_DIR}/checkPageItem.h
+    ${COMPONENT_DIR}/rolePageItem.h
+    ${COMPONENT_DIR}/editUserForAp.h
+    ${COMPONENT_DIR}/pageBtn.h
+    ${COMPONENT_DIR}/paginator.h
+    ${COMPONENT_DIR}/toast.h
+    ${LRPAGR_DIR}/login.h
 )
 
 set(UI_FILES
@@ -73,8 +99,15 @@ set(UI_FILES
     ${COMPONENT_DIR}/bulletEdit.ui
     ${COMPONENT_DIR}/myPage.ui
     ${COMPONENT_DIR}/modifySelfInfo.ui
-    ${COMPONENT_DIR}/uploadVedioPage.ui
+    ${COMPONENT_DIR}/uploadVideoPage.ui
     ${COMPONENT_DIR}/modifyPd.ui
+    ${COMPONENT_DIR}/adminPage.ui
+    ${COMPONENT_DIR}/rolePageForAp.ui
+    ${COMPONENT_DIR}/checkPageForAp.ui
+    ${COMPONENT_DIR}/checkPageItem.ui
+    ${COMPONENT_DIR}/rolePageItem.ui
+    ${COMPONENT_DIR}/editUserForAp.ui
+    ${LRPAGR_DIR}/login.ui
 )
 
 # 资源文件
@@ -86,9 +119,6 @@ qt_add_executable(VisNova
     ${SOURCES}
     ${HEADERS}
     ${UI_FILES}
-
-
-
 
 )
 
@@ -111,10 +141,10 @@ qt_add_translations(VisNova
 target_link_libraries(VisNova PRIVATE
     Qt6::Core
     Qt6::Widgets
+    Qt6::Multimedia
+    Qt6::MultimediaWidgets
 )
-target_link_libraries(VisNova PRIVATE Qt6::Core Qt6::Widgets)
-target_link_libraries(VisNova PRIVATE Qt6::Core Qt6::Widgets)
-target_link_libraries(VisNova PRIVATE Qt6::Core Qt6::Widgets)
+
 
 # ==================== 安装配置 ====================
 include(GNUInstallDirs)
