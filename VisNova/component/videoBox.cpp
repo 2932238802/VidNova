@@ -1,6 +1,6 @@
 #include "videoBox.h"
 #include "ui_videoBox.h"
-#include "common/myLog.h"
+
 
 VideoBox::VideoBox(QWidget *parent)
     : QWidget(parent)
@@ -17,6 +17,7 @@ VideoBox::VideoBox(QWidget *parent)
 
 VideoBox::~VideoBox()
 {
+    delete playerPage;
     delete ui;
 }
 
@@ -41,7 +42,16 @@ bool VideoBox::eventFilter(QObject *watched, QEvent *event)
 void VideoBox::onPlayBtnClicked()
 {
     LOG()<<"[suc] 播放视频...";
-    playerPage->show();
+
+#ifdef DE_TEST
+    Login* login = new Login(this);
+    // login->setWindowFlag(Qt::FramelessWindowHint,true);
+    // login->exec(); // exec
+    Toast::showMsg("用户点击了视频");
+
+    Toast::showMsg("先登录...",login);
+#endif
+    // playerPage->show();
 }
 
 

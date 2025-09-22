@@ -5,16 +5,16 @@
 #include "common/myLog.h"
 
 namespace Ui {
-class UploadVedioPage;
+class UploadVideoPage;
 }
 
-class UploadVedioPage : public QWidget
+class UploadVideoPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit UploadVedioPage(QWidget *parent = nullptr);
-    ~UploadVedioPage();
+    explicit UploadVideoPage(QWidget *parent = nullptr);
+    ~UploadVideoPage();
 
 private slots:
     void onCommitBtnClicked();
@@ -28,7 +28,7 @@ signals:
 private:
     int maxContentLenth;
     int maxNumberLimit;
-    Ui::UploadVedioPage *ui;
+    Ui::UploadVideoPage *ui;
 
 };
 

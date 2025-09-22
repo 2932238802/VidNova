@@ -4,7 +4,7 @@
 #include <QMouseEvent>
 #include "myPage.h"
 #include"style.h"
-#include"uploadVedioPage.h"
+#include"uploadVideoPage.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui{
@@ -24,10 +24,11 @@ class VidNovaMain : public QWidget
     Q_OBJECT
 
 public:
-    VidNovaMain(QWidget *parent = nullptr);
-    ~VidNovaMain();
+    static VidNovaMain* getInstance();
+    ~VidNovaMain() =default;
 
 private:
+    VidNovaMain(QWidget *parent = nullptr);
     void initUi();
     void connectSignalAndSlot();
     void mousePressEvent(QMouseEvent* event);
@@ -43,5 +44,6 @@ private slots:
 
 private:
     Ui::VidNovaMain *ui;
+
 };
 

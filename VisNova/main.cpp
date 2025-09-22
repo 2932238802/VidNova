@@ -18,13 +18,13 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    VidNovaMain w;
+    VidNovaMain*w = VidNovaMain::getInstance();
 
     // 先显示启动
     start_page startPage;
     startPage.exec();
 
 
-    w.show();
+    w->show();
     return a.exec();
 }

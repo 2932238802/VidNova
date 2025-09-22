@@ -1,9 +1,9 @@
-#include "uploadVedioPage.h"
-#include "ui_uploadVedioPage.h"
+#include "uploadVideoPage.h"
+#include "ui_uploadVideoPage.h"
 
-UploadVedioPage::UploadVedioPage(QWidget *parent)
+UploadVideoPage::UploadVideoPage(QWidget *parent)
     : QWidget(parent)
-    , ui(new Ui::UploadVedioPage)
+    , ui(new Ui::UploadVideoPage)
 {
 
     ui->setupUi(this);
@@ -14,18 +14,18 @@ UploadVedioPage::UploadVedioPage(QWidget *parent)
     QString titleNumberText(ui->titleNumber->text());
     maxNumberLimit = titleNumberText.mid(titleNumberText.indexOf('/')+1).toInt();
 
-    connect(ui->commitBtn,&QPushButton::clicked,this,&UploadVedioPage::onCommitBtnClicked);
-    connect(ui->titleEdit,&QLineEdit::textChanged,this,&UploadVedioPage::onTitleEditTextNumberChanged);
-    connect(ui->plainbriefIntroduceEdit,&QPlainTextEdit::textChanged,this,&UploadVedioPage::onPlainBriefIntroduceEditTextNumberChanged);
-    connect(ui->changeBtn,&QPushButton::clicked,this,&UploadVedioPage::onChangeBtnClicked);
+    connect(ui->commitBtn,&QPushButton::clicked,this,&UploadVideoPage::onCommitBtnClicked);
+    connect(ui->titleEdit,&QLineEdit::textChanged,this,&UploadVideoPage::onTitleEditTextNumberChanged);
+    connect(ui->plainbriefIntroduceEdit,&QPlainTextEdit::textChanged,this,&UploadVideoPage::onPlainBriefIntroduceEditTextNumberChanged);
+    connect(ui->changeBtn,&QPushButton::clicked,this,&UploadVideoPage::onChangeBtnClicked);
 }
 
-UploadVedioPage::~UploadVedioPage()
+UploadVideoPage::~UploadVideoPage()
 {
     delete ui;
 }
 
-void UploadVedioPage::onCommitBtnClicked()
+void UploadVideoPage::onCommitBtnClicked()
 {
     // TODO: 上传到服务器
 
@@ -37,7 +37,7 @@ void UploadVedioPage::onCommitBtnClicked()
 ///
 /// \brief UploadVedioPage::onLineEditTextNumberChanged
 /// 动态变化数字
-void UploadVedioPage::onTitleEditTextNumberChanged(const QString& words)
+void UploadVideoPage::onTitleEditTextNumberChanged(const QString& words)
 {
     QString titleNumberText(ui->titleNumber->text());
     int wordCount = words.length();
@@ -51,7 +51,7 @@ void UploadVedioPage::onTitleEditTextNumberChanged(const QString& words)
     }
 }
 
-void UploadVedioPage::onPlainBriefIntroduceEditTextNumberChanged()
+void UploadVideoPage::onPlainBriefIntroduceEditTextNumberChanged()
 {
     QString content = ui->plainbriefIntroduceEdit->toPlainText();
     int contentLenth = content.length();
@@ -71,7 +71,7 @@ void UploadVedioPage::onPlainBriefIntroduceEditTextNumberChanged()
     }
 }
 
-void UploadVedioPage::onChangeBtnClicked()
+void UploadVideoPage::onChangeBtnClicked()
 {
     QString fileName = QFileDialog::getOpenFileName(nullptr,"选择视频封面图","","Images(*.png *.jpg)");
     if(fileName.isEmpty())

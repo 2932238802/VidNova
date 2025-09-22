@@ -1,6 +1,10 @@
 #include "vidnovamain.h"
 #include "ui_vidnovamain.h"
 
+
+
+VidNovaMain* instance = nullptr;
+
 ///
 /// \brief VidNovaMain::VidNovaMain
 /// \param parent
@@ -73,7 +77,7 @@ void VidNovaMain::connectSignalAndSlot()
     connect(ui->myPageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPage);
     connect(ui->sysPageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPage);
     connect(ui->myPage,&MyPage::switchUploadVedioPage,this,&VidNovaMain::onSwitchPage);
-    connect(ui->uploadVedioPage,&UploadVedioPage::returnMyPage,this,&VidNovaMain::onSwitchPage);
+    connect(ui->uploadVedioPage,&UploadVideoPage::returnMyPage,this,&VidNovaMain::onSwitchPage);
 
 }
 
@@ -180,7 +184,9 @@ void VidNovaMain::onSwitchPage(int page_id)
 ///
 /// \brief VidNovaMain::~VidNovaMain
 /// 析构
-VidNovaMain::~VidNovaMain()
+VidNovaMain *VidNovaMain::getInstance()
 {
-    delete ui;
+    static VidNovaMain instance;
+    return &instance;
 }
+

@@ -1,6 +1,9 @@
 #pragma once
 #include <QWidget>
 #include "playerPage.h"
+#include "common/myLog.h"
+#include"toast.h"
+#include"lrPage/login.h"
 
 namespace Ui {
 class VideoBox;
