@@ -39,5 +39,6 @@
         <file>image/left-unhover.png</file>
         <file>image/right-hover.png</file>
         <file>image/right-unhover.png</file>
+        <file>image/stop.png</file>
     </qresource>
 </RCC>

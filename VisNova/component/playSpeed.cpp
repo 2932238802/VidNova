@@ -22,20 +22,24 @@ PlaySpeed::~PlaySpeed()
 
 void PlaySpeed::onSpeed20Clicked()
 {
-    LOG()<<"[suc] 2倍数播放...";
+
+    emit speedSignals(2.0);
 }
 
 void PlaySpeed::onSpeed15Clicked()
 {
-    LOG()<<"[suc] 1.5倍数播放...";
+
+    emit speedSignals(1.5);
 }
 
 void PlaySpeed::onSpeed10Clicked()
 {
-    LOG()<<"[suc] 1倍数播放...";
+
+    emit speedSignals(1.0);
 }
 
 void PlaySpeed::onSpeed05Clicked()
 {
-    LOG()<<"[suc] 0.5倍数播放...";
+
+    emit speedSignals(0.5);
 }

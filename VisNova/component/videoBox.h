@@ -1,5 +1,7 @@
 #pragma once
 #include <QWidget>
+#include <QDir>
+#include "mpvPlayer.h"
 #include "playerPage.h"
 #include "common/myLog.h"
 #include"toast.h"
@@ -16,13 +18,22 @@ class VideoBox : public QWidget
 public:
     explicit VideoBox(QWidget *parent = nullptr);
     ~VideoBox();
+
+    ///
+    /// \brief eventFilter
+    /// \param watched
+    /// \param event
+    /// \return
+    /// 虚函数重写
     bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
+
     void onPlayBtnClicked();
 
 private:
     Ui::VideoBox *ui;
     PlayerPage* playerPage;
+
 };
 

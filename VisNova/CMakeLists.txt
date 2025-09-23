@@ -123,13 +123,10 @@ qt_add_resources(RESOURCES imageRsc.qrc)
 
 # ==================== 可执行文件创建 ====================
 qt_add_executable(VisNova
-    WIN32 MACOSX_BUNDLE
     ${SOURCES}
     ${HEADERS}
     ${UI_FILES}
-
-
-
+    common/constants.h
 )
 
 target_sources(VisNova PRIVATE ${RESOURCES})
@@ -145,10 +142,7 @@ target_include_directories(VisNova PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/${MPV_DIR}
 )
 
-# ==================== 国际化支持 ====================
-qt_add_translations(VisNova
-    TS_FILES VisNova_zh_CN.ts
-)
+
 
 # ==================== 库链接 ====================
 target_link_libraries(VisNova PRIVATE

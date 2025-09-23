@@ -12,12 +12,8 @@ PlayerPage::PlayerPage(QWidget *parent)
 
     volume = new Volume(this);
     speedCtl = new PlaySpeed(this);
-
-    //
-    connect(ui->minBtn,&QPushButton::clicked,this,&QWidget::showMinimized);
-    connect(ui->quitBtn,&QPushButton::clicked,this,&QWidget::close);
-    connect(ui->volumeBtn,&QPushButton::clicked,this,&PlayerPage::onVolumeBtnClicked);
-    connect(ui->speedBtn,&QPushButton::clicked,this,&PlayerPage::onPlaySpeedBtnClicked);
+    mpvPlayer = new MpvPlayer(ui->playerMid);
+    initConnect();
 }
 
 
@@ -79,6 +75,48 @@ void PlayerPage::onPlaySpeedBtnClicked()
     speedCtl->show();
 }
 
+///
+/// \brief PlayerPage::onPlayBtnClicked
+/// 点击 播放 按钮
+void PlayerPage::onPlayBtnClicked()
+{
+    isPlaying = !isPlaying;
+    // 进入 循环 说明了 就是播放状态
+    if(isPlaying)
+    {
+        mpvPlayer->play();
+        ui->playBtn->setStyleSheet(PLAYER_BEGIN_STYLE);
+    }
+    else{
+        mpvPlayer->pause();
+        ui->playBtn->setStyleSheet(PLAYER_STOP_STYLE);
+    }
+}
+
+void PlayerPage::onPlaySpeedChanged(double speed)
+{
+    mpvPlayer->setSpeed(speed);
+}
+
+///
+/// \brief PlayerPage::onVolumeChanged
+/// \param volume
+/// 音量改变
+void PlayerPage::onVolumeChanged(int volume)
+{
+    mpvPlayer->setVolume(volume);
+}
+
+///
+/// \brief PlayerPage::onPlayPositionChanged
+/// \param playTime
+///
+void PlayerPage::onPlayPositionChanged(int64_t playTime)
+{
+    LOG()<<playTime;
+}
+
+
 
 void PlayerPage::moveVolumeWindow(const QPoint &point)
 {
@@ -93,10 +131,31 @@ void PlayerPage::moveSpeedWindow(const QPoint &point)
     speedCtl->move(newPoint);
 }
 
+void PlayerPage::initConnect()
+{
+    connect(ui->minBtn,&QPushButton::clicked,this,&QWidget::showMinimized);
+    connect(ui->quitBtn,&QPushButton::clicked,this,&QWidget::close);
+    connect(ui->volumeBtn,&QPushButton::clicked,this,&PlayerPage::onVolumeBtnClicked);
+    connect(ui->speedBtn,&QPushButton::clicked,this,&PlayerPage::onPlaySpeedBtnClicked);
+    connect(ui->playBtn,&QPushButton::clicked,this,&PlayerPage::onPlayBtnClicked);
+    connect(speedCtl,&PlaySpeed::speedSignals,this,&PlayerPage::onPlaySpeedChanged);
+    connect(volume,&Volume::volumeSignals,this,&PlayerPage::onVolumeChanged);
+    connect(mpvPlayer,&MpvPlayer::playPositionSignals,this,&PlayerPage::onPlayPositionChanged);
+}
+
+void PlayerPage::startPlay(const QString &videoPath)
+{
+    mpvPlayer->startPlay(videoPath);
+    mpvPlayer->pause(); // 视频暂停 初始状态
+}
+
+
+
 
 PlayerPage::~PlayerPage()
 {
     delete ui;
+    delete mpvPlayer;
 }
 
 
