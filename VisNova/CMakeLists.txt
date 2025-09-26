@@ -12,6 +12,8 @@ find_package(Qt6
     MultimediaWidgets
 )
 find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 
 qt_standard_project_setup()
@@ -127,6 +129,8 @@ qt_add_executable(VisNova
     ${HEADERS}
     ${UI_FILES}
     common/constants.h
+    component/bulletItem.h component/bulletItem.cpp
+    component/bulletManage.h component/bulletManage.cpp
 )
 
 target_sources(VisNova PRIVATE ${RESOURCES})
@@ -152,6 +156,8 @@ target_link_libraries(VisNova PRIVATE
     Qt6::MultimediaWidgets
     ${CMAKE_CURRENT_SOURCE_DIR}/${MPV_DIR}/libmpv.dll.a
 )
+target_link_libraries(VisNova PRIVATE Qt6::Core)
+target_link_libraries(VisNova PRIVATE Qt6::Widgets)
 target_link_libraries(VisNova PRIVATE Qt6::Core)
 
 

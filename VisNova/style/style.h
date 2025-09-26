@@ -123,4 +123,44 @@ inline const QString PLAYER_STOP_STYLE = R"(
 
 )";
 
+inline const QString PLAYERPAGE_TEST_BACKGROUND_FOR_TOP = R"(
+    background-color: #E3C014;
+)";
+
+inline const QString PLAYERPAGE_TEST_BACKGROUND_FOR_MIDDLE = R"(
+    background-color: #E3A714;
+)";
+
+inline const QString PLAYERPAGE_TEST_BACKGROUND_FOR_BOTTOM = R"(
+    background-color: #E3D914;
+)";
+
+inline const QString BULLET_TEXT = R"(
+    font-family: 微软雅黑;
+    font-size: 18px;
+    color: #FFFFFF;
+    border: none;
+)";
+
+inline const QString BULLET = R"(
+    #bulletItem{
+    border: 1px solid #3ECEFE;
+    border-radius: 19px;
+}
+)";
+
+inline const QString BULLETBTN_SHOW = R"(
+    border-image: url(":/image/bulletOpen.png")
+
+)";
+
+inline const QString BULLETBTN_CLOSE = R"(
+    border-image: url(":/image/bulletClose.png")
+)";
+
+
+
+
+
+
 

@@ -28,8 +28,11 @@ public:
     bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
-
     void onPlayBtnClicked();
+    void checkPlayPageIsNullptr();
+
+private slots:
+    void onPlayerPageDestroyed();
 
 private:
     Ui::VideoBox *ui;

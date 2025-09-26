@@ -12,8 +12,7 @@ VideoBox::VideoBox(QWidget *parent)
     ui->vedioTitleBox->installEventFilter(this);
     // 设置弹出窗口
     playerPage = new PlayerPage();
-
-
+    connect(playerPage,&QWidget::destroyed,this,&VideoBox::onPlayerPageDestroyed);
 }
 
 VideoBox::~VideoBox()
@@ -35,7 +34,6 @@ bool VideoBox::eventFilter(QObject *watched, QEvent *event)
             return true;
         }
     }
-
     // 如果希望 完全拦截 可以返回 true
     return QObject::eventFilter(watched,event);
 }
@@ -49,24 +47,30 @@ void VideoBox::onPlayBtnClicked()
 
 #ifdef DE_TEST
 
+    checkPlayPageIsNullptr();
     playerPage->show();
-    // 获取视频的路径
-
     QDir dir = QDir::current();
-    // LOG()<<dir;
     dir.cdUp();
     dir.cdUp();
     QString videoPath = dir.absolutePath();
     videoPath+="/test/test1.mp4";
     playerPage->startPlay(videoPath);
-
-    // Login* login = new Login(this);
-    // // login->setWindowFlag(Qt::FramelessWindowHint,true);
-    // // login->exec(); // exec
-    // Toast::showMsg("用户点击了视频");
-
-    // Toast::showMsg("先登录...",login);
 #endif
+}
+
+void VideoBox::checkPlayPageIsNullptr()
+{
+    if(playerPage == nullptr)
+    {
+        LOG()<<"[err] playPage is nullptr and create a new one";
+        playerPage = new PlayerPage();
+        connect(playerPage,&QWidget::destroyed,this,&VideoBox::onPlayerPageDestroyed);
+    }
+}
+
+void VideoBox::onPlayerPageDestroyed()
+{
+    playerPage = nullptr; // 把悬挂指针 置为 nullptr
 
 }
 

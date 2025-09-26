@@ -17,20 +17,26 @@ public:
     void pause(); // 暂停
     void mute(bool isMute);
     void setVolume(int64_t volume); // 音量调节方法
+    void setTimePos(double timePos); //
+    double getPlayTotalTime() const;
 
 private:
     void handleMpvEvent(mpv_event* event);
+
 
 private:
     mpv_handle* mpv = nullptr;
 
 private slots:
     void onMpvEvents();
+
     // void
 
 signals:
     void mpvEvents(); // 当mpv 触发事件的时候 发射该信号 用户程序处理 这个 信号
     void playPositionSignals(double seconds);
+    void medioLoaded(double totalTime);
+    void medioFinished();
 };
 
 

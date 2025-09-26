@@ -17,5 +17,7 @@ BulletEdit::~BulletEdit()
 
 void BulletEdit::onSendBtnClicked()
 {
-    LOG()<<"[suc] 点击发送信息按钮...";
+    emit sendBullet(ui->bulletTextEdit->text());
 }
+
+

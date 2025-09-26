@@ -11,7 +11,6 @@ static void wakeUp(void * ctx)
 }
 
 
-///
 /// \brief MpvPlayer::MpvPlayer
 /// \param parent
 /// \param videoRenderWnd
@@ -54,16 +53,6 @@ MpvPlayer::MpvPlayer(QWidget* videoRenderWnd,QObject *parent)
 
 }
 
-///
-/// \brief MpvPlayer::~MpvPlayer
-/// 析构函数
-MpvPlayer::~MpvPlayer()
-{
-    if(mpv)
-    {
-        mpv_terminate_destroy(mpv);
-    }
-}
 
 void MpvPlayer::startPlay(const QString &videoPath)
 {
@@ -76,6 +65,7 @@ void MpvPlayer::startPlay(const QString &videoPath)
 
     // 这里异步处理 会有个 问题 就是 args 里面的 data 可能指向一个空
     mpv_command(mpv,args);
+
 }
 
 void MpvPlayer::setSpeed(double speed)
@@ -83,16 +73,17 @@ void MpvPlayer::setSpeed(double speed)
     mpv_set_property(mpv,"speed",MPV_FORMAT_DOUBLE,&speed);
 }
 
-
 void MpvPlayer::play()
 {
     // 0 是开始 0一般是关 关掉暂停状态 就是 开始 ~
-    mpv_set_property(mpv,"pause",MPV_FORMAT_FLAG,(void*)&MY_MPV_PLAYER_OPEN);
+    int flag = 0;
+    mpv_set_property(mpv,"pause",MPV_FORMAT_FLAG,&flag);
 }
 
 void MpvPlayer::pause()
 {
-    mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, (void*)&MY_MPV_PLAYER_CLOSE);
+    int flag = 1;
+    mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG,&flag);
 }
 
 void MpvPlayer::mute(bool isMute)
@@ -110,10 +101,40 @@ void MpvPlayer::setVolume(int64_t volume)
     mpv_set_property(mpv,"volume",MPV_FORMAT_INT64,&volume);
 }
 
-///
+/// \brief MpvPlayer::setTimePos
+/// \param timePos
+/// 设置时间位置
+void MpvPlayer::setTimePos(double timePos)
+{
+    if(!mpv)
+    {
+#ifdef MPVPLAYER_TEST
+        LOG()<<"[inf] mpv是空";
+#endif
+        return;
+    }
+    QString timeStr = QString::number(timePos);
+    const char* cmd[] = {"seek",qPrintable(timeStr),"absolute",nullptr};
+    mpv_command(mpv,cmd);
+}
+
+double MpvPlayer::getPlayTotalTime() const
+{
+    if(!mpv)
+    {
+#ifdef MPVPLAYER_TEST
+        LOG()<<"[inf] mpv是空";
+#endif
+        return 0.0;
+    }
+    double duration = 0.0;
+    mpv_get_property(mpv,"duration",MPV_FORMAT_DOUBLE,&duration);
+    return duration;
+}
+
 /// \brief MpvPlayer::handleMpvEvent
 /// \param event
-///
+
 void MpvPlayer::handleMpvEvent(mpv_event *event)
 {
     switch (event->event_id)
@@ -129,8 +150,8 @@ void MpvPlayer::handleMpvEvent(mpv_event *event)
             {
                 // time-pos 属性: 播放时间发生改变
                 double seconds = *((double*)eventProperty->data);
-
                 // 发生信号 通知界面更新 当前时间
+
                 emit playPositionSignals(seconds);
             }
             break;
@@ -162,10 +183,27 @@ void MpvPlayer::onMpvEvents()
             // 表示没有任何地事件
             break;
         }
+        else if(mpvEvent->event_id == MPV_EVENT_FILE_LOADED)
+        {
+            emit medioLoaded(getPlayTotalTime());
+        }
+        else if(mpvEvent->event_id == MPV_EVENT_END_FILE)
+        {
+            emit medioFinished();
+        }
         handleMpvEvent(mpvEvent);
     }
 }
 
 
+/// \brief MpvPlayer::~MpvPlayer
+/// 析构函数
+MpvPlayer::~MpvPlayer()
+{
+    if(mpv)
+    {
+        mpv_terminate_destroy(mpv);
+    }
+}
 
 
