@@ -3,6 +3,8 @@
 #include<QString>
 inline const QString BODY_LEFT_BUTTON_PRESS_FONT_COLOR = "#000000";
 inline const QString BODY_LEFT_BUTTON_UNPRESS_FONT_COLOR = "#999999";
+
+
 inline const QString MYPAGE_MASK_FOR_AVATAR = R"(
         #myPageMaskForAvatar{
         color: #FFFFFF;
@@ -38,6 +40,7 @@ inline const QString SYSTEMPAGE_ACTIVED_BUTTON = R"(
 
 )";
 
+// 分页器的样式 触发
 inline const QString PAGE_BUTTON_FENYEQI_ACTIVED = R"(
     QPushButton{
         color: #FFFFFF;
@@ -48,6 +51,7 @@ inline const QString PAGE_BUTTON_FENYEQI_ACTIVED = R"(
 )";
 
 
+// 分页器 没有触发
 inline const QString PAGE_BUTTON_FENYEQI_UNACTIVED = R"(
     QPushButton{
         color: #000000;
@@ -107,6 +111,55 @@ inline const QString TOAST_LABEL = R"(
     font-size: 14px;
     color: #FFFFFF;
 )";
+
+
+inline const QString PLAYER_BEGIN_STYLE = R"(
+    border-image:url(":/image/stop.png");
+
+)";
+
+inline const QString PLAYER_STOP_STYLE = R"(
+    border-image:url(":/image/play.png");
+
+)";
+
+inline const QString PLAYERPAGE_TEST_BACKGROUND_FOR_TOP = R"(
+    background-color: #E3C014;
+)";
+
+inline const QString PLAYERPAGE_TEST_BACKGROUND_FOR_MIDDLE = R"(
+    background-color: #E3A714;
+)";
+
+inline const QString PLAYERPAGE_TEST_BACKGROUND_FOR_BOTTOM = R"(
+    background-color: #E3D914;
+)";
+
+inline const QString BULLET_TEXT = R"(
+    font-family: 微软雅黑;
+    font-size: 18px;
+    color: #FFFFFF;
+    border: none;
+)";
+
+inline const QString BULLET = R"(
+    #bulletItem{
+    border: 1px solid #3ECEFE;
+    border-radius: 19px;
+}
+)";
+
+inline const QString BULLETBTN_SHOW = R"(
+    border-image: url(":/image/bulletOpen.png")
+
+)";
+
+inline const QString BULLETBTN_CLOSE = R"(
+    border-image: url(":/image/bulletClose.png")
+)";
+
+
+
 
 
 

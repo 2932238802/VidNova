@@ -19,6 +19,10 @@ private slots:
     void onSendBtnClicked();
 
 
+signals:
+    void sendBullet(const QString& str);
+
+
 private:
     Ui::BulletEdit *ui;
 };

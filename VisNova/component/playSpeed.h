@@ -20,6 +20,10 @@ private slots:
     void onSpeed10Clicked();
     void onSpeed05Clicked();
 
+signals:
+    void speedSignals(double speed);
+
+
 private:
     Ui::PlaySpeed *ui;
 };

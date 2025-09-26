@@ -329,7 +329,7 @@
             <item>
              <widget class="QLabel" name="videoDuration">
               <property name="text">
-               <string>28:22/32:33</string>
+               <string>00:00/00:10</string>
               </property>
              </widget>
             </item>

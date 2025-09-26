@@ -17,14 +17,11 @@ public:
 
     // 显示完 文本 显示窗口
     Toast(const QString&msg,QWidget* widget);
-
     static void showMsg(const QString& msg);
     static void showMsg(const QString& msg,QWidget* widget);
 
 private:
     void initUi(const QString& msg);
-
-
 };
 
 

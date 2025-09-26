@@ -1,8 +1,7 @@
-#ifndef VOLUME_H
-#define VOLUME_H
-
+#pragma once
 #include <QWidget>
 #include <QCursor>
+#include "common/myLog.h"
 
 namespace Ui {
 class Volume;
@@ -22,6 +21,10 @@ private:
 
 private:
     Ui::Volume *ui;
+    int volume = 35;
+
+signals:
+    void volumeSignals(int volume);
 };
 
-#endif // VOLUME_H
+

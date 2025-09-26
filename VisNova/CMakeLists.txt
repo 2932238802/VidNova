@@ -11,6 +11,9 @@ find_package(Qt6
     Multimedia
     MultimediaWidgets
 )
+find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 
 qt_standard_project_setup()
@@ -24,6 +27,7 @@ set(COMPONENT_DIR component)
 set(STYLE_DIR style)
 set(COMMON_DIR common)
 set(LRPAGR_DIR lrPage)
+set(MPV_DIR mpv)
 
 set(SOURCES
     main.cpp
@@ -52,6 +56,7 @@ set(SOURCES
     ${COMPONENT_DIR}/pageBtn.cpp
     ${COMPONENT_DIR}/paginator.cpp
     ${COMPONENT_DIR}/toast.cpp
+    ${COMPONENT_DIR}/mpvPlayer.cpp
     ${LRPAGR_DIR}/login.cpp
 
 )
@@ -85,7 +90,12 @@ set(HEADERS
     ${COMPONENT_DIR}/pageBtn.h
     ${COMPONENT_DIR}/paginator.h
     ${COMPONENT_DIR}/toast.h
+    ${COMPONENT_DIR}/mpvPlayer.h
     ${LRPAGR_DIR}/login.h
+    ${MPV_DIR}/client.h
+    ${MPV_DIR}/render.h
+    ${MPV_DIR}/render_gl.h
+    ${MPV_DIR}/stream_cb.h
 )
 
 set(UI_FILES
@@ -115,11 +125,12 @@ qt_add_resources(RESOURCES imageRsc.qrc)
 
 # ==================== 可执行文件创建 ====================
 qt_add_executable(VisNova
-    WIN32 MACOSX_BUNDLE
     ${SOURCES}
     ${HEADERS}
     ${UI_FILES}
-
+    common/constants.h
+    component/bulletItem.h component/bulletItem.cpp
+    component/bulletManage.h component/bulletManage.cpp
 )
 
 target_sources(VisNova PRIVATE ${RESOURCES})
@@ -130,12 +141,12 @@ target_include_directories(VisNova PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/${START_PAGE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/${COMPONENT_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/${STYLE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/${COMMON_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/${LRPAGR_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/${MPV_DIR}
 )
 
-# ==================== 国际化支持 ====================
-qt_add_translations(VisNova
-    TS_FILES VisNova_zh_CN.ts
-)
+
 
 # ==================== 库链接 ====================
 target_link_libraries(VisNova PRIVATE
@@ -143,7 +154,11 @@ target_link_libraries(VisNova PRIVATE
     Qt6::Widgets
     Qt6::Multimedia
     Qt6::MultimediaWidgets
+    ${CMAKE_CURRENT_SOURCE_DIR}/${MPV_DIR}/libmpv.dll.a
 )
+target_link_libraries(VisNova PRIVATE Qt6::Core)
+target_link_libraries(VisNova PRIVATE Qt6::Widgets)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
 
 
 # ==================== 安装配置 ====================

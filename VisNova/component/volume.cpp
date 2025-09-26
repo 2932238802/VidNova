@@ -27,8 +27,11 @@ bool Volume::eventFilter(QObject *watched, QEvent *event)
         }
         else if(event->type() == QEvent::MouseButtonRelease){
 
+            emit volumeSignals(volume);
+
         }else if(event->type() == QEvent::MouseMove){
             alter();
+            emit volumeSignals(volume);
         }
         return true;
     }
@@ -51,6 +54,11 @@ void Volume::alter()
         toY = 140;
     }
     ui->volumeBtn->move(ui->volumeBtn->x(),toY);
+
+    // 上面是把 距离更新了
+    // 下面还要计算一下 音量大小
+    volume = ui->outLine->height()/(double)145 * 100;
+    LOG()<<"音量大小: "<<volume;
 }
 
 
