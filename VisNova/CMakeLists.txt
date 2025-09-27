@@ -14,6 +14,7 @@ find_package(Qt6
 find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 
 qt_standard_project_setup()
@@ -27,6 +28,7 @@ set(COMPONENT_DIR component)
 set(STYLE_DIR style)
 set(COMMON_DIR common)
 set(LRPAGR_DIR lrPage)
+set(DATA_CENTER_DIR dataCenter)
 set(MPV_DIR mpv)
 
 set(SOURCES
@@ -57,7 +59,10 @@ set(SOURCES
     ${COMPONENT_DIR}/paginator.cpp
     ${COMPONENT_DIR}/toast.cpp
     ${COMPONENT_DIR}/mpvPlayer.cpp
+    ${COMPONENT_DIR}/bulletItem.cpp
+    ${COMPONENT_DIR}/bulletManage.cpp
     ${LRPAGR_DIR}/login.cpp
+    ${DATA_CENTER_DIR}/dataCenter.cpp
 
 )
 
@@ -74,6 +79,7 @@ set(HEADERS
     ${STYLE_DIR}/style.h
     ${COMMON_DIR}/myLog.h
     ${COMMON_DIR}/readLocalFile.h
+    ${COMMON_DIR}/constants.h
     ${COMPONENT_DIR}/bulletEdit.h
     ${COMPONENT_DIR}/myPage.h
     ${COMPONENT_DIR}/myPageAvatarBtn.h
@@ -91,11 +97,15 @@ set(HEADERS
     ${COMPONENT_DIR}/paginator.h
     ${COMPONENT_DIR}/toast.h
     ${COMPONENT_DIR}/mpvPlayer.h
+    ${COMPONENT_DIR}/bulletItem.h
+    ${COMPONENT_DIR}/bulletManage.h
     ${LRPAGR_DIR}/login.h
     ${MPV_DIR}/client.h
     ${MPV_DIR}/render.h
     ${MPV_DIR}/render_gl.h
     ${MPV_DIR}/stream_cb.h
+    ${DATA_CENTER_DIR}/dataCenter.h
+    ${DATA_CENTER_DIR}/data.h
 )
 
 set(UI_FILES
@@ -128,9 +138,7 @@ qt_add_executable(VisNova
     ${SOURCES}
     ${HEADERS}
     ${UI_FILES}
-    common/constants.h
-    component/bulletItem.h component/bulletItem.cpp
-    component/bulletManage.h component/bulletManage.cpp
+    dataCenter/data.cpp
 )
 
 target_sources(VisNova PRIVATE ${RESOURCES})
@@ -158,6 +166,7 @@ target_link_libraries(VisNova PRIVATE
 )
 target_link_libraries(VisNova PRIVATE Qt6::Core)
 target_link_libraries(VisNova PRIVATE Qt6::Widgets)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
 target_link_libraries(VisNova PRIVATE Qt6::Core)
 
 

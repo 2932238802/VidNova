@@ -4,9 +4,12 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QButtonGroup>
+#include"dataCenter/data.h"
+#include "dataCenter/dataCenter.h"
 #include "common/myLog.h"
 #include"style/style.h"
 #include "ui_homePageCpt.h"
+#include "videoBox.h"
 
 namespace Ui {
 class homePageCpt;
@@ -21,12 +24,14 @@ public:
     void initKindAndTags();
     void resetTags(const QList<QString>& tags_contain);
     void initRefreshAndTopBtn();
+    void initConnect();
     ~homePageCpt();
 
 private:
     QPushButton* buildBtn(QWidget* parent,const QString&color,const QString&text );
     void clearLayoutAndBtn(QLayout* layout);
-    void initVedios();
+    void initVideos();
+    void openPlayerPage(const QString& path);
 
 private slots:
     void onTopBtnClicked();
@@ -35,8 +40,7 @@ private slots:
 private:
     Ui::homePageCpt *ui;
     QButtonGroup* tagsGp;
-    QHash<QString,QList<QString>> kindTags;
-    QList<QString> kinds;
+
 };
 
 
