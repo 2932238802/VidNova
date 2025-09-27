@@ -174,6 +174,7 @@ void PlayerPage::onVolumeChanged(int volume)
 
 
 
+
 ////////////////////////////////////////////////
 /// \brief PlayerPage::onPlayPositionChanged
 /// \param playTime

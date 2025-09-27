@@ -32,15 +32,11 @@ void PlayerSlider::mousePressEvent(QMouseEvent *event)
     if(event->button() == Qt::LeftButton) // 表示左键 暗下来
     {
         isDraging = true;
-
         playProgress = event->pos().x(); // 这些都是 相对于 当前得 QWidget 而言的
         moveSlider(); // 移动一下
         emit onPlayTimeDrag(ratio);
-
-
         return;
     }
-
     QWidget::mousePressEvent(event);
 }
 

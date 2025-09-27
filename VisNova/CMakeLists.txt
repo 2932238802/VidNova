@@ -13,8 +13,9 @@ find_package(Qt6
 )
 find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
-find_package(Qt6 REQUIRED COMPONENTS Core)
-find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS HttpServer)
+find_package(Qt6 REQUIRED COMPONENTS Network)
+
 
 
 qt_standard_project_setup()
@@ -139,6 +140,8 @@ qt_add_executable(VisNova
     ${HEADERS}
     ${UI_FILES}
     dataCenter/data.cpp
+    net/netClient.h net/netClient.cpp
+    net/testHttp.h
 )
 
 target_sources(VisNova PRIVATE ${RESOURCES})
@@ -166,9 +169,9 @@ target_link_libraries(VisNova PRIVATE
 )
 target_link_libraries(VisNova PRIVATE Qt6::Core)
 target_link_libraries(VisNova PRIVATE Qt6::Widgets)
+target_link_libraries(VisNova PRIVATE Qt6::Network)
 target_link_libraries(VisNova PRIVATE Qt6::Core)
-target_link_libraries(VisNova PRIVATE Qt6::Core)
-
+target_link_libraries(VisNova PRIVATE Qt6::HttpServer)
 
 # ==================== 安装配置 ====================
 include(GNUInstallDirs)
