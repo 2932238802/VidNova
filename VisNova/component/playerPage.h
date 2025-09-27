@@ -30,6 +30,7 @@ public:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void startPlay(const QString& videoPath);
+    void initBullet();
 
 // 内置函数
 private:

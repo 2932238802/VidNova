@@ -1,6 +1,10 @@
 #include "playerPage.h"
 #include "ui_playerPage.h"
 
+/////////////////////////////////////////////////////////
+/// \brief PlayerPage::PlayerPage
+/// \param parent
+///
 PlayerPage::PlayerPage(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::PlayerPage)
@@ -20,10 +24,25 @@ PlayerPage::PlayerPage(QWidget *parent)
     shortCut = new QShortcut(ui->playBtn);
     QKeySequence keySequence(" ");
     shortCut->setKey(keySequence);
-    QPoint point = mapToGlobal(QPoint(0,0));
-    bm = std::make_unique<BulletManage>(this,point.x(),point.y() + ui->playerHead->height());
+    initBullet();
     initConnect();
 }
+/////////////////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////////////////
+/// \brief PlayerPage::initBullet
+///
+void PlayerPage::initBullet()
+{
+    if(bm==nullptr)
+    {
+        QPoint point = mapToGlobal(QPoint(0,0));
+        bm = std::make_unique<BulletManage>(this,point.x(),point.y() + ui->playerHead->height());
+    }
+}
+/////////////////////////////////////////////////////////
 
 
 
@@ -215,12 +234,14 @@ void PlayerPage::onMedioLoaded(double total_time)
 void PlayerPage::onMedioFinished()
 {
     // 结束了 首先是
-    mpvPlayer->startPlay(videoPath);
-    isPlaying = !isPlaying;
-    mpvPlayer->pause();
+    // mpvPlayer->startPlay(videoPath);
+    // isPlaying = !isPlaying;
+    isPlaying = false;
+    // mpvPlayer->pause();
     ui->playBtn->setStyleSheet(PLAYER_STOP_STYLE);
 }
 ////////////////////////////////////////////////
+
 
 
 ////////////////////////////////////////////////
@@ -244,9 +265,9 @@ void PlayerPage::onBulletScreenBtnClicked()
         bm->setBulletStateForHide(true);
         bm->hide();
     }
-
 }
 ////////////////////////////////////////////////
+
 
 
 ////////////////////////////////////////////////
@@ -258,7 +279,6 @@ void PlayerPage::onAcceptSignalsByBulletEdit(const QString& str)
         Toast::showMsg("请打开弹幕开关...");
         return ;
     }
-
     BulletItem* item = bm->buildBullet(BulletPosition::TOP);
     item->setText(str);
 
@@ -281,9 +301,11 @@ void PlayerPage::moveVolumeWindow(const QPoint &point)
 ////////////////////////////////////////////////
 
 
+
 ////////////////////////////////////////////////
 /// \brief PlayerPage::moveSpeedWindow
 /// \param point
+/// 音量
 void PlayerPage::moveSpeedWindow(const QPoint &point)
 {
     QPoint newPoint = point + QPoint(this->width() - speedCtl->width()-77,565);
@@ -326,10 +348,8 @@ void PlayerPage::startPlay(const QString &video_path)
     bm->buildBulletItems();
     LOG()<<"[inf] enter function startPlay";
 #endif
-
     videoPath = video_path;
     mpvPlayer->startPlay(video_path);
-
     mpvPlayer->pause();
 }
 ////////////////////////////////////////////////
@@ -357,7 +377,6 @@ void PlayerPage::initConnect()
     connect(ui->bulletScreenText,&BulletEdit::sendBullet,this,&PlayerPage::onAcceptSignalsByBulletEdit);
 }
 ////////////////////////////////////////////////
-
 
 
 

@@ -56,6 +56,8 @@ MpvPlayer::MpvPlayer(QWidget* videoRenderWnd,QObject *parent)
 
 void MpvPlayer::startPlay(const QString &videoPath)
 {
+
+    LOG()<<"[inf] videoPath" << videoPath;
     // 发送加载视频地命令 然后播放视频
     // 因为 QString 内部实现的细节是 UTF-16
     const QByteArray fileName = videoPath.toUtf8();
@@ -131,10 +133,15 @@ double MpvPlayer::getPlayTotalTime() const
     mpv_get_property(mpv,"duration",MPV_FORMAT_DOUBLE,&duration);
     return duration;
 }
+////////////////////////////////////////////////////////
 
+
+
+
+
+////////////////////////////////////////////////////////
 /// \brief MpvPlayer::handleMpvEvent
 /// \param event
-
 void MpvPlayer::handleMpvEvent(mpv_event *event)
 {
     switch (event->event_id)
@@ -168,9 +175,14 @@ void MpvPlayer::handleMpvEvent(mpv_event *event)
         }
     }
 }
+////////////////////////////////////////////////////////
 
 
 
+
+////////////////////////////////////////////////////////
+/// \brief MpvPlayer::onMpvEvents
+///
 void MpvPlayer::onMpvEvents()
 {
     while(mpv)
@@ -194,8 +206,11 @@ void MpvPlayer::onMpvEvents()
         handleMpvEvent(mpvEvent);
     }
 }
+////////////////////////////////////////////////////////
 
 
+
+////////////////////////////////////////////////////////
 /// \brief MpvPlayer::~MpvPlayer
 /// 析构函数
 MpvPlayer::~MpvPlayer()
@@ -205,5 +220,5 @@ MpvPlayer::~MpvPlayer()
         mpv_terminate_destroy(mpv);
     }
 }
-
+////////////////////////////////////////////////////////
 

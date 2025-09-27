@@ -11,7 +11,7 @@ Volume::Volume(QWidget *parent)
     ui->volumeBg->installEventFilter(this); // 拦截器
 }
 
-///
+/////////////////////////////////////////////////////////
 /// \brief Volume::eventFilter
 /// \param watched
 /// \param event
@@ -38,7 +38,12 @@ bool Volume::eventFilter(QObject *watched, QEvent *event)
 
     return QObject::eventFilter(watched,event);
 }
+/////////////////////////////////////////////////////////
 
+
+/////////////////////////////////////////////////////////
+/// \brief Volume::alter
+///
 void Volume::alter()
 {
     // 先获取 y 坐标
@@ -60,9 +65,14 @@ void Volume::alter()
     volume = ui->outLine->height()/(double)145 * 100;
     LOG()<<"音量大小: "<<volume;
 }
+/////////////////////////////////////////////////////////
 
 
+/////////////////////////////////////////////////////////
+/// \brief Volume::~Volume
+///
 Volume::~Volume()
 {
     delete ui;
 }
+/////////////////////////////////////////////////////////

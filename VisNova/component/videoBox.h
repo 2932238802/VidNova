@@ -29,14 +29,13 @@ public:
 
 private:
     void onPlayBtnClicked();
-    void checkPlayPageIsNullptr();
+    void initBullet();
 
-private slots:
-    void onPlayerPageDestroyed();
+signals:
+    void openPlayerPage(const QString& str);
 
 private:
     Ui::VideoBox *ui;
-    PlayerPage* playerPage;
 
 };
 

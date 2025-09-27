@@ -395,7 +395,7 @@
              </widget>
             </item>
             <item>
-             <widget class="bulletEdit" name="bulletScreenText">
+             <widget class="BulletEdit" name="bulletScreenText">
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -836,7 +836,7 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>bulletEdit</class>
+   <class>BulletEdit</class>
    <extends>QLineEdit</extends>
    <header location="global">bulletedit.h</header>
   </customwidget>

@@ -41,6 +41,7 @@
       <string notr="true">
 #scrollArea {
 border: none;
+color:black;
 }
 
 
@@ -89,7 +90,7 @@ background: none;
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-143</y>
         <width>1337</width>
         <height>981</height>
        </rect>
@@ -906,7 +907,7 @@ padding-left: 16px;
 font-size: 14px;
 font-family: '微软雅黑';
 font-weight: bold;
-color: black;
+color:rgb(0, 0, 0);
 }
 
 
@@ -923,6 +924,35 @@ margin-top: 0;
 image: url(&quot;:/image/more.png&quot;);
 
 }
+
+QComboBox QAbstractItemView {
+	background-color:rgb(243, 243, 243);
+	border: 1px solid #D3D3D3;
+	selection-background-color: #5CACEE;
+	selection-color: white;
+	outline: 0px;
+}
+
+
+#kinds::item{
+	font-color: black;
+}
+
+#kinds::item:hover{
+	background-color: #F5F5F5;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 </string>
                </property>
                <property name="placeholderText">
@@ -965,7 +995,7 @@ image: url(&quot;:/image/more.png&quot;);
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_9">
              <property name="spacing">
-              <number>30</number>
+              <number>10</number>
              </property>
              <property name="leftMargin">
               <number>16</number>
@@ -977,7 +1007,7 @@ image: url(&quot;:/image/more.png&quot;);
               <number>0</number>
              </property>
              <property name="bottomMargin">
-              <number>20</number>
+              <number>0</number>
              </property>
              <item>
               <widget class="QLabel" name="tagsLabel">
@@ -1023,7 +1053,11 @@ image: url(&quot;:/image/more.png&quot;);
                  <number>0</number>
                 </property>
                 <item>
-                 <layout class="QHBoxLayout" name="tagsLayout"/>
+                 <layout class="QHBoxLayout" name="tagsLayout">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                 </layout>
                 </item>
                </layout>
               </widget>

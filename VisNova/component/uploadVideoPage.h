@@ -2,6 +2,8 @@
 #include <QWidget>
 #include <QFileDialog>
 #include "vidnovamain.h"
+#include "dataCenter/dataCenter.h"
+#include "dataCenter/data.h"
 #include "common/myLog.h"
 
 namespace Ui {
@@ -21,9 +23,17 @@ private slots:
     void onTitleEditTextNumberChanged(const QString& words);
     void onPlainBriefIntroduceEditTextNumberChanged();
     void onChangeBtnClicked();
+    void onTagChanged(const QString &choosed_tag);
+
+private:
+    void addTags(const QString& str);
+
 
 signals:
     void returnMyPage(int page_id);
+    void tagChanged(const QString &choosed_tag);
+
+
 
 private:
     int maxContentLenth;
