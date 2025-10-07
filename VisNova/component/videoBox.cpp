@@ -2,16 +2,27 @@
 #include "ui_videoBox.h"
 
 
-VideoBox::VideoBox(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::VideoBox)
+
+VideoBox::VideoBox(const model::VideoInfo&video_info, QWidget *parent)
+    :QWidget(parent)
+    , ui(new Ui::VideoBox),videoInfo(video_info)
 {
     ui->setupUi(this);
-    ui->delVedioBtn->hide(); // 隐藏删除按钮
+    ui->delVideoBtn->hide(); // 隐藏删除按钮
+    ui->videoTitle->setStyleSheet(VIDEO_TITLE_LABEL);
+    ui->videoInfoBox->setStyleSheet("background: transparent;");
     ui->imageBox->installEventFilter(this);
-    ui->vedioTitleBox->installEventFilter(this);
+    ui->videoTitleBox->installEventFilter(this);
+    setVideoImage(videoInfo.photoId);
+    setUserAvatar(videoInfo.userAvatarId);
+
+    updataVideoInfoUI();
+    auto dataCenter = model::DataCenter::getInstance();
+    connect(dataCenter,&model::DataCenter::_downloadPhotoDone,this,&VideoBox::getVideoImage);
+    connect(dataCenter,&model::DataCenter::_downloadPhotoDone,this,&VideoBox::onUserAvatarGeted);
 
 }
+
 
 VideoBox::~VideoBox()
 {
@@ -23,12 +34,12 @@ VideoBox::~VideoBox()
 bool VideoBox::eventFilter(QObject *watched, QEvent *event)
 {
     // 只要是
-    if(ui->imageBox == watched || ui->vedioTitleBox == watched)
+    if(ui->imageBox == watched || ui->videoTitleBox == watched)
     {
         if(event->type() == QEvent::MouseButtonPress)
         {
             // 显示 播放窗口
-            onPlayBtnClicked();
+            emit _onPlayBtnClicked();
             return true;
         }
     }
@@ -36,16 +47,173 @@ bool VideoBox::eventFilter(QObject *watched, QEvent *event)
     return QObject::eventFilter(watched,event);
 }
 
-void VideoBox::onPlayBtnClicked()
+
+
+const QString &VideoBox::getVideoId() const
 {
-    LOG()<<"[suc] 播放视频...";
-    QDir dir = QDir::current();
-    dir.cdUp();
-    dir.cdUp();
-    QString videoPath = dir.absolutePath();
-    videoPath+="/test/test1.mp4";
-    emit openPlayerPage(videoPath);
+    return videoInfo.videoId;
 }
+
+
+void VideoBox::updataVideoInfoUI()
+{
+    //
+    ui->videoTitle->setText(videoInfo.videoTitle);
+
+#ifdef HOMEPAGECPT_TEST
+    // LOG()<< "标题..." <<ui->videoTitle->text();
+#endif
+
+    ui->likeNum->setText(intToString(videoInfo.likeCount)); // 点赞数量
+
+    ui->playNum->setText(intToString(videoInfo.playCount)); // 播放量
+
+    ui->userNickName->setText(videoInfo.nickName);
+
+    ui->loadupTime->setText(videoInfo.loadupTime);
+
+    ui->videoDuration->setText(stringToTime(videoInfo.videoDuration));
+
+}
+
+////////////////////////
+/// \brief VideoBox::getVideoImageDone
+/// \param photoId
+/// \param imageData
+///
+void VideoBox::getVideoImage(const QString &photoId, QByteArray imageData)
+{
+    if(photoId != videoInfo.photoId)
+    {
+        return;
+    }
+
+
+
+    if(imageData.isEmpty())
+    {
+
+#ifdef VIDEOBOX_TEST
+        LOG() << "imageData内容为空...";
+#endif
+
+        return;
+    }
+
+    // 更新
+
+    if(!videoCoverImage.loadFromData(imageData))
+    {
+        LOG()<<"imageData 加载失败...";
+        return;
+    }
+
+    update();
+}
+////////////////////////
+
+
+
+////////////////////////
+/// \brief VideoBox::onUserAvatarGeted
+/// \param photoId
+/// \param imageData
+///
+void VideoBox::onUserAvatarGeted(const QString &avatar_id, QByteArray imageData)
+{
+    // 把用户头像 设置上去
+    if(avatar_id != videoInfo.userAvatarId)
+    {
+        return;
+    }
+
+    //
+
+    userAvatar =  makeIcon(imageData,(ui->userIcon->width()/2),(ui->userIcon->height()/2));
+    ui->userIcon->setPixmap(userAvatar);
+
+
+}
+////////////////////////
+
+
+
+////////////////////////
+/// \brief VideoBox::getUserAvatar
+/// \return
+///
+QPixmap VideoBox::getUserAvatar() const
+{
+    return userAvatar;
+}
+////////////////////////
+
+
+
+
+
+
+
+
+
+// 设置 视频封面
+void VideoBox::setVideoImage(const QString &photoId)
+{
+    auto dataCenter = model::DataCenter::getInstance();
+    dataCenter->downloadPhotoAsync(photoId);
+}
+
+void VideoBox::paintEvent(QPaintEvent *event)
+{
+    // 如果图片不相符
+    // 需要对图片进行缩放
+    // SmoothTransformation 平滑算法 更加好 质量
+    // KeepAspectRatio 保持 原始宽高比
+
+    // ui->imageBox->setAutoFillBackground(true);
+
+    // QPalette qpale = ui->imageBox->palette(); // 这个是内置的调色板
+
+    // videoCoverImage = videoCoverImage.scaled(ui->imageBox->size(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
+
+    // QBrush brush(videoCoverImage);
+
+    // qpale.setBrush(QPalette::Window,brush);
+
+    // ui->imageBox->setPalette(qpale);
+    QWidget::paintEvent(event); // 调用父类实现
+    if (videoCoverImage.isNull()) {
+        return;
+    }
+    QPainter painter(this);
+    QRect targetRect = ui->imageBox->geometry();
+    painter.drawPixmap(targetRect, videoCoverImage);
+}
+
+
+////////////////////////
+/// \brief VideoBox::setUserAvatar
+/// \param userAvatar
+///
+void VideoBox::setUserAvatar(const QString &user_avatar_id)
+{
+    if(user_avatar_id.isEmpty())
+    {
+        ui->userIcon->setStyleSheet(R"(
+            border-image: url(":/image/txMan.png");
+        )");
+    }
+    else{
+
+        auto dataCenter = model::DataCenter::getInstance();
+        dataCenter->downloadPhotoAsync(user_avatar_id);
+    }
+}
+////////////////////////
+
+
+
+
 
 
 

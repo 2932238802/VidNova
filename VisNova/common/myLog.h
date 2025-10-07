@@ -11,11 +11,27 @@ inline static QString getFileName(const QString& path)
 }
 #define TAG QString("[%1,%2]").arg(getFileName(__FILE__),QString::number(__LINE__))
 #define LOG() qDebug().noquote()<<TAG
-#define DE_TEST
+
+#define NETCLIENT_TEST
+
+// #define MYPAGE_TEST
+
 #define PLAYERPAGE_TEST
 // #define PLAYERPAGE_TEST_FOR_VOLUMN
-#define PLAYERPAGE_TEST_FOR_BULLET
-#define MPVPLAYER_TEST
-#define HTTP_TEST
+// #define PLAYERPAGE_TEST_FOR_BULLET
+
+// #define MPVPLAYER_TEST
+
+// #define HTTP_TEST
 
 // #define PAGE_SLIDER_TEST
+
+#define HOMEPAGECPT_TEST
+
+// #define VIDEOINFO_TEST
+
+// #define DATACENTER_TEST
+
+#define VIDEOBOX_TEST
+
+

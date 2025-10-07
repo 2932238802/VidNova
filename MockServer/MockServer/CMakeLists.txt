@@ -3,6 +3,9 @@ project(MockServer LANGUAGES CXX)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools HttpServer)
 find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 qt_standard_project_setup()
 
@@ -29,6 +32,12 @@ qt_add_executable(MockServer
     ${SRC_FILES}
     ${HEADERS}
     ${UI_FILES}
+    common/loadFileToByteArray.h
+    image.qrc
+    image.qrc
+    video.qrc
+    data.h data.cpp
+    common/rand.cpp common/rand.h
 )
 
 target_include_directories(MockServer PRIVATE
@@ -46,6 +55,7 @@ target_link_libraries(MockServer
 )
 
 
+target_link_libraries(MockServer PRIVATE Qt6::Core)
 target_link_libraries(MockServer PRIVATE Qt6::Core)
 
 

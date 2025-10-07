@@ -1,11 +1,22 @@
 #pragma once
 #include <QWidget>
 #include <QDir>
+#include <QPixmap>
+#include <QPalette>
+#include <QBrush>
+#include <QPainter>
+#include <Qpixmap>
 #include "mpvPlayer.h"
 #include "playerPage.h"
 #include "common/myLog.h"
+#include "common/ReadLocalFile.h"
 #include"toast.h"
 #include"lrPage/login.h"
+#include "dataCenter/data.h"
+#include "dataCenter/dataCenter.h"
+#include "intToString.h"
+#include "stringToTime.h"
+
 
 namespace Ui {
 class VideoBox;
@@ -16,7 +27,8 @@ class VideoBox : public QWidget
     Q_OBJECT
 
 public:
-    explicit VideoBox(QWidget *parent = nullptr);
+    explicit VideoBox(const model::VideoInfo& videoInfo,QWidget *parent = nullptr);
+
     ~VideoBox();
 
     ///
@@ -26,16 +38,32 @@ public:
     /// \return
     /// 虚函数重写
     bool eventFilter(QObject *watched, QEvent *event) override;
+    const QString& getVideoId() const;
+    QPixmap getUserAvatar() const ;
 
 private:
-    void onPlayBtnClicked();
-    void initBullet();
+    void setVideoImage(const QString& photoId);
+    void paintEvent(QPaintEvent* event) override;
+    void setUserAvatar(const QString& userAvatar);
+
 
 signals:
-    void openPlayerPage(const QString& str);
+    void _onPlayBtnClicked();
+
+private slots:
+    // void onPlayBtnClicked(); // 视频播放按钮
+    // void initBullet();
+    void updataVideoInfoUI();
+    void getVideoImage(const QString& photoId,QByteArray imageData);
+    void onUserAvatarGeted(const QString& photoId,QByteArray imageData);
+
+
 
 private:
+    QPixmap videoCoverImage;
+    QPixmap userAvatar;
     Ui::VideoBox *ui;
+    model::VideoInfo videoInfo;
 
 };
 

@@ -50,7 +50,7 @@
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">background-color: white;</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
@@ -72,6 +72,7 @@
        <widget class="QWidget" name="selectBox" native="true">
         <property name="styleSheet">
          <string notr="true">QPushButton {
+	background-color: white;
     font-family: &quot;微软雅黑&quot;; 
     font-size: 16px;
     border: none;
@@ -236,9 +237,13 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="vedioBox" native="true">
+    <widget class="QWidget" name="videoBox" native="true">
      <property name="styleSheet">
-      <string notr="true">background-color:rgb(200,200,200);</string>
+      <string notr="true">#videoBox{
+
+	background-color: rgb(250,250,250);
+
+}</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <property name="spacing">
@@ -257,7 +262,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QScrollArea" name="vedioScroll">
+       <widget class="QScrollArea" name="videoScroll">
         <property name="styleSheet">
          <string notr="true">#vedioScroll{
 
@@ -306,8 +311,8 @@ QScrollBar::add-page:vertical {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1330</width>
-           <height>680</height>
+           <width>1328</width>
+           <height>678</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -327,7 +332,7 @@ QScrollBar::add-page:vertical {
            <number>0</number>
           </property>
           <item>
-           <layout class="QGridLayout" name="vedioGLayout"/>
+           <layout class="QGridLayout" name="videoGLayout"/>
           </item>
          </layout>
         </widget>

@@ -42,14 +42,14 @@ static inline void writeByteArrayToFile(const QString& file_path,const QByteArra
 }
 
 
-static inline QIcon makeIcon(const QByteArray& data,int width , int height)
+static inline QPixmap makeIcon(const QByteArray& data,int width , int height)
 {
     QPixmap qpixMap;
     qpixMap.loadFromData(data);
 
     if(qpixMap.isNull())
     {
-        return QIcon{};
+        return QPixmap{};
     }
 
     // IgnoreAspectRatio 忽略 图片的比率
@@ -58,15 +58,16 @@ static inline QIcon makeIcon(const QByteArray& data,int width , int height)
     // 画布
     QPixmap canvas(qpixMap.size());
     canvas.fill(Qt::transparent);
+
     QPainter pen(&canvas);
-    pen.setRenderHint(QPainter::Antialiasing);
+    pen.setRenderHint(QPainter::Antialiasing,true);
 
     // 创建一个 圆形的部件
     QPainterPath path;
     path.addEllipse(0,0,width,height);
     pen.setClipPath(path);
     pen.drawPixmap(0,0,qpixMap);
-    return  QIcon(canvas);
+    return  canvas;
 }
 
 

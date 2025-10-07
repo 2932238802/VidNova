@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     VidNovaMain*w = VidNovaMain::getInstance();
 
     // 先显示启动
-    start_page startPage;
+    StartPage startPage;
     startPage.exec();
 
 #ifdef HTTP_TEST

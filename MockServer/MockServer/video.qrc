@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>video/output.m3u8</file>
+        <file>video/output0.ts</file>
+        <file>video/output1.ts</file>
+        <file>video/output2.ts</file>
+        <file>video/output3.ts</file>
+        <file>video/output4.ts</file>
+        <file>video/test.mp4</file>
+        <file>video/test1.mp4</file>
+    </qresource>
+</RCC>

@@ -1,6 +1,4 @@
-#ifndef MOCKSERVER_H
-#define MOCKSERVER_H
-
+#pragma once
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -20,4 +18,4 @@ public:
 private:
     Ui::MockServer *ui;
 };
-#endif // MOCKSERVER_H
+

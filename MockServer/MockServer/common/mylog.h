@@ -3,6 +3,8 @@
 #include<QFileInfo>
 #include<qDebug>
 
+#include <source_location>
+
 // 封装一个 日志
 inline static QString getFileName(const QString& path)
 {
@@ -11,4 +13,5 @@ inline static QString getFileName(const QString& path)
 }
 #define TAG QString("[%1,%2]").arg(getFileName(__FILE__),QString::number(__LINE__))
 #define LOG() qDebug().noquote()<<TAG
-
+#define TEST_VIDEOLIST
+#define HTTPSERVER_TEST

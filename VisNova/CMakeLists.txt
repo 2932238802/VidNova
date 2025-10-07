@@ -142,6 +142,10 @@ qt_add_executable(VisNova
     dataCenter/data.cpp
     net/netClient.h net/netClient.cpp
     net/testHttp.h
+    common/intToString.h
+    common/stringToTime.h
+    common/rand.h common/rand.cpp
+
 )
 
 target_sources(VisNova PRIVATE ${RESOURCES})

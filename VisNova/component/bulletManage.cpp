@@ -35,37 +35,40 @@ BulletManage::BulletManage(QWidget *parent,int x_parent,int y_parent)
     this->show();
 }
 
-void BulletManage::buildBulletItems()
+void BulletManage::buildBulletItems(const QString& video_id)
 {
-    QList<BulletInfo> bulletItems;
+    auto dataCenter = model::DataCenter::getInstance();
+    dataCenter->getBulletsAsync(video_id); // 这个要发送一个信号
 
-    for(int i =0 ; i < 3; i++)
-    {
-        BulletInfo bsItem("100",i,"我是弹幕" + QString::number(i));
-        bulletItems.append(bsItem);
-        bulletItemInfoMap.insert(bsItem.playTime,bulletItems);
-        bulletItems.clear();
-    }
-    for(int i = 0; i < 4; i++)
-    {
-        BulletInfo bsItem("100" , 5 , "我是弹幕" + QString::number(i));
-        bulletItems.append(bsItem);
-    }
-    bulletItemInfoMap.insert(5,bulletItems);
+    // QList<model::BulletInfo> bulletItems;
+
+    // for(int i =0 ; i < 3; i++)
+    // {
+    //     model::BulletInfo bsItem("100",i,"我是弹幕" + QString::number(i));
+    //     bulletItems.append(bsItem);
+    //     bulletItemInfoMap.insert(bsItem.playTime,bulletItems);
+    //     bulletItems.clear();
+    // }
+    // for(int i = 0; i < 4; i++)
+    // {
+    //     model::BulletInfo bsItem("100" , 5 , "我是弹幕" + QString::number(i));
+    //     bulletItems.append(bsItem);
+    // }
+    // bulletItemInfoMap.insert(5,bulletItems);
 }
 
 void BulletManage::showBulletBySecond(int64_t second)
 {
     if(isHide) return; // true 就返回 意思是说 true就表示隐藏
 
-    QList<BulletInfo> bullets = bulletItemInfoMap.value(second);
+    QList<model::BulletInfo> bullets = bulletItemInfoMap.value(second);
     // 弹幕显示出来
     BulletItem* item = nullptr;
     int xTop; int xMid; int xBtm;
     xTop = xMid = xBtm = topBlt->width();
     for(int i= 0; i<bullets.size(); i++)
     {
-        BulletInfo& info = bullets[i];
+        model::BulletInfo& info = bullets[i];
         if(i%3 == 0)
         {
             int duration = 10000* xTop /(double)(topBlt->width()+30*18);
@@ -87,7 +90,6 @@ void BulletManage::showBulletBySecond(int64_t second)
         }else{
             int duration = 10000* xBtm /(double)(bottomBlt->width()+30*18);
             item = new BulletItem(bottomBlt);
-
             item->setText(info.text);
             item->setAnimation(xBtm,duration);
             // 四个字符 每个字符 18 像素
@@ -165,6 +167,15 @@ BulletItem *BulletManage::buildBullet(BulletPosition position)
 
     return item;
 }
+
+void BulletManage::getVideoBulletSuccess(const QString &videoId)
+{
+    auto dataCenter = model::DataCenter::getInstance();
+    bulletItemInfoMap = dataCenter->getBullets();
+
+
+}
+
 
 
 

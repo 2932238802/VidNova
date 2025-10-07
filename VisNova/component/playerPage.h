@@ -14,6 +14,9 @@
 #include "common/myLog.h"
 #include "bulletEdit.h"
 #include "bulletManage.h"
+#include "dataCenter/data.h"
+#include "dataCenter/dataCenter.h"
+#include "common/intToString.h"
 
 namespace Ui {
 class PlayerPage;
@@ -25,12 +28,14 @@ class PlayerPage : public QWidget
 
 // 外部函数
 public:
-    explicit PlayerPage(QWidget *parent = nullptr);
+    explicit PlayerPage(const model::VideoInfo& info,QWidget *parent = nullptr);
     ~PlayerPage();
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
-    void startPlay(const QString& videoPath);
+    void setUserAvatar(QPixmap &&avatar);
+    void startPlay();
     void initBullet();
+
 
 // 内置函数
 private:
@@ -38,6 +43,8 @@ private:
     void moveSpeedWindow(const QPoint& point);
     void initConnect();
     QString secondToTime(double seconds);
+    void updataPlayNumber();
+
 
 // 信号
 private slots:
@@ -69,8 +76,9 @@ private:
     std::unique_ptr<BulletManage> bm;
     int lastSecondsForBullet;
     QShortcut* shortCut;
+    model::VideoInfo videoInfo;
     // 左边是播放时间 右边是弹幕列表
-
+    QPixmap userAvatar;
 };
 
 

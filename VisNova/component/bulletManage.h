@@ -4,6 +4,8 @@
 #include <QFrame>
 #include <QWidget>
 #include "common/myLog.h"
+#include "dataCenter/data.h"
+#include "dataCenter/dataCenter.h"
 #include "bulletItem.h"
 
 enum class BulletPosition{
@@ -17,7 +19,7 @@ class BulletManage : public QDialog
     Q_OBJECT
 public:
     explicit BulletManage(QWidget *parent = nullptr,int x_parent = 0,int y_parent = 0);
-    void buildBulletItems();
+    void buildBulletItems(const QString&  video_id);
     void showBulletBySecond(int64_t second);
     void setBulletStateForHide(bool isHide);
     void pauseBullet(); // 暂停动画
@@ -29,12 +31,15 @@ public:
     int64_t getDefaultDuration();
     BulletItem* buildBullet(BulletPosition position);
 
+public slots:
+    void getVideoBulletSuccess(const QString& videoId);
+
 private:
     bool isHide;
     QFrame* topBlt;
     QFrame* middleBlt;
     QFrame* bottomBlt;
-    QMap<int64_t,QList<BulletInfo>> bulletItemInfoMap;
+    QHash<int64_t,QList<model::BulletInfo>> bulletItemInfoMap;
 
 signals:
 
