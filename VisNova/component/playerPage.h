@@ -17,6 +17,7 @@
 #include "dataCenter/data.h"
 #include "dataCenter/dataCenter.h"
 #include "common/intToString.h"
+#include "lrPage/login.h"
 
 namespace Ui {
 class PlayerPage;
@@ -29,22 +30,23 @@ class PlayerPage : public QWidget
 // 外部函数
 public:
     explicit PlayerPage(const model::VideoInfo& info,QWidget *parent = nullptr);
-    ~PlayerPage();
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
     void setUserAvatar(QPixmap &&avatar);
     void startPlay();
-    void initBullet();
-
 
 // 内置函数
 private:
     void moveVolumeWindow(const QPoint& point);
     void moveSpeedWindow(const QPoint& point);
     void initConnect();
+    void initBullet();
     QString secondToTime(double seconds);
     void updataPlayNumber();
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    ~PlayerPage();
 
+protected:
+    void closeEvent(QCloseEvent* event) override;
 
 // 信号
 private slots:
@@ -54,31 +56,42 @@ private slots:
     void onPlayBtnClicked();
     void onPlaySpeedChanged(double speed);
     void onVolumeChanged(int volume);
-    void onPlayPositionChanged(double playTime);
+    void onPlayPositionChanged(double play_yime);
     void onPlayPositionDraged(double ratio);
     void onMedioLoaded(double total_time);
     void onMedioFinished();
-    void onBulletScreenBtnClicked();
+    void onBulletScreenBtnClicked(); // 弹幕
     void onAcceptSignalsByBulletEdit(const QString& str);
+    void isLikeBtnClicked(const QString&video_id,bool is_liked); // 这个只是个检查
+    void onLikeBtnClicked();
+
+signals:
+    void _updateLikeNumber(int64_t like_count);
+
 
 private:
     Ui::PlayerPage *ui;
+    QString videoPath;
     QPoint dragPos;
-    Volume* volume;
-    PlaySpeed* speedCtl;
-    BulletEdit* bulletEdit;
-    MpvPlayer* mpvPlayer = nullptr;
+    QShortcut* shortCut;
+    QPixmap userAvatar;
+
     bool isPlaying = false;
     bool isShowBullet =true;
+    bool isLikedBefore = false;
+    bool isLikedAfter = false;
+
+    int lastSecondsForBullet;
     double playTime;
     double totalTime;
-    QString videoPath;
     std::unique_ptr<BulletManage> bm;
-    int lastSecondsForBullet;
-    QShortcut* shortCut;
+
+    Volume* volume;
     model::VideoInfo videoInfo;
-    // 左边是播放时间 右边是弹幕列表
-    QPixmap userAvatar;
+    MpvPlayer* mpvPlayer = nullptr;
+    PlaySpeed* speedCtl;
+    BulletEdit* bulletEdit;
+
 };
 
 

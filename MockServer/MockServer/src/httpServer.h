@@ -46,6 +46,10 @@ private:
     QHttpServerResponse downloadVideoSegmentation(const QString& request);
     QHttpServerResponse getBullets(const QHttpServerRequest& request);
     QHttpServerResponse addPlayNumber(const QHttpServerRequest& request);
+    QHttpServerResponse isLikeBtnClicked(const QHttpServerRequest& request);
+    QHttpServerResponse addLikeNumber(const QHttpServerRequest& request);
+    QHttpServerResponse newBullet(const QHttpServerRequest& request);
+
 
 private:
     static HttpServer* instance;

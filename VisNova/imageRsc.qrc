@@ -14,7 +14,6 @@
         <file>image/refresh.png</file>
         <file>image/vedioFirstPage.png</file>
         <file>image/run.png</file>
-        <file>image/likeImage.png</file>
         <file>image/txMan.png</file>
         <file>image/del.png</file>
         <file>image/minilize.png</file>
@@ -40,5 +39,8 @@
         <file>image/right-hover.png</file>
         <file>image/right-unhover.png</file>
         <file>image/stop.png</file>
+        <file>image/likeBtnClicked.png</file>
+        <file>image/likeBtnUnclicked.png</file>
+        <file>image/likeBtnClicked2.png</file>
     </qresource>
 </RCC>

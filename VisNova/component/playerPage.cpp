@@ -32,13 +32,13 @@ PlayerPage::PlayerPage(const model::VideoInfo& video_info,QWidget *parent)
     QString curTime = secondToTime(0.0);
     QString totalTime = secondToTime(videoInfo.videoDuration);
     ui->videoDuration->setText(curTime + '/' + totalTime);
+    auto dataCenter = model::DataCenter::getInstance();
+    dataCenter->isLikeBtnClickedAsync(videoInfo.videoId);
 
     QKeySequence keySequence(" ");
     shortCut->setKey(keySequence);
     initBullet();
     initConnect();
-
-
 
     bm->buildBulletItems(videoInfo.videoId); // 初始化弹幕
 }
@@ -305,21 +305,81 @@ void PlayerPage::onBulletScreenBtnClicked()
 ////////////////////////////////////////////////
 /// \brief PlayerPage::onAcceptSignalsByBulletEdit
 /// \param str
+/// 发送弹幕信息
 void PlayerPage::onAcceptSignalsByBulletEdit(const QString& str)
 {
     if(!isShowBullet){
         Toast::showMsg("请打开弹幕开关...");
         return ;
     }
+
+    // 构造弹幕显示
     BulletItem* item = bm->buildBullet(BulletPosition::TOP);
     item->setText(str);
-
-    // TODO 这里要修改
-
     item->startAnimation();
+
+
+    // 给服务器发送 请求
+    model::BulletInfo info;
+    info.playTime = playTime;
+    info.text = str;
+    info.userId = videoInfo.userId;
+    auto dataCenter = model::DataCenter::getInstance();
+    dataCenter->sendBulletAsync(videoInfo.videoId,info);
 }
 ////////////////////////////////////////////////
 
+
+
+////////////////////////////////////////////////
+/// \brief PlayerPage::onLikeBtnClicked
+/// \param video_id
+/// \param is_liked
+/// 槽函数 是不是被点击过 点赞
+void PlayerPage::isLikeBtnClicked(const QString &video_id, bool is_liked)
+{
+    if(video_id != videoInfo.videoId)
+    {
+        return;
+    }
+
+    isLikedAfter = isLikedBefore = is_liked;
+
+    if(is_liked)
+    {
+
+        ui->likeImageBtn->setStyleSheet(PLAYERPAGE_LIKEBTN_CLIECKED);
+    }
+    else{
+        ui->likeImageBtn->setStyleSheet(PLAYERPAGE_LIKEBTN_UNCLICKED);
+    }
+}
+////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////
+/// \brief PlayerPage::onLikeBtnClicked
+///
+void PlayerPage::onLikeBtnClicked()
+{
+    // Login* login = new Login();
+    // Toast::showMsg("先登录哦~",login);
+
+    isLikedAfter = !isLikedAfter;
+    if(isLikedAfter)
+    {
+        videoInfo.likeCount++;
+        ui->likeImageBtn->setStyleSheet(PLAYERPAGE_LIKEBTN_CLIECKED);
+    }
+    else{
+        videoInfo.likeCount--;
+        ui->likeImageBtn->setStyleSheet(PLAYERPAGE_LIKEBTN_UNCLICKED);
+    }
+
+    ui->likeNum->setText(intToString(videoInfo.likeCount));
+
+}
+////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////
@@ -428,11 +488,16 @@ void PlayerPage::startPlay()
 void PlayerPage::initConnect()
 {
     auto dataCenter = model::DataCenter::getInstance();
+
     connect(ui->minBtn,&QPushButton::clicked,this,&QWidget::showMinimized);
     connect(ui->quitBtn,&QPushButton::clicked,this,&QWidget::close);
     connect(ui->volumeBtn,&QPushButton::clicked,this,&PlayerPage::onVolumeBtnClicked);
     connect(ui->speedBtn,&QPushButton::clicked,this,&PlayerPage::onPlaySpeedBtnClicked);
     connect(ui->playBtn,&QPushButton::clicked,this,&PlayerPage::onPlayBtnClicked);
+    connect(ui->bulletScreenBtn,&QPushButton::clicked,this,&PlayerPage::onBulletScreenBtnClicked);
+    connect(ui->likeImageBtn,&QPushButton::clicked,this,&PlayerPage::onLikeBtnClicked);
+    connect(ui->bulletScreenText,&BulletEdit::sendBullet,this,&PlayerPage::onAcceptSignalsByBulletEdit);
+
     connect(speedCtl,&PlaySpeed::speedSignals,this,&PlayerPage::onPlaySpeedChanged);
     connect(volume,&Volume::volumeSignals,this,&PlayerPage::onVolumeChanged);
     connect(mpvPlayer,&MpvPlayer::playPositionSignals,this,&PlayerPage::onPlayPositionChanged);
@@ -440,9 +505,10 @@ void PlayerPage::initConnect()
     connect(mpvPlayer,&MpvPlayer::medioLoaded,this,&PlayerPage::onMedioLoaded);
     connect(mpvPlayer,&MpvPlayer::medioFinished,this,&PlayerPage::onMedioFinished);
     connect(shortCut,&QShortcut::activated,this,&PlayerPage::onPlayBtnClicked);
-    connect(ui->bulletScreenBtn,&QPushButton::clicked,this,&PlayerPage::onBulletScreenBtnClicked);
-    connect(ui->bulletScreenText,&BulletEdit::sendBullet,this,&PlayerPage::onAcceptSignalsByBulletEdit);
+
     connect(dataCenter,&model::DataCenter::_getBulletsDone,bm.get(),&BulletManage::getVideoBulletSuccess);
+    connect(dataCenter,&model::DataCenter::_isLikeBtnClicked,this,&PlayerPage::isLikeBtnClicked);
+
 }
 ////////////////////////////////////////////////
 
@@ -456,6 +522,29 @@ PlayerPage::~PlayerPage()
     delete ui;
 }
 ////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////
+/// \brief PlayerPage::closeEvent
+/// \param event
+///
+void PlayerPage::closeEvent(QCloseEvent *event)
+{
+    // 更改
+    auto dataCenter = model::DataCenter::getInstance();
+    if(isLikedAfter != isLikedBefore)
+    {
+        dataCenter->addLikeNumberAsync(videoInfo.videoId);
+        auto videoListPtr = dataCenter->getVideoList();
+        videoListPtr->updateLikeNumber(videoInfo.videoId,videoInfo.likeCount);
+
+        emit _updateLikeNumber(videoInfo.likeCount);
+    }
+    QWidget::closeEvent(event);
+}
+////////////////////////////////////////////////
+
 
 
 

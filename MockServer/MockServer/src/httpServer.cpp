@@ -594,7 +594,40 @@ QHttpServerResponse HttpServer::addPlayNumber(const QHttpServerRequest &request)
     jsonBody["errorCode"] = 0;
     jsonBody["errorMsg"] = "";
 
-    QJsonArray bulletArray;
+
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+////////////////////////////////////
+/// \brief HttpServer::isLikeBtnClicked
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::isLikeBtnClicked(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+    const QJsonObject& jsonObject = docReq.object();
+    LOG()<<"isLikeBtnClicked 收到请求"<<jsonObject["requestId"];
+
+    QJsonObject jsonBody; // 总的 jsonBody 回复体
+    QString videoId = jsonObject["videoId"].toString();
+
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+    QJsonObject rst;
+    rst["isLiked"] = true;
+    jsonBody["result"] = rst;
 
     QJsonDocument docRes;
     docRes.setObject(jsonBody);
@@ -608,8 +641,70 @@ QHttpServerResponse HttpServer::addPlayNumber(const QHttpServerRequest &request)
 
 
 
+////////////////////////////////////
+/// \brief HttpServer::addLikeNumber
+/// \param request
+/// \return
+/// 点赞按钮 点击 服务器的处理
+QHttpServerResponse HttpServer::addLikeNumber(const QHttpServerRequest &request)
+{
+
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+    const QJsonObject& jsonObject = docReq.object();
+    LOG()<<"addLikeNumber 收到请求"<<jsonObject["requestId"];
+
+    QJsonObject jsonBody; // 总的 jsonBody 回复体
+    QString videoId = jsonObject["videoId"].toString();
+
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
 
 
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+////////////////////////////////////
+/// \brief HttpServer::newBullet
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::newBullet(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+    const QJsonObject& jsonObject = docReq.object();
+
+#ifdef HTTPSERVER_TEST
+    LOG()<<"newBullet 收到请求"<<jsonObject["requestId"];
+#endif
+
+
+    QJsonObject jsonBody; // 总的 jsonBody 回复体
+    QString videoId = jsonObject["videoId"].toString();
+
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
 
 
 
@@ -725,6 +820,20 @@ bool HttpServer::init()
     httpServer->route("/VidNova/data/add_play_number",[=](const QHttpServerRequest& req){
         return this->addPlayNumber(req);
     });
+
+
+    httpServer->route("/VidNova/data/is_likeBtn_clicked",[=](const QHttpServerRequest& req){
+        return this->isLikeBtnClicked(req);
+    });
+
+    httpServer->route("/VidNova/data/likeBtn",[=](const QHttpServerRequest& req){
+        return this->addLikeNumber(req);
+    });
+
+    httpServer->route("/VidNova/data/sendBullet",[=](const QHttpServerRequest& req){
+        return this->newBullet(req);
+    });
+
 
     httpServer->route("/<arg:.*>", [](const QHttpServerRequest &request) {
         LOG() << "URL:" << request.url().toString();

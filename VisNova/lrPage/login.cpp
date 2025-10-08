@@ -7,7 +7,7 @@ Login::Login(QWidget *parent)
     , ui(new Ui::Login)
 {
     ui->setupUi(this);
-
+    setAttribute(Qt::WA_DeleteOnClose);
     // 不需要 手动设置
     // setAttribute(Qt::WA_ShowModal,true); // 没有意义了
     // setAttribute(Qt::FramelessWindowHint);
@@ -16,8 +16,6 @@ Login::Login(QWidget *parent)
     inputInit();
     ui->msgContain->show();
     ui->pdContain->hide(); // 密码登录
-
-
 }
 
 Login::~Login()

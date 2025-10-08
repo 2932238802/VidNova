@@ -111,19 +111,7 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">#videoInfoBox {
-	background: transparent;
-}
-
-
-QLabel {
-	color: #FFFFFF;
-	background-color: transparent;
-	border: none;
-	font-size: 14px;
-	font-family: '微软雅黑';
-}
-</string>
+         <string notr="true"/>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
@@ -268,10 +256,7 @@ QLabel {
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">#likeImage{
-	border-image: url(&quot;:/image/likeImage.png&quot;);
-
-}</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string/>

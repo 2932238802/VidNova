@@ -128,6 +128,42 @@ DataCenter::DataCenter(QObject *parent)
 
 
 
+    ///////////////////////////////////////
+    /// \brief DataCenter::isLikeBtnClicked
+    /// \param videoId
+    ///
+    void DataCenter::isLikeBtnClickedAsync(const QString &videoId)
+    {
+        client.isLikeBtnClicked(videoId);
+    }
+    ///////////////////////////////////////
+
+
+    ///////////////////////////////////////
+    void DataCenter::addLikeNumberAsync(const QString &videoId)
+    {
+        client.addLikeNumber(videoId);
+    }
+    ///////////////////////////////////////
+
+
+
+    ///////////////////////////////////////
+    /// \brief DataCenter::sendBulletAsync
+    /// \param videoId
+    /// \param bulletInfo
+    /// 发送弹幕信息
+    void DataCenter::sendBulletAsync(const QString &videoId, const BulletInfo &bulletInfo)
+    {
+        client.sendBullet(videoId,bulletInfo);
+    }
+    ///////////////////////////////////////
+
+
+
+
+
+
 
 
     ///////////////////////////////////////

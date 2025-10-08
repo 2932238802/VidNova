@@ -399,8 +399,11 @@ void homePageCpt::updataVideoList()
         // 从视频列表 开始
 
         VideoBox* videoBox = new VideoBox(videoList[i]);
+
+
         connect(videoBox,&VideoBox::_onPlayBtnClicked,this,[=](){
             PlayerPage* page = new PlayerPage(videoList[i]);
+            connect(page,&PlayerPage::_updateLikeNumber,videoBox,&VideoBox::onUpdateLikeNumber);
             page->setUserAvatar(std::move(videoBox->getUserAvatar()));
             page->show();
             page->startPlay();

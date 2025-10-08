@@ -61,6 +61,9 @@ model::KindAndTags::KindAndTags()
     }
 
 
+
+
+
     VideoList::VideoList()
     {
 
@@ -127,6 +130,25 @@ model::KindAndTags::KindAndTags()
         pageIndex = 1;
         videoTotalCount = 0;
     }
+
+    //////////////////
+    /// \brief VideoList::updateLikeNumber
+    /// \param videoId
+    ///
+    void VideoList::updateLikeNumber(const QString &video_id,int64_t likeCount )
+    {
+        for(auto & vi: videoInfoLists)
+        {
+            if(vi.videoId == video_id)
+            {
+                vi.likeCount = likeCount;
+                return;
+            }
+        }
+
+    }
+    //////////////////
+
 
     void VideoInfo::loadVideoInfoFromJson(const QJsonObject &videoInfoJson)
     {

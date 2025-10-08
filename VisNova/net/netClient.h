@@ -6,6 +6,7 @@
 #include <QNetworkAccessManager>
 #include <QUuid>
 #include <QStandardPaths>
+#include "dataCenter/data.h"
 #include "common/myLog.h"
 #include "common/ReadLocalFile.h"
 
@@ -34,6 +35,9 @@ public:
     void downloadPhoto(const QString&photeId);
     void getBullets(const QString& videoId);
     void addPlayNumber(const QString& videoId);
+    void isLikeBtnClicked(const QString&videoId);
+    void addLikeNumber(const QString&videoId);
+    void sendBullet(const QString&videoId,const model::BulletInfo&bulletInfo);
     // void downloadVideo(const QString& videoId);
 
 private:
