@@ -6,28 +6,6 @@
 #include<QPropertyAnimation>
 #include"style.h"
 
-class BulletInfo{
-
-public:
-    QString userId;
-    QString videoId;
-    int64_t playTime;
-    QString text;
-
-    BulletInfo(
-        const QString& user_id,
-        const QString& video_id,
-        int64_t play_time,
-        const QString text_out
-        );
-
-    BulletInfo(
-        const QString& user_id,
-        int64_t play_time,
-        const QString text_out
-        );
-};
-
 
 class BulletItem : public QFrame
 {

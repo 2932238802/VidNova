@@ -43,7 +43,7 @@ void PageSwitchBtn::mousePressEvent(QMouseEvent *event)
     Q_UNUSED(event);
     // setTextColor("#000000"); // 高亮显示
     emit switchPage(pageId);
-    LOG()<<"切换按钮"<<pageId;
+
 }
 
 

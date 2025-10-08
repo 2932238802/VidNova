@@ -1,13 +1,6 @@
 #include "bulletItem.h"
 
 
-BulletInfo::BulletInfo(const QString &user_id, const QString &video_id, int64_t play_time, const QString text_out)
-    : userId(user_id),videoId(video_id),playTime(play_time),text(text_out){}
-
-BulletInfo::BulletInfo(const QString &user_id, int64_t play_time, const QString text_out)
-: userId(user_id),playTime(play_time),text(text_out)
-{}
-
 BulletItem::BulletItem(QWidget *parent)
     : QFrame{parent}
 {

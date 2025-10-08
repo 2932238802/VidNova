@@ -71,7 +71,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="vedioTitle">
+       <widget class="QLabel" name="videoTitle">
         <property name="styleSheet">
          <string notr="true">#vedioTitle{
 	font-size: 24px;
@@ -805,7 +805,7 @@
           <number>20</number>
          </property>
          <item>
-          <widget class="QLabel" name="vedioDesc">
+          <widget class="QLabel" name="videoDesc">
            <property name="styleSheet">
             <string notr="true">#vedioDesc{
 	font-size:14px;

@@ -18,18 +18,17 @@ void MyPage::initUi()
 {
     ui->attentionBtn->hide();
 
-#ifdef DE_TEST
+#ifdef MY_PAGE_TEST
     for(int i = 0; i< 16;i++)
     {
         VideoBox* vedioBox = new VideoBox();
         ui->layout->addWidget(vedioBox,i/4,i%4,1,1);
-
     }
 #endif
+
     connect(ui->avatarBtn,&QPushButton::clicked,this,&MyPage::onAvatarBtnClicked);
     connect(ui->modifyBtn,&QPushButton::clicked,this,&MyPage::onModifyBtnClicked);
     connect(ui->uploadVedioBtn,&QPushButton::clicked,this,&MyPage::onUploadVedioBtnClicked);
-
 }
 
 ///
@@ -55,7 +54,7 @@ void MyPage::onAvatarBtnClicked()
 
     ui->avatarBtn->setIcon(makeIcon(fileData,ui->avatarBtn->width(),ui->avatarBtn->height()));
     ui->avatarBtn->setStyleSheet(MYPAGE_AVATAR_CLEAR_STYLE);
-    // TODO: 上传到服务器
+
 }
 
 void MyPage::onModifyBtnClicked()

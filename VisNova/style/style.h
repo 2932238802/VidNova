@@ -216,8 +216,12 @@ inline const QString UPLOADPA_TAG = R"(
 
 
 
-
-
+inline const QString VIDEO_TITLE_LABEL = R"(
+    color: #000000;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: '微软雅黑';
+)";
 
 
 

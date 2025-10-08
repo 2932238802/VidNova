@@ -1,21 +1,29 @@
-#ifndef STARTPAGE_H
-#define STARTPAGE_H
-
+#pragma once
 #include <QObject>
 #include <QWidget>
 #include <QDialog>
 #include <QLabel>
 #include <QTimer>
 #include <QTime>
+#include "dataCenter/dataCenter.h"
 
-class start_page : public QDialog
+class StartPage : public QDialog
 {
     Q_OBJECT
 public:
-    explicit start_page(QDialog *parent = nullptr);
+    explicit StartPage(QDialog *parent = nullptr);
     void startTimer();
+
+private:
+    void initConnect();
+
+private slots:
+    void onTempLogin();
+
+private:
+    bool isLoginIn = false;
 
 signals:
 };
 
-#endif // STARTPAGE_H
+

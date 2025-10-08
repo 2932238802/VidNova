@@ -7,16 +7,38 @@
     <x>0</x>
     <y>0</y>
     <width>310</width>
-    <height>235</height>
+    <height>257</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>310</width>
+    <height>257</height>
+   </size>
+  </property>
+  <property name="sizeIncrement">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#vedioBox{
-	background-color: #303030;
-}</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -43,10 +65,7 @@
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">#imageBox{
-	
-border-image: url(&quot;:/image/vedioFirstPage.png&quot;);
-}</string>
+      <string notr="true"/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
@@ -92,12 +111,19 @@ border-image: url(&quot;:/image/vedioFirstPage.png&quot;);
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">QLabel{
+         <string notr="true">#videoInfoBox {
+	background: transparent;
+}
+
+
+QLabel {
 	color: #FFFFFF;
+	background-color: transparent;
 	border: none;
 	font-size: 14px;
 	font-family: '微软雅黑';
-}</string>
+}
+</string>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
@@ -297,7 +323,7 @@ border-image: url(&quot;:/image/vedioFirstPage.png&quot;);
              </spacer>
             </item>
             <item>
-             <widget class="QLabel" name="vedioDuration">
+             <widget class="QLabel" name="videoDuration">
               <property name="text">
                <string>TextLabel</string>
               </property>
@@ -313,7 +339,7 @@ border-image: url(&quot;:/image/vedioFirstPage.png&quot;);
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="vedioTitleBox" native="true">
+    <widget class="QWidget" name="videoTitleBox" native="true">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -346,11 +372,10 @@ border-image: url(&quot;:/image/vedioFirstPage.png&quot;);
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="vedioTitle">
+       <widget class="QLabel" name="videoTitle">
         <property name="styleSheet">
-         <string notr="true">#vedioTitle{
-
-	color: #666666;
+         <string notr="true">#videoTitle{
+	color: #000000;
 	font-weight: bold;
 	font-size: 16px;
 	font-family: '微软雅黑';
@@ -419,9 +444,7 @@ border-image: url(&quot;:/image/vedioFirstPage.png&quot;);
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">#userIcon{
-	border-image: url(&quot;:/image/txMan.png&quot;);
-}</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string/>
@@ -429,14 +452,14 @@ border-image: url(&quot;:/image/vedioFirstPage.png&quot;);
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="userName">
+       <widget class="QLabel" name="userNickName">
         <property name="text">
          <string>用户昵称.</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="loadupTine">
+       <widget class="QLabel" name="loadupTime">
         <property name="text">
          <string>9-16</string>
         </property>
@@ -456,7 +479,7 @@ border-image: url(&quot;:/image/vedioFirstPage.png&quot;);
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="delVedioBtn">
+       <widget class="QPushButton" name="delVideoBtn">
         <property name="minimumSize">
          <size>
           <width>18</width>

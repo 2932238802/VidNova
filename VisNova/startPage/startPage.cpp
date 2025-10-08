@@ -1,7 +1,7 @@
 #include "startPage.h"
 #include <QDir>
 
-start_page::start_page(QDialog *parent)
+StartPage::StartPage(QDialog *parent)
     : QDialog{parent}
 {
     // 让窗口没有边框
@@ -38,16 +38,60 @@ start_page::start_page(QDialog *parent)
     startTimer();
 }
 
-void start_page::startTimer()
+void StartPage::startTimer()
 {
     QTimer* timer = new QTimer(this);
+    timer->setSingleShot(false);
     connect(timer,&QTimer::timeout,this,[this,timer]{
         timer->stop();
         delete timer;
         close();
     });
+
+
     timer->start(2000);
+
+    auto dataCenter = model::DataCenter::getInstance();
+    dataCenter->tempLoginAsync();
 
     // 完成用户的自动登录 和 获取信息
     // TODO ...
 }
+
+////////////////////////////////////
+/// \brief StartPage::initConnect
+///
+void StartPage::initConnect()
+{
+    auto dataCenter = model::DataCenter::getInstance();
+    connect(dataCenter,&model::DataCenter::_loginSucDone,this,&StartPage::onTempLogin);
+
+}
+////////////////////////////////////
+
+
+
+////////////////////////////////////
+/// \brief StartPage::onTempLogin
+///
+void StartPage::onTempLogin()
+{
+    isLoginIn = true;
+}
+////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

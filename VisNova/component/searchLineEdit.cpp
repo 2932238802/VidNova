@@ -49,27 +49,12 @@ SearchLineEdit::SearchLineEdit(QWidget *parent):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 void SearchLineEdit::onSearchBrnClicked()
 {
     LOG()<<"[info] 搜索按钮点击";
+    emit _searchVideos(this->text());
 }
 
 

@@ -5,8 +5,9 @@
 /// \brief PlayerPage::PlayerPage
 /// \param parent
 ///
-PlayerPage::PlayerPage(QWidget *parent)
-    : QWidget(parent)
+PlayerPage::PlayerPage(const model::VideoInfo& video_info,QWidget *parent)
+    : QWidget(parent),
+    videoInfo(video_info)
     , ui(new Ui::PlayerPage)
 {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -22,10 +23,24 @@ PlayerPage::PlayerPage(QWidget *parent)
     speedCtl = new PlaySpeed(this);
     mpvPlayer = new MpvPlayer(ui->playerMid);
     shortCut = new QShortcut(ui->playBtn);
+
+    ui->videoTitle->setText(videoInfo.videoTitle);
+    ui->userNickName->setText(videoInfo.nickName);
+    ui->likeNum->setText(intToString(videoInfo.likeCount));
+    ui->playNum->setText(intToString(videoInfo.playCount));
+    ui->loadupTime->setText(videoInfo.loadupTime);
+    QString curTime = secondToTime(0.0);
+    QString totalTime = secondToTime(videoInfo.videoDuration);
+    ui->videoDuration->setText(curTime + '/' + totalTime);
+
     QKeySequence keySequence(" ");
     shortCut->setKey(keySequence);
     initBullet();
     initConnect();
+
+
+
+    bm->buildBulletItems(videoInfo.videoId); // 初始化弹幕
 }
 /////////////////////////////////////////////////////////
 
@@ -132,19 +147,36 @@ void PlayerPage::onPlaySpeedBtnClicked()
 /// 点击 播放 按钮
 void PlayerPage::onPlayBtnClicked()
 {
-    isPlaying = !isPlaying;
-    // 进入 循环 说明了 就是播放状态
-    if(isPlaying)
+
+
+    bool isEnd = (!isPlaying && totalTime>0 && playTime == 0.0);
+
+    if(isEnd)
     {
+        LOG () << "重新播放...";
+        isPlaying = true;
+        startPlay();
+        mpvPlayer->setTimePos(0.0);
         mpvPlayer->play();
-        bm->setBulletStateForHide(false); // 表示不隐藏
+        bm->setBulletStateForHide(false);
         ui->playBtn->setStyleSheet(PLAYER_BEGIN_STYLE);
     }
     else{
-        mpvPlayer->pause();
-        bm->setBulletStateForHide(true); // 表示不隐藏
-        ui->playBtn->setStyleSheet(PLAYER_STOP_STYLE);
+        isPlaying = !isPlaying;
+        if(isPlaying)
+        {
+            mpvPlayer->play();
+            bm->setBulletStateForHide(false); // 表示不隐藏
+            ui->playBtn->setStyleSheet(PLAYER_BEGIN_STYLE);
+        }
+        else{
+            mpvPlayer->pause();
+            bm->setBulletStateForHide(true); // 表示不隐藏
+            ui->playBtn->setStyleSheet(PLAYER_STOP_STYLE);
+        }
     }
+
+
 }
 ////////////////////////////////////////////////
 
@@ -171,6 +203,7 @@ void PlayerPage::onVolumeChanged(int volume)
     mpvPlayer->setVolume(volume);
 }
 ////////////////////////////////////////////////
+
 
 
 
@@ -233,12 +266,11 @@ void PlayerPage::onMedioLoaded(double total_time)
 ///
 void PlayerPage::onMedioFinished()
 {
-    // 结束了 首先是
-    // mpvPlayer->startPlay(videoPath);
-    // isPlaying = !isPlaying;
     isPlaying = false;
-    // mpvPlayer->pause();
     ui->playBtn->setStyleSheet(PLAYER_STOP_STYLE);
+    mpvPlayer->setTimePos(0.0);
+    ui->videoSlider->setPlayStepByTimeStep(0.0);
+    onPlayPositionChanged(0.0);
 }
 ////////////////////////////////////////////////
 
@@ -281,6 +313,8 @@ void PlayerPage::onAcceptSignalsByBulletEdit(const QString& str)
     }
     BulletItem* item = bm->buildBullet(BulletPosition::TOP);
     item->setText(str);
+
+    // TODO 这里要修改
 
     item->startAnimation();
 }
@@ -339,17 +373,49 @@ QString PlayerPage::secondToTime(double seconds)
 
 
 ////////////////////////////////////////////////
+/// \brief PlayerPage::updataPlayNumber
+///
+void PlayerPage::updataPlayNumber()
+{
+    videoInfo.playCount++;
+    ui->playNum->setText(intToString(videoInfo.playCount));
+    auto dataCenter = model::DataCenter::getInstance();
+    dataCenter->addPlayNumberAsync(videoInfo.videoId);
+}
+////////////////////////////////////////////////
+
+
+
+
+////////////////////////////////////////////////
+void PlayerPage::setUserAvatar(QPixmap &&avatar)
+{
+    userAvatar = avatar;
+}
+////////////////////////////////////////////////
+
+
+
+
+////////////////////////////////////////////////
 /// 开始播放
 /// \brief PlayerPage::startPlay
 /// \param videoPath
-void PlayerPage::startPlay(const QString &video_path)
+// void PlayerPage::startPlay(const QString &video_path)
+void PlayerPage::startPlay()
 {
-#ifdef PLAYERPAGE_TEST_FOR_BULLET
-    bm->buildBulletItems();
-    LOG()<<"[inf] enter function startPlay";
+    // videoPath = video_path;
+    auto dataCenter = model::DataCenter::getInstance();
+    const QString& url = dataCenter->getUrl();
+    QString m3u8FileUrl = url+ "/VidNova/data/download_video?fileId=";
+    m3u8FileUrl += videoInfo.videoFileId;
+
+#ifdef PLAYERPAGE_TEST
+
+    LOG()<<"PlayerPage::startPlay m3u8FileUrl:" << m3u8FileUrl;
 #endif
-    videoPath = video_path;
-    mpvPlayer->startPlay(video_path);
+
+    mpvPlayer->startPlay(m3u8FileUrl);
     mpvPlayer->pause();
 }
 ////////////////////////////////////////////////
@@ -361,6 +427,7 @@ void PlayerPage::startPlay(const QString &video_path)
 /// 初始化 所有的连接
 void PlayerPage::initConnect()
 {
+    auto dataCenter = model::DataCenter::getInstance();
     connect(ui->minBtn,&QPushButton::clicked,this,&QWidget::showMinimized);
     connect(ui->quitBtn,&QPushButton::clicked,this,&QWidget::close);
     connect(ui->volumeBtn,&QPushButton::clicked,this,&PlayerPage::onVolumeBtnClicked);
@@ -375,6 +442,7 @@ void PlayerPage::initConnect()
     connect(shortCut,&QShortcut::activated,this,&PlayerPage::onPlayBtnClicked);
     connect(ui->bulletScreenBtn,&QPushButton::clicked,this,&PlayerPage::onBulletScreenBtnClicked);
     connect(ui->bulletScreenText,&BulletEdit::sendBullet,this,&PlayerPage::onAcceptSignalsByBulletEdit);
+    connect(dataCenter,&model::DataCenter::_getBulletsDone,bm.get(),&BulletManage::getVideoBulletSuccess);
 }
 ////////////////////////////////////////////////
 

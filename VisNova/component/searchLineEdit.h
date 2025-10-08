@@ -18,6 +18,11 @@ public:
 private slots:
     void onSearchBrnClicked();
 
+
+
+signals:
+    void _searchVideos(const QString& searchText);
+
 };
 
 

@@ -4,16 +4,29 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QButtonGroup>
+#include <QScrollBar>
+#include "ui_homePageCpt.h"
 #include"dataCenter/data.h"
 #include "dataCenter/dataCenter.h"
 #include "common/myLog.h"
 #include"style/style.h"
-#include "ui_homePageCpt.h"
 #include "videoBox.h"
+#include "dataCenter/dataCenter.h"
+#include "dataCenter/data.h"
 
 namespace Ui {
-class homePageCpt;
+    class homePageCpt;
 }
+
+
+// 向服务器 获取视频列表的方式
+enum VideoListStyle{
+    All = 0,
+    Kind,
+    Tag,
+    Search
+};
+
 
 class homePageCpt : public QWidget
 {
@@ -21,26 +34,34 @@ class homePageCpt : public QWidget
 
 public:
     explicit homePageCpt(QWidget *parent = nullptr);
-    void initKindAndTags();
-    void resetTags(const QList<QString>& tags_contain);
-    void initRefreshAndTopBtn();
-    void initConnect();
+
+    void resetTags(const QString& kind ,const QList<QString>& tags_contain);
+
     ~homePageCpt();
 
 private:
     QPushButton* buildBtn(QWidget* parent,const QString&color,const QString&text );
-    void clearLayoutAndBtn(QLayout* layout);
     void initVideos();
-    void openPlayerPage(const QString& path);
+    void initRefreshAndTopBtn();
+    void initConnect();
+    void initKindAndTags();
+    void openPlayerPage(const model::VideoInfo& video_info);
+    void clearLayoutAndBtn(QLayout* layout);
 
-private slots:
+private slots: // 槽函数 被调用函数
     void onTopBtnClicked();
     void onRefreshBtnClicked();
+    void updataVideoList();
+    void onSearchVideosBtnClicked(const QString& text );
+    void onScrollBarValueChanged(int value);
 
 private:
     Ui::homePageCpt *ui;
     QButtonGroup* tagsGp;
-
+    VideoListStyle lastStyle;
+    long long combinedTagId = 0;
+    bool isAppend = false;
+    int curKindId ;
 };
 
 
