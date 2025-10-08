@@ -494,6 +494,7 @@ void net::NetClient::addPlayNumber(const QString &videoId)
     QJsonObject request;
     request["sessionId"] = dataCenter->getSessionId();
     request["videoId"] = videoId;
+    request["requestId"] = makeRequestUuid();
 
     QNetworkReply* reply = sendHttpRequest("/VidNova/data/add_play_number",request);
 
@@ -513,6 +514,105 @@ void net::NetClient::addPlayNumber(const QString &videoId)
 }
 ///////////////////////////////////////
 
+
+///////////////////////////////////////
+/// \brief net::NetClient::isLikeBtnClicked
+/// \param videoId
+///
+void net::NetClient::isLikeBtnClicked(const QString &videoId)
+{
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["videoId"] = videoId;
+    request["requestId"] = makeRequestUuid();
+
+    QNetworkReply* reply = sendHttpRequest("/VidNova/data/is_likeBtn_clicked",request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        QJsonObject resultJson = replyObject["result"].toObject();
+
+        emit dataCenter->_isLikeBtnClicked(videoId,resultJson["isLiked"].toBool());
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::addLikeNumber
+/// \param videoId
+///
+void net::NetClient::addLikeNumber(const QString &videoId)
+{
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["videoId"] = videoId;
+    request["requestId"] = makeRequestUuid();
+
+    QNetworkReply* reply = sendHttpRequest("/VidNova/data/likeBtn",request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+        else{
+            LOG() <<"addLikeNumber请求发送成功";
+        }
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::sendBullet
+/// \param videoId
+/// \param bulletInfo
+///
+void net::NetClient::sendBullet(const QString &videoId, const model::BulletInfo &bulletInfo)
+{
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["videoId"] = videoId;
+    request["requestId"] = makeRequestUuid();
+
+    QJsonObject bulletInfoObject;
+    bulletInfoObject["content"] = bulletInfo.text;
+    bulletInfoObject["sendTime"] = bulletInfo.playTime;
+
+    request["bulletInfo"] = bulletInfoObject;
+
+    QNetworkReply* reply = sendHttpRequest("/VidNova/data/sendBullet",request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+        else{
+            LOG() <<"sendBullet 请求发送成功";
+        }
+    });
+}
+///////////////////////////////////////
 
 
 

@@ -67,6 +67,7 @@ namespace model{
         void addVideoInfo(const VideoInfo& info);
         const QList<VideoInfo>& getVideoListOfVideoInfo() const;
         void clearVideoList(); // 清空一下任务列表
+        void updateLikeNumber(const QString& videoId,int64_t likeCount);
 
     public:
         QList<VideoInfo> videoInfoLists;

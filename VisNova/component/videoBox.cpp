@@ -9,15 +9,27 @@ VideoBox::VideoBox(const model::VideoInfo&video_info, QWidget *parent)
 {
     ui->setupUi(this);
     ui->delVideoBtn->hide(); // 隐藏删除按钮
+
+    ui->imageBox->setStyleSheet("background-color: transparent");
     ui->videoTitle->setStyleSheet(VIDEO_TITLE_LABEL);
-    ui->videoInfoBox->setStyleSheet("background: transparent;");
+    ui->videoInfoBox->setStyleSheet(VIDEO_INFO_BOX);
     ui->imageBox->installEventFilter(this);
     ui->videoTitleBox->installEventFilter(this);
+
+    ui->likeNum->setText(intToString(video_info.likeCount));
+    ui->playNum->setText(intToString(video_info.playCount));
+    ui->videoDuration->setText(stringToTime(video_info.videoDuration));
+
+
     setVideoImage(videoInfo.photoId);
     setUserAvatar(videoInfo.userAvatarId);
 
     updataVideoInfoUI();
     auto dataCenter = model::DataCenter::getInstance();
+
+    dataCenter->isLikeBtnClickedAsync(videoInfo.videoId);
+
+    connect(dataCenter,&model::DataCenter::_isLikeBtnClicked,this,&VideoBox::setLikeBtn);
     connect(dataCenter,&model::DataCenter::_downloadPhotoDone,this,&VideoBox::getVideoImage);
     connect(dataCenter,&model::DataCenter::_downloadPhotoDone,this,&VideoBox::onUserAvatarGeted);
 
@@ -135,6 +147,48 @@ void VideoBox::onUserAvatarGeted(const QString &avatar_id, QByteArray imageData)
 
 }
 ////////////////////////
+
+
+
+////////////////////////
+/// \brief VideoBox::onUpdateLikeNumber
+/// \param like_number
+///  更新点赞数量
+void VideoBox::onUpdateLikeNumber(int64_t like_number)
+{
+
+
+    if(like_number > videoInfo.likeCount)
+    {
+        // 点了
+        ui->likeImage->setStyleSheet(PLAYERPAGE_LIKEBTN_CLIECKED);
+    }
+    else{
+        ui->likeImage->setStyleSheet(PLAYERPAGE_LIKEBTN_UNCLICKED);
+    }
+
+    videoInfo.likeCount = like_number;
+    ui->likeNum->setText(intToString(like_number));
+}
+
+////////////////////////
+/// \brief VideoBox::setLikeBtn
+/// \param videoId
+/// \param is_liked
+///
+void VideoBox::setLikeBtn(const QString &videoId, bool is_liked)
+{
+    if(is_liked)
+    {
+        ui->likeImage->setStyleSheet(PLAYERPAGE_LIKEBTN_CLIECKED);
+    }
+    else{
+        ui->likeImage->setStyleSheet(PLAYERPAGE_LIKEBTN_UNCLICKED);
+    }
+}
+////////////////////////
+
+
 
 
 

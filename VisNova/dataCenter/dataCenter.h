@@ -15,7 +15,11 @@ namespace model
     public:
         void setMode(bool is_append);
         explicit DataCenter(QObject *parent = nullptr);
-        const KindAndTags* getkatPtr();
+        DataCenter(const DataCenter &) = delete;
+        DataCenter(DataCenter &&) = delete;
+        DataCenter &operator=(const DataCenter &) = delete;
+        DataCenter &operator=(DataCenter &&) = delete;
+        const KindAndTags *getkatPtr();
         static DataCenter* getInstance();
         void setSessionId(const QString& sessionId); // 设置sessionid;
         QString getSessionId();
@@ -36,7 +40,9 @@ namespace model
         void downloadPhotoAsync(const QString& photeId); // 下载图片
         void getBulletsAsync(const QString& videoId);
         void addPlayNumberAsync(const QString& videoId); // 增加播放量
-
+        void isLikeBtnClickedAsync(const QString& videoId); // 是否被点赞过
+        void addLikeNumberAsync(const QString& videoId);
+        void sendBulletAsync(const QString& videoId,const BulletInfo& bulletInfo);
         // void downloadVideoAsync(const QString& videoId);
 
     // 信号
@@ -50,6 +56,7 @@ namespace model
         void _downloadPhotoDone(const QString& photeId,QByteArray imageData);
         void _downloadVideoDone(const QString&  m3u8Path,const QString& videoId);
         void _getBulletsDone(const QString& videoId);
+        void _isLikeBtnClicked(const QString& videoId,bool is_liked);
 
 
     private:

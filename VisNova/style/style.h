@@ -153,7 +153,7 @@ inline const QString PLAYER_STOP_STYLE = R"(
 
 
 ////////////////////////////////////////////////////////////////////////////////////
-/// 弹幕
+/// PlayerPage弹幕
 inline const QString PLAYERPAGE_TEST_BACKGROUND_FOR_TOP = R"(
     background-color: #E3C014;
 )";
@@ -183,7 +183,15 @@ inline const QString BULLETBTN_SHOW = R"(
 
 )";
 inline const QString BULLETBTN_CLOSE = R"(
-    border-image: url(":/image/bulletClose.png")
+    border-image: url(":/image/bulletClose.png");
+)";
+
+inline const QString PLAYERPAGE_LIKEBTN_CLIECKED =R"(
+    border-image: url(":/image/likeBtnClicked.png");
+)";
+
+inline const QString PLAYERPAGE_LIKEBTN_UNCLICKED =R"(
+    border-image: url(":/image/likeBtnUnclicked.png");
 )";
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -223,6 +231,19 @@ inline const QString VIDEO_TITLE_LABEL = R"(
     font-family: '微软雅黑';
 )";
 
+
+inline const QString VIDEO_INFO_BOX = R"(
+    #videoInfoBox {
+        background-color: transparent;
+    }
+    QLabel {
+        color: #000000;
+        background-color: transparent;
+        border: none;
+        font-size: 14px;
+        font-family: '微软雅黑';
+    }
+)";
 
 
 

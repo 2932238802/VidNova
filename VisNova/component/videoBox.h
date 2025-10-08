@@ -50,13 +50,14 @@ private:
 signals:
     void _onPlayBtnClicked();
 
-private slots:
+public slots:
     // void onPlayBtnClicked(); // 视频播放按钮
     // void initBullet();
     void updataVideoInfoUI();
     void getVideoImage(const QString& photoId,QByteArray imageData);
     void onUserAvatarGeted(const QString& photoId,QByteArray imageData);
-
+    void onUpdateLikeNumber(int64_t like_number); // 由 playpage 发出来的
+    void setLikeBtn(const QString& videoId,bool is_liked);
 
 
 private:
