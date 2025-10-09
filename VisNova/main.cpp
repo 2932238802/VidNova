@@ -16,10 +16,6 @@ int main(int argc, char *argv[])
     StartPage startPage;
     startPage.exec();
 
-#ifdef HTTP_TEST
-    TestFromRequest();
-#endif
-
     w->show();
 
     return a.exec();

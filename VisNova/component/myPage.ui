@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:#FFFFFF;</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -84,7 +84,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
-          <number>7</number>
+          <number>8</number>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -118,7 +118,7 @@
 	background-color: transparent;
 	border: none;
 	border-radius: 30px;
-	border-image: url(&quot;:/image/txMan.png&quot;);
+	
 }</string>
            </property>
            <property name="text">
@@ -133,24 +133,12 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="nickNameLabel">
-           <property name="minimumSize">
-            <size>
-             <width>125</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>125</width>
-             <height>16777215</height>
-            </size>
-           </property>
+          <widget class="QPushButton" name="nickNameBtn">
            <property name="styleSheet">
-            <string notr="true">#nickNameLabel {
-font-family : 微软雅⿊;
-font-size: 18px;
-color: #222222;
+            <string notr="true">#nickNameBtn{
+	border:none;
+	color: black;
+
 }</string>
            </property>
            <property name="text">

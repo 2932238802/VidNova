@@ -3,7 +3,7 @@
 #include <QFileDialog>
 #include "vidnovamain.h"
 #include "dataCenter/dataCenter.h"
-#include "dataCenter/data.h"
+#include "dataCenter/videoInfo.h"
 #include "common/myLog.h"
 
 namespace Ui {

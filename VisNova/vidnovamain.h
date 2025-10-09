@@ -27,6 +27,9 @@ public:
     static VidNovaMain* getInstance();
     ~VidNovaMain() =default;
 
+    void showSystemBtn(bool is_show);
+
+
 private:
     VidNovaMain(QWidget *parent = nullptr);
     void initUi();
@@ -34,15 +37,16 @@ private:
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
-    QPoint dragPosition;
-    bool isDragging;
-    void resetSwitchButton(int page_id);
+
 
 // 槽函数
 private slots:
     void onSwitchPage(int page_id);
 
 private:
+    QPoint dragPosition;
+    bool isDragging;
+    void resetSwitchButton(int page_id);
     Ui::VidNovaMain *ui;
 
 };

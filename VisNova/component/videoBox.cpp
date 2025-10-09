@@ -140,11 +140,8 @@ void VideoBox::onUserAvatarGeted(const QString &avatar_id, QByteArray imageData)
     }
 
     //
-
     userAvatar =  makeIcon(imageData,(ui->userIcon->width()/2),(ui->userIcon->height()/2));
     ui->userIcon->setPixmap(userAvatar);
-
-
 }
 ////////////////////////
 

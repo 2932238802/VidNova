@@ -70,7 +70,7 @@ void PageSwitchBtn::setImage(const QString &image_path)
     icon->setPixmap(QPixmap(image_path));
 }
 
-int PageSwitchBtn::page_id()
+int PageSwitchBtn::getPageId()
 {
     return pageId;
 }

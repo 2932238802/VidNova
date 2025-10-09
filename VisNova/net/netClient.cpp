@@ -6,6 +6,10 @@ net::NetClient::NetClient(model::DataCenter* data_center):
     dataCenter(data_center)
 {
     baseUrl = dataCenter->getUrl();
+
+#ifdef NETCLIENT_TEST
+    LOG()<<"baseUrl "<<baseUrl;
+#endif
 }
 
 void net::NetClient::hello()
@@ -33,12 +37,62 @@ void net::NetClient::hello()
 }
 
 
-
+///////////////////////////////////////
+/// \brief net::NetClient::makeRequestUuid
+/// \return
+///
 QString net::NetClient::makeRequestUuid()
 {
     // 使用 后面12位
     return 'R' + QUuid::createUuid().toString().slice(24,12);
 }
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::setAvatar
+/// \param fileId
+///
+void net::NetClient::setAvatar(const QString &fileId)
+{
+#ifdef NETCLIENT_TEST
+    LOG()<<"进入 setAvatar ..." << "fileId 是 " << fileId;
+#endif
+
+    QJsonObject replyBody ; // 构造请求体
+    replyBody["sessionId"] = dataCenter->getSessionId(); //登录之后 获得的
+    replyBody["fileId"] = fileId;
+
+    // 发送请求
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/set_avatar",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        // handHttpResponse 会处理这个 ok 到底 不ok
+        // 还有就是这个消息
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        dataCenter->setAvatar(fileId);
+
+        emit dataCenter->_setAvatarDone();
+
+
+        QJsonObject resultObject = replyObject["result"].toObject();
+        QJsonObject userInfo = resultObject["userInfo"].toObject();
+
+
+    });
+
+}
+///////////////////////////////////////
 
 
 ///////////////////////////////////////
@@ -54,6 +108,11 @@ QNetworkReply *net::NetClient::sendHttpRequest(const QString &request_path, QJso
 
     QNetworkRequest httpReq;
     httpReq.setUrl(baseUrl + request_path);
+
+#ifdef NETCLIENT_TEST
+    LOG()<<"请求路径为..."<<baseUrl + request_path;
+#endif
+
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader,"application/json; charset=utf8");
 
     //
@@ -138,12 +197,13 @@ void net::NetClient::loginTemplateAccess()
 
         if(!ok)
         {
-            LOG()<<"请求出错了...";
+            LOG()<<"请求出错了..." << "";
             return;
         }
 
         QJsonObject resultObject = replyObject["result"].toObject();
-        dataCenter->setSessionId(replyObject["sessionId"].toString());
+
+        dataCenter->setSessionId(resultObject["sessionId"].toString());
 
         LOG()<<"[inf] resultObject"<<resultObject;
         LOG()<<"[inf] 临时用户登录成功 requestId: " << replyObject["requestId"].toString();
@@ -407,7 +467,6 @@ void net::NetClient::downloadPhoto(const QString &photeId)
         }
 
 
-
         // 获取 图片数据
         QByteArray imageData = reply->readAll();
         QString contentType = reply->header(QNetworkRequest::ContentTypeHeader).toString();
@@ -486,6 +545,57 @@ void net::NetClient::getBullets(const QString &videoId)
 
 
 ///////////////////////////////////////
+/// \brief net::NetClient::getUserInfo
+/// \param userId
+///
+void net::NetClient::getUserInfo(const QString &userId)
+{
+#ifdef NETCLIENT_TEST
+    LOG()<<"进入 getUserInfo ..." << "userId 是" << userId;
+#endif
+
+    QJsonObject replyBody ; // 构造请求体
+    replyBody["requestId"] = makeRequestUuid();
+    replyBody["sessionId"] = dataCenter->getSessionId(); //登录之后 获得的
+
+    // 发送请求
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/get_user_info",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        // handHttpResponse 会处理这个 ok 到底 不ok
+        // 还有就是这个消息
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        QJsonObject resultObject = replyObject["result"].toObject();
+        QJsonObject userInfo = resultObject["userInfo"].toObject();
+        if(userId.isEmpty())
+        {
+            dataCenter->setMyselfInfo(userInfo);
+            emit dataCenter->_getMyselfInfoDone();
+        }
+        else{
+            dataCenter->setOtherInfo(userInfo);
+            emit dataCenter->_getOtherInfoDone(); // 发送登录 成功信号/
+        }
+
+
+    });
+
+}
+///////////////////////////////////////
+
+
+
+
+///////////////////////////////////////
 /// \brief net::NetClient::addPlayNumber
 /// \param videoId
 ///
@@ -541,6 +651,8 @@ void net::NetClient::isLikeBtnClicked(const QString &videoId)
         QJsonObject resultJson = replyObject["result"].toObject();
 
         emit dataCenter->_isLikeBtnClicked(videoId,resultJson["isLiked"].toBool());
+
+        reply->deleteLater();
     });
 }
 ///////////////////////////////////////
@@ -572,6 +684,8 @@ void net::NetClient::addLikeNumber(const QString &videoId)
         else{
             LOG() <<"addLikeNumber请求发送成功";
         }
+
+        reply->deleteLater();
     });
 }
 ///////////////////////////////////////
@@ -610,9 +724,66 @@ void net::NetClient::sendBullet(const QString &videoId, const model::BulletInfo 
         else{
             LOG() <<"sendBullet 请求发送成功";
         }
+
+        reply->deleteLater();
     });
 }
 ///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::uploadPhoto
+/// \param photo_data
+///  上传图片
+void net::NetClient::uploadPhoto(const QByteArray &photo_data)
+{
+    // 构造请求
+    // 发送请求
+    QString queryString;
+    queryString+="requestId=";
+    queryString+=makeRequestUuid();
+    queryString+="&";
+    queryString+="sessionId=";
+    queryString+=dataCenter->getSessionId();
+
+
+    QNetworkRequest request;
+    request.setUrl(QUrl(baseUrl + "/VidNova/data/upload_photo?" + queryString));
+    request.setHeader(QNetworkRequest::ContentTypeHeader,"application/octet-stream");
+    // 发送亲求
+
+    QNetworkReply* reply = manage.post(request,photo_data);
+
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+        else{
+            LOG() <<"uploadPhoto 请求发送成功";
+        }
+
+        const QString& requestId = replyObject["requestId"].toString();
+
+        QJsonObject resultObject = replyObject["result"].toObject();
+
+        const QString& fileId = resultObject["fileId"].toString();
+
+        emit dataCenter->_uploadPhotoDone(fileId);
+
+        reply->deleteLater();
+
+    });
+}
+///////////////////////////////////////
+
 
 
 

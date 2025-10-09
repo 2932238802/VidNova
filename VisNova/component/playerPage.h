@@ -14,7 +14,7 @@
 #include "common/myLog.h"
 #include "bulletEdit.h"
 #include "bulletManage.h"
-#include "dataCenter/data.h"
+#include "dataCenter/videoInfo.h"
 #include "dataCenter/dataCenter.h"
 #include "common/intToString.h"
 #include "lrPage/login.h"

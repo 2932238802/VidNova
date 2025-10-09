@@ -12,7 +12,7 @@
 #include "common/ReadLocalFile.h"
 #include"toast.h"
 #include"lrPage/login.h"
-#include "dataCenter/data.h"
+#include "dataCenter/videoInfo.h"
 #include "dataCenter/dataCenter.h"
 #include "intToString.h"
 #include "stringToTime.h"

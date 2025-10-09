@@ -13,6 +13,7 @@
 #include "mylog.h"
 #include "loadFileToByteArray.h"
 #include "rand.h"
+#include "common/loadFileToByteArray.h"
 
 enum RoleType{
     SuperAdmin = 1,
@@ -49,9 +50,11 @@ private:
     QHttpServerResponse isLikeBtnClicked(const QHttpServerRequest& request);
     QHttpServerResponse addLikeNumber(const QHttpServerRequest& request);
     QHttpServerResponse newBullet(const QHttpServerRequest& request);
-
-
+    QHttpServerResponse getUserInfo(const QHttpServerRequest& request);
+    QHttpServerResponse uploadPhoto(const QHttpServerRequest& request);
+    QHttpServerResponse setAvatar(const QHttpServerRequest& request);
 private:
+
     static HttpServer* instance;
     std::unique_ptr<QHttpServer> httpServer; // 服务
     std::unique_ptr<QTcpServer> tcpServer;

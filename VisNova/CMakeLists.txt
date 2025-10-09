@@ -15,6 +15,10 @@ find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS HttpServer)
 find_package(Qt6 REQUIRED COMPONENTS Network)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 
 
@@ -106,7 +110,7 @@ set(HEADERS
     ${MPV_DIR}/render_gl.h
     ${MPV_DIR}/stream_cb.h
     ${DATA_CENTER_DIR}/dataCenter.h
-    ${DATA_CENTER_DIR}/data.h
+
 )
 
 set(UI_FILES
@@ -139,12 +143,18 @@ qt_add_executable(VisNova
     ${SOURCES}
     ${HEADERS}
     ${UI_FILES}
-    dataCenter/data.cpp
+    dataCenter/videoInfo.cpp
     net/netClient.h net/netClient.cpp
     net/testHttp.h
     common/intToString.h
     common/stringToTime.h
     common/rand.h common/rand.cpp
+    dataCenter/kindAndTags.h dataCenter/kindAndTags.cpp
+    dataCenter/videoInfo.cpp dataCenter/videoInfo.h
+    dataCenter/videoInfo.cpp dataCenter/videoInfo.h
+    dataCenter/videoList.h dataCenter/videoList.cpp
+    dataCenter/bulletInfo.h dataCenter/bulletInfo.cpp
+    dataCenter/userInfo.h dataCenter/userInfo.cpp
 
 )
 
@@ -176,6 +186,10 @@ target_link_libraries(VisNova PRIVATE Qt6::Widgets)
 target_link_libraries(VisNova PRIVATE Qt6::Network)
 target_link_libraries(VisNova PRIVATE Qt6::Core)
 target_link_libraries(VisNova PRIVATE Qt6::HttpServer)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
 
 # ==================== 安装配置 ====================
 include(GNUInstallDirs)

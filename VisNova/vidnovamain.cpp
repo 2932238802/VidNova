@@ -15,6 +15,7 @@ VidNovaMain::VidNovaMain(QWidget *parent)
     , ui(new Ui::VidNovaMain)
 {
     ui->setupUi(this);
+    setStyleSheet("background-color:#FFFFFF");
     initUi();
     connectSignalAndSlot();
 }
@@ -76,7 +77,7 @@ void VidNovaMain::connectSignalAndSlot()
     connect(ui->homePageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPage);
     connect(ui->myPageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPage);
     connect(ui->sysPageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPage);
-    connect(ui->myPage,&MyPage::switchUploadVedioPage,this,&VidNovaMain::onSwitchPage);
+    connect(ui->myPage,&MyPage::switchUploadVideoPage,this,&VidNovaMain::onSwitchPage);
     connect(ui->uploadVedioPage,&UploadVideoPage::returnMyPage,this,&VidNovaMain::onSwitchPage);
 
 }
@@ -85,14 +86,14 @@ void VidNovaMain::connectSignalAndSlot()
 
 ///
 /// \brief VidNovaMain::resetSwitchButton
-/// \param page_id
+/// \param getPageId
 /// 重置按钮颜色
 void VidNovaMain::resetSwitchButton(int page_id)
 {
     QList<PageSwitchBtn*> switch_buttons = findChildren<PageSwitchBtn*>();
     for(auto a: switch_buttons)
     {
-        if(a->page_id() != page_id)
+        if(a->getPageId() != page_id)
         {
             a->setTextColor(BODY_LEFT_BUTTON_UNPRESS_FONT_COLOR); // 没有点击 设置成灰色
         }
@@ -169,19 +170,27 @@ void VidNovaMain::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-///
+////////////////////////
 /// \brief VidNovaMain::onSwitchPage
 /// \param page_id
 /// 槽函数
 void VidNovaMain::onSwitchPage(int page_id)
 {
-    // resetSwitchButton对应这个 表上 选择 其它 变暗
+
     ui->stackedWidget->setCurrentIndex(page_id);
     resetSwitchButton(page_id);
-    qDebug()<<"[info] 切换界面 "<<page_id;
-}
 
-///
+    //
+    if(page_id == StackWidgetPage::MY_PAGE)
+    {
+        ui->myPage->loadMyselfInfoAndVideo();
+    }
+}
+////////////////////////
+
+
+
+////////////////////////
 /// \brief VidNovaMain::~VidNovaMain
 /// 析构
 VidNovaMain *VidNovaMain::getInstance()
@@ -189,4 +198,31 @@ VidNovaMain *VidNovaMain::getInstance()
     static VidNovaMain instance;
     return &instance;
 }
+////////////////////////
+
+
+
+////////////////////////
+/// \brief VidNovaMain::showSystemBtn
+/// \param is_show
+///
+void VidNovaMain::showSystemBtn(bool is_show)
+{
+    if(is_show)
+    {
+        ui->sysBtn->show();
+    }
+    else{
+        ui->sysBtn->hide();
+    }
+}
+////////////////////////
+
+
+
+
+
+
+
+
 

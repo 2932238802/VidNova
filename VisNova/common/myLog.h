@@ -34,4 +34,6 @@ inline static QString getFileName(const QString& path)
 
 #define VIDEOBOX_TEST
 
+#define NETCLIENT_TEST
+
 

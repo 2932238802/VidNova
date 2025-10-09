@@ -6,13 +6,13 @@
 #include <QButtonGroup>
 #include <QScrollBar>
 #include "ui_homePageCpt.h"
-#include"dataCenter/data.h"
+#include"dataCenter/videoInfo.h"
 #include "dataCenter/dataCenter.h"
 #include "common/myLog.h"
 #include"style/style.h"
 #include "videoBox.h"
 #include "dataCenter/dataCenter.h"
-#include "dataCenter/data.h"
+#include "dataCenter/videoInfo.h"
 
 namespace Ui {
     class homePageCpt;

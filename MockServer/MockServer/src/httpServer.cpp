@@ -68,10 +68,7 @@ QHttpServerResponse HttpServer::tempLoginService(const QHttpServerRequest &reque
     QString sessionId = QUuid::createUuid().toString();
     sessionId = sessionId.mid(25,12);
 
-    LOG()<<"sessionId: "<<sessionId;
-
-    dataObject["sessionId"] = sessionId;
-
+    jsonBody["sessionId"] = sessionId;
 
     jsonBody["result"] = dataObject;
 
@@ -594,8 +591,6 @@ QHttpServerResponse HttpServer::addPlayNumber(const QHttpServerRequest &request)
     jsonBody["errorCode"] = 0;
     jsonBody["errorMsg"] = "";
 
-
-
     QJsonDocument docRes;
     docRes.setObject(jsonBody);
     QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
@@ -605,6 +600,7 @@ QHttpServerResponse HttpServer::addPlayNumber(const QHttpServerRequest &request)
     return httpRes;
 }
 ////////////////////////////////////
+
 
 
 ////////////////////////////////////
@@ -672,6 +668,7 @@ QHttpServerResponse HttpServer::addLikeNumber(const QHttpServerRequest &request)
 ////////////////////////////////////
 
 
+
 ////////////////////////////////////
 /// \brief HttpServer::newBullet
 /// \param request
@@ -686,15 +683,12 @@ QHttpServerResponse HttpServer::newBullet(const QHttpServerRequest &request)
     LOG()<<"newBullet 收到请求"<<jsonObject["requestId"];
 #endif
 
-
     QJsonObject jsonBody; // 总的 jsonBody 回复体
     QString videoId = jsonObject["videoId"].toString();
 
     jsonBody["requestId"] = jsonObject["requestId"].toString();
     jsonBody["errorCode"] = 0;
     jsonBody["errorMsg"] = "";
-
-
 
     QJsonDocument docRes;
     docRes.setObject(jsonBody);
@@ -705,6 +699,183 @@ QHttpServerResponse HttpServer::newBullet(const QHttpServerRequest &request)
     return httpRes;
 }
 ////////////////////////////////////
+
+
+
+////////////////////////////////////
+/// \brief HttpServer::getUserInfo
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::getUserInfo(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+    const QJsonObject& jsonObject = docReq.object();
+    const QString userId = jsonObject["userId"].toString();
+
+#ifdef HTTPSERVER_TEST
+    LOG()<<"getUserInfo 收到请求"<<jsonObject["requestId"].toString()
+          << "userId" << userId;
+#endif
+
+    QJsonObject jsonBody;
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+    // 构造用户信息
+    QJsonObject userInfoJson;
+    if(userId.isEmpty())
+    {
+        userInfoJson["userId"] = "2932238802";
+        userInfoJson["photoNumber"] = "12312345678";
+        userInfoJson["nickName"] = "LosAngelous";
+        QJsonArray userType;
+        userType.append(3);
+        userInfoJson["roleType"] = userType;
+
+        QJsonArray identityType;
+        identityType.append(1);
+        userInfoJson["identityType"] = identityType;
+
+        userInfoJson["likeCount"] = 30002;
+
+        userInfoJson["playCount"] = 1232131;
+
+        userInfoJson["fansCount"] = 13123;
+
+        userInfoJson["followCount"] = 30002;
+
+        userInfoJson["userState"] = 0;
+        userInfoJson["isFollowed"] = 0;
+        userInfoJson["userMemo"] = "mei you beizhu xinxi";
+        userInfoJson["userCreateTime"] = "";
+        userInfoJson["avatarFileId"] = "10001";
+
+
+    }
+    else{
+        userInfoJson["userId"] = "2088322392";
+        userInfoJson["photoNumber"] = "09809876543";
+        userInfoJson["nickName"] = "lsj";
+        QJsonArray userType;
+        userType.append(3);
+        userInfoJson["roleType"] = userType;
+
+        QJsonArray identityType;
+        identityType.append(1);
+        userInfoJson["identityType"] = identityType;
+
+        userInfoJson["likeCount"] = 3123;
+
+        userInfoJson["playCount"] = 543;
+
+        userInfoJson["fansCount"] = 675;
+
+        userInfoJson["followCount"] = 32;
+
+        userInfoJson["userState"] = 0;
+        userInfoJson["isFollowed"] = 0;
+        userInfoJson["userMemo"] = "其它用户";
+        userInfoJson["userCreateTime"] = "";
+        userInfoJson["avatarFileId"] = "20001";
+    }
+
+    QJsonObject rstJson;
+    rstJson["userInfo"] = userInfoJson;
+    jsonBody["result"] = rstJson;
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+////////////////////////////////////
+/// \brief HttpServer::uploadPhoto
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::uploadPhoto(const QHttpServerRequest &request)
+{
+    QUrlQuery query(request.url());
+    QString requestId = query.queryItemValue("requestId");
+    QString sessionId = query.queryItemValue("sessionId");
+
+    QByteArray imageData = request.body();
+
+    QDir dir(QDir::currentPath()); // exe 所在的目录
+    dir.cdUp();
+    dir.cdUp();
+    QString imagePath = dir.absolutePath();
+    imagePath += "/image/temp.png";
+
+#ifdef HTTPSERVER_TEST
+    LOG() << imagePath;
+#endif
+
+    writeByteArrayToFile(imagePath,imageData);
+
+    QJsonObject jsonBody;
+
+    jsonBody["requestId"] = requestId;
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+
+    QJsonObject resultJson;
+    resultJson["fileId"] = "1000";
+    jsonBody["result"] = resultJson;
+
+    idPathMap.insert("1000","/image/temp.png");
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+
+////////////////////////////////////
+/// \brief HttpServer::setAvatar
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::setAvatar(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+    const QJsonObject& jsonObject = docReq.object();
+    const QString userId = jsonObject["userId"].toString();
+
+#ifdef HTTPSERVER_TEST
+    LOG()<<"setAvatar 收到请求"<<jsonObject["requestId"].toString();
+#endif
+
+    QJsonObject jsonBody;
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
 
 
 
@@ -832,6 +1003,19 @@ bool HttpServer::init()
 
     httpServer->route("/VidNova/data/sendBullet",[=](const QHttpServerRequest& req){
         return this->newBullet(req);
+    });
+
+    httpServer->route("/VidNova/data/get_user_info",[=](const QHttpServerRequest& req){
+        return this->getUserInfo(req);
+    });
+
+
+    httpServer->route("/VidNova/data/upload_photo",[=](const QHttpServerRequest& req){
+        return this->uploadPhoto(req);
+    });
+
+    httpServer->route("/VidNova/data/set_avatar",[=](const QHttpServerRequest& req){
+        return this->setAvatar(req);
     });
 
 
