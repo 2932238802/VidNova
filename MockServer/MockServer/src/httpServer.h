@@ -38,23 +38,36 @@ private:
     explicit HttpServer(QObject *parent = nullptr);
     QHttpServerResponse helloService(const QHttpServerRequest& request);
     QHttpServerResponse tempLoginService(const QHttpServerRequest& request);
+
+    QHttpServerResponse downloadPhoto(const QHttpServerRequest& request);
+    QHttpServerResponse downloadVideoM3u8File(const QHttpServerRequest& request);
+    QHttpServerResponse downloadVideoSegmentation(const QString& request);
+
+    QHttpServerResponse getBullets(const QHttpServerRequest& request);
+    QHttpServerResponse getUserInfo(const QHttpServerRequest& request);
+    QHttpServerResponse getCodeFromEmail(const QHttpServerRequest& request);
+
     QHttpServerResponse allVideoList(const QHttpServerRequest& request);
     QHttpServerResponse videoByKind(const QHttpServerRequest& request);
     QHttpServerResponse videoByTag(const QHttpServerRequest& request);
     QHttpServerResponse videoByKey(const QHttpServerRequest& request);
-    QHttpServerResponse downloadPhoto(const QHttpServerRequest& request);
-    QHttpServerResponse downloadVideoM3u8File(const QHttpServerRequest& request);
-    QHttpServerResponse downloadVideoSegmentation(const QString& request);
-    QHttpServerResponse getBullets(const QHttpServerRequest& request);
+    QHttpServerResponse getUserVideoInfo(const QHttpServerRequest& request);
+
     QHttpServerResponse addPlayNumber(const QHttpServerRequest& request);
-    QHttpServerResponse isLikeBtnClicked(const QHttpServerRequest& request);
     QHttpServerResponse addLikeNumber(const QHttpServerRequest& request);
+    QHttpServerResponse addAttention(const QHttpServerRequest& request);
     QHttpServerResponse newBullet(const QHttpServerRequest& request);
-    QHttpServerResponse getUserInfo(const QHttpServerRequest& request);
+
+    QHttpServerResponse isLikeBtnClicked(const QHttpServerRequest& request);
+    QHttpServerResponse alterAttention(const QHttpServerRequest& request);
+
     QHttpServerResponse uploadPhoto(const QHttpServerRequest& request);
     QHttpServerResponse setAvatar(const QHttpServerRequest& request);
-private:
 
+    QHttpServerResponse deleteVideo(const QHttpServerRequest& request);
+    QHttpServerResponse delAttention(const QHttpServerRequest& request);
+
+private:
     static HttpServer* instance;
     std::unique_ptr<QHttpServer> httpServer; // 服务
     std::unique_ptr<QTcpServer> tcpServer;

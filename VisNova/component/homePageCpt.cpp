@@ -400,7 +400,6 @@ void homePageCpt::updataVideoList()
 
         VideoBox* videoBox = new VideoBox(videoList[i]);
 
-
         connect(videoBox,&VideoBox::_onPlayBtnClicked,this,[=](){
             PlayerPage* page = new PlayerPage(videoList[i]);
             connect(page,&PlayerPage::_updateLikeNumber,videoBox,&VideoBox::onUpdateLikeNumber);

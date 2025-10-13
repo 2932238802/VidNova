@@ -50,9 +50,13 @@ private:
 
 private slots: // 槽函数 被调用函数
     void onTopBtnClicked();
+
     void onRefreshBtnClicked();
+
     void updataVideoList();
+
     void onSearchVideosBtnClicked(const QString& text );
+
     void onScrollBarValueChanged(int value);
 
 private:

@@ -10,15 +10,18 @@ PlayerPage::PlayerPage(const model::VideoInfo& video_info,QWidget *parent)
     videoInfo(video_info)
     , ui(new Ui::PlayerPage)
 {
-    setAttribute(Qt::WA_DeleteOnClose);
     ui->setupUi(this);
+
+    setAttribute(Qt::WA_DeleteOnClose);
+    setWindowFlag(Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_ShowModal);
+
     isPlaying = false;
     playTime = 0.0;
     totalTime = 0.0;
     videoPath = "";
     lastSecondsForBullet = 0;
-    setWindowFlag(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_ShowModal);
+
     volume = new Volume(this);
     speedCtl = new PlaySpeed(this);
     mpvPlayer = new MpvPlayer(ui->playerMid);
@@ -383,6 +386,29 @@ void PlayerPage::onLikeBtnClicked()
 
 
 ////////////////////////////////////////////////
+/// \brief PlayerPage::onAvatarClicked
+/// 用户头像点击 触发的槽函数 一般是 跳转到 对应的 其它用户界面
+void PlayerPage::onAvatarClicked()
+{
+#ifdef PLAYERPAGE_TEST
+    LOG ()<<"onAvatarClicked()";
+    LOG()<<"关闭 PlayerPage 界面";
+    LOG()<<"打开 个人信息界面 展示其它用户的个人信息";
+#endif
+
+    // 关闭窗口
+    this->close();
+
+    VidNovaMain* instance = VidNovaMain::getInstance();
+
+    // 跳转其它界面
+    instance->switchMyPageForOtherUser(videoInfo.userId);
+}
+////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////
 /// \brief PlayerPage::moveVolumeWindow
 /// \param point
 /// 移动音量
@@ -439,6 +465,7 @@ void PlayerPage::updataPlayNumber()
 {
     videoInfo.playCount++;
     ui->playNum->setText(intToString(videoInfo.playCount));
+
     auto dataCenter = model::DataCenter::getInstance();
     dataCenter->addPlayNumberAsync(videoInfo.videoId);
 }
@@ -490,12 +517,18 @@ void PlayerPage::initConnect()
     auto dataCenter = model::DataCenter::getInstance();
 
     connect(ui->minBtn,&QPushButton::clicked,this,&QWidget::showMinimized);
+
     connect(ui->quitBtn,&QPushButton::clicked,this,&QWidget::close);
+
     connect(ui->volumeBtn,&QPushButton::clicked,this,&PlayerPage::onVolumeBtnClicked);
+
     connect(ui->speedBtn,&QPushButton::clicked,this,&PlayerPage::onPlaySpeedBtnClicked);
+
     connect(ui->playBtn,&QPushButton::clicked,this,&PlayerPage::onPlayBtnClicked);
+
     connect(ui->bulletScreenBtn,&QPushButton::clicked,this,&PlayerPage::onBulletScreenBtnClicked);
     connect(ui->likeImageBtn,&QPushButton::clicked,this,&PlayerPage::onLikeBtnClicked);
+    connect(ui->userAvator,&QPushButton::clicked,this,&PlayerPage::onAvatarClicked);
     connect(ui->bulletScreenText,&BulletEdit::sendBullet,this,&PlayerPage::onAcceptSignalsByBulletEdit);
 
     connect(speedCtl,&PlaySpeed::speedSignals,this,&PlayerPage::onPlaySpeedChanged);
@@ -508,7 +541,6 @@ void PlayerPage::initConnect()
 
     connect(dataCenter,&model::DataCenter::_getBulletsDone,bm.get(),&BulletManage::getVideoBulletSuccess);
     connect(dataCenter,&model::DataCenter::_isLikeBtnClicked,this,&PlayerPage::isLikeBtnClicked);
-
 }
 ////////////////////////////////////////////////
 

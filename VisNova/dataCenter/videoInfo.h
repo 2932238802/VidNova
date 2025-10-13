@@ -10,6 +10,16 @@
 
 
 namespace model{
+
+enum VideoStatus{
+    NoStatus = 0,
+    WaitForChecking, // 待审核
+    Accessed, // 审核通过
+    Reject,
+    Discard, // 下架了 之前是上架的
+};
+
+
 class VideoInfo{
 
 public:

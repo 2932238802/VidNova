@@ -373,7 +373,7 @@ color: #222222;
         <property name="styleSheet">
          <string notr="true"/>
         </property>
-        <widget class="QPushButton" name="attentionBtn">
+        <widget class="AttentionBtn" name="attentionBtn">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -441,10 +441,10 @@ color: #222222;
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
-       <number>0</number>
+       <number>6</number>
       </property>
       <property name="leftMargin">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
        <number>0</number>
@@ -484,7 +484,7 @@ color:black;
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="uploadVedioBtn">
+       <widget class="QPushButton" name="uploadVideoBtn">
         <property name="minimumSize">
          <size>
           <width>30</width>
@@ -498,7 +498,7 @@ color:black;
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">#uploadVedioBtn{
+         <string notr="true">#uploadVideoBtn{
 	border-radius: 15px;
 	border-image: url(&quot;:/image/upload.png&quot;);
 
@@ -677,6 +677,11 @@ QScrollBar::down-arrow:vertical
    <class>MyPageAvatarBtn</class>
    <extends>QPushButton</extends>
    <header location="global">mypageavatarbtn.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AttentionBtn</class>
+   <extends>QPushButton</extends>
+   <header location="global">attentionBtn.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

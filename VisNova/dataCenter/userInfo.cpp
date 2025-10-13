@@ -9,34 +9,35 @@ void model::UserInfo::loadUserInfo(const QJsonObject &user_info)
     // QString userMemo; // 用户的备注信息
     // QString userCreateTime; //用户创建的时间
     // QString avatarFileId; // 用户头像id
-    userId = user_info["userId"].toString();
-    photoNumber = user_info["photoNumber"].toString();
-    nickName = user_info["nickName"].toString();
-    QJsonArray arrayRole = user_info["roleType"].toArray();
+    userId = user_info.value("userId").toString();
+    photoNumber = user_info.value("photoNumber").toString();
+    nickName = user_info.value("nickName").toString();
+    QJsonArray arrayRole = user_info.value("roleType").toArray();
 
     for(int i = 0 ; i < arrayRole.size() ; i++)
     {
         roleType.append(arrayRole[i].toInt());
     }
 
-    QJsonArray arrayIdentity = user_info["identityType"].toArray();
+
+    QJsonArray arrayIdentity = user_info.value("identityType").toArray();
 
     for(int i = 0 ; i < arrayIdentity.size() ; i++)
     {
         identityType.append(arrayIdentity[i].toInt());
     }
 
-    likeCount = user_info["likeCount"].toInteger();
-    playCount = user_info["playCount"].toInteger();
-    fansCount = user_info["fansCount"].toInteger();
-    followCount = user_info["followCount"].toInteger();
+    likeCount = user_info.value("likeCount").toInteger();
+    playCount = user_info.value("playCount").toInteger();
+    fansCount = user_info.value("fansCount").toInteger();
+    followCount = user_info.value("followCount").toInteger();
 
-    userState = user_info["userState"].toInt();
-    isFollowed = user_info["isFollowed"].toInt();
+    userState = user_info.value("userState").toInt();
+    isFollowed = user_info.value("isFollowed").toInt();
 
-    userMemo = user_info["userMemo"].toString();
-    userCreateTime = user_info["userCreateTime"].toString();
-    avatarFileId = user_info["avatarFileId"].toString();
+    userMemo = user_info.value("userMemo").toString();
+    userCreateTime = user_info.value("userCreateTime").toString();
+    avatarFileId = user_info.value("avatarFileId").toString();
 
 
 }
@@ -77,6 +78,35 @@ bool model::UserInfo::isTempUser() const
     return false;
 }
 //////////////////
+
+
+//////////////////
+/// \brief model::UserInfo::buildTmpUserInfo
+///
+void model::UserInfo::buildTmpUserInfo()
+{
+    userId = "";
+    photoNumber = ""; // 手机号
+    nickName = "Los"; // 用户昵称
+    roleType.append(RoleType::TempUser) ;  // 角色类型
+    identityType.append(IdentityType::BUser); // 身份类型
+    likeCount = 0; // 点赞数
+    playCount = 0; // 播放数量
+    fansCount = 0; // 粉丝数量
+    followCount = 0; //关注数量
+    int userState = 0; // 用户状态
+    int isFollowed = 0; //是否被关注
+    QString userMemo = "抓紧去登录哦~"; // 用户的备注信息
+    QString userCreateTime = ""; //用户创建的时间
+    QString avatarFileId = ""; // 用户头像id
+
+}
+//////////////////
+
+
+
+
+
 
 
 

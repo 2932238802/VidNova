@@ -15,6 +15,16 @@ DataCenter::DataCenter(QObject *parent)
     : QObject{parent}, isAppend(false)
 {
     client = std::make_unique<net::NetClient>(this);
+
+    userVideoList = std::make_unique<VideoList>();
+
+    kat = std::make_unique<KindAndTags>();
+
+    videoList = std::make_unique<VideoList>();
+
+    myselfInfo = nullptr;
+
+    otherInfo = nullptr;
 }
 
 KindAndTags *DataCenter::getkatPtr()
@@ -64,6 +74,35 @@ void DataCenter::setAvatarAsync(const QString &fileId)
 ///////////////////////////////////////
 
 
+///////////////////////////////////////
+/// \brief DataCenter::setUserIdOnce
+/// \param userId
+///
+void DataCenter::setUserIdOnce(const QString &user_id)
+{
+    if(!userId.isEmpty())
+    {
+#ifdef DATACENTER_TEST
+        LOG() << "userId 已经被初始化了 不能再次进行赋值" ;
+#endif
+        return;
+    }
+    userId = user_id;
+}
+///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief DataCenter::getCodeFromEmail
+/// \param email
+/// 获取短信 验证码
+void DataCenter::getCodeFromEmailAsync(const QString &email)
+{
+    client->getCodeFromEmail(email);
+}
+///////////////////////////////////////
+
+
 
 ///////////////////////////////////////
 /// \brief DataCenter::getAllVideoListAsync
@@ -97,6 +136,25 @@ void DataCenter::getVideoByTagAsync(int tagId)
 ///////////////////////////////////////
 
 
+///////////////////////////////////////
+/// \brief DataCenter::getVideoListForMyselfOrOtherAsync
+/// \param userId
+/// \param pageIndex
+/// 获取视频列表
+void DataCenter::getVideoListForMyselfOrOtherAsync(const QString &userId, int pageIndex)
+{
+
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::getVideoListForMyselfOrOtherAsync(const QString &userId, int pageIndex)..."
+          << "\nuserId: " << userId
+          << "\npageIndex: " << pageIndex;
+#endif
+
+    client->getVideoListForMyselfOrOther(userId,pageIndex);
+}
+///////////////////////////////////////
+
+
 
 ///////////////////////////////////////
 /// \brief DataCenter::getAllVideoListSearchTextAsync
@@ -121,6 +179,7 @@ void DataCenter::downloadPhotoAsync(const QString &photeId)
 ///////////////////////////////////////
 
 
+
 ///////////////////////////////////////
 /// \brief DataCenter::getBulletsAsync
 /// \param videoId
@@ -128,17 +187,6 @@ void DataCenter::downloadPhotoAsync(const QString &photeId)
 void DataCenter::getBulletsAsync(const QString &videoId)
 {
     client->getBullets(videoId);
-}
-///////////////////////////////////////
-
-
-///////////////////////////////////////
-/// \brief DataCenter::addPlayNumberAsync
-/// \param videoId
-///
-void DataCenter::addPlayNumberAsync(const QString &videoId)
-{
-    client->addPlayNumber(videoId);
 }
 ///////////////////////////////////////
 
@@ -155,12 +203,57 @@ void DataCenter::isLikeBtnClickedAsync(const QString &videoId)
 ///////////////////////////////////////
 
 
+
 ///////////////////////////////////////
+/// \brief DataCenter::alterAttentionAsync
+/// \param user_id
+/// 获取 更改 用户对其它用户的关注状态
+void DataCenter::alterAttentionAsync(const QString &user_id)
+{
+    client->alterAttention(user_id);
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::addPlayNumberAsync
+/// \param videoId
+///
+void DataCenter::addPlayNumberAsync(const QString &videoId)
+{
+    client->addPlayNumber(videoId);
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::addLikeNumberAsync
+/// \param videoId
+///
 void DataCenter::addLikeNumberAsync(const QString &videoId)
 {
     client->addLikeNumber(videoId);
 }
 ///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::addAttention
+/// \param userId
+///
+void DataCenter::addAttentionAsync(const QString &userId)
+{
+#ifdef DATACENTER_TEST
+        LOG() << "DataCenter::addAttention(const QString &userId)";
+#endif
+
+    client->addAttention(userId);
+}
+///////////////////////////////////////
+
 
 
 
@@ -173,7 +266,13 @@ void DataCenter::sendBulletAsync(const QString &videoId, const BulletInfo &bulle
 {
     client->sendBullet(videoId,bulletInfo);
 }
+///////////////////////////////////////
 
+
+///////////////////////////////////////
+/// \brief DataCenter::uploadPhotoAsync
+/// \param photo
+///
 void DataCenter::uploadPhotoAsync(const QByteArray &photo)
 {
     client->uploadPhoto(photo);
@@ -183,10 +282,42 @@ void DataCenter::uploadPhotoAsync(const QByteArray &photo)
 
 
 ///////////////////////////////////////
+/// \brief DataCenter::deleteVideoAsync
+/// \param video
+///
+void DataCenter::deleteVideoAsync(const QString &video_id)
+{
+    client->deleteVideo(video_id);
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::delAttention
+/// \param userId
+/// 取消关注
+void DataCenter::delAttentionAsync(const QString &userId)
+{
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::delAttention(const QString &userId)";
+#endif
+    client->delAttention(userId);
+}
+///////////////////////////////////////
+
+
+
+
+///////////////////////////////////////
 /// \brief DataCenter::getMyselfInfoAsync
 ///
 void DataCenter::getMyselfInfoAsync()
 {
+#ifdef DATACENTER_TEST
+    LOG() << "进入 DataCenter 的 getMyselfInfoAsync 函数...";
+#endif
+
     client->getUserInfo("");
 }
 ///////////////////////////////////////
@@ -200,6 +331,10 @@ void DataCenter::getMyselfInfoAsync()
 ///
 void DataCenter::getOtherInfoAsync(const QString &user_id)
 {
+#ifdef DATACENTER_TEST
+    LOG() << "进入getOtherInfoAsync 函数...";
+#endif
+
     client->getUserInfo(user_id);
 }
 ///////////////////////////////////////
@@ -251,7 +386,7 @@ const QString& DataCenter::getSessionId() const
 //////////////////////////////////////
 /// \brief DataCenter::getVideoList
 /// \return
-///
+/// 这个是 homePage的
 VideoList *DataCenter::getVideoList()
 {
     if(videoList == nullptr)
@@ -299,6 +434,11 @@ void DataCenter::setVideoList(const QJsonObject &videoListJsonObject)
     }
 
     videoList->setVideoTotalCount(videoListJsonObject["totalCount"].toInteger());
+
+    if(0 == videoListArray.size())
+    {
+        videoList->setPageIndex(videoList->getPageIndex()-1);
+    }
 
 }
 //////////////////////////////////////
@@ -355,7 +495,7 @@ void DataCenter::setMyselfInfo(const QJsonObject &myself_json)
 {
     if(myselfInfo == nullptr)
     {
-        myselfInfo = std::make_shared<UserInfo>();
+        myselfInfo = std::make_unique<UserInfo>();
     }
 
     myselfInfo->loadUserInfo(myself_json);
@@ -372,7 +512,7 @@ void DataCenter::setOtherInfo(const QJsonObject &other_json)
 {
     if(otherInfo == nullptr)
     {
-        otherInfo = std::make_shared<UserInfo>();
+        otherInfo = std::make_unique<UserInfo>();
     }
 
     otherInfo->loadUserInfo(other_json);
@@ -390,6 +530,57 @@ void DataCenter::setAvatar(const QString &fileId)
     myselfInfo->avatarFileId = fileId;
 }
 //////////////////////////////////////
+
+
+
+//////////////////////////////////////
+/// \brief DataCenter::setUserVideoList
+/// \param videoList
+///
+void DataCenter::setUserVideoList(const QJsonObject &resultJson)
+{
+    if(!isOriginUser)
+    {
+        userVideoList = std::make_unique<VideoList>();
+    }
+    isOriginUser = true;
+
+    QJsonArray videoListArray = resultJson["videoList"].toArray();
+
+    for(int i = 0; i < videoListArray.size(); i++)
+    {
+        QJsonObject videoInfoSingle = videoListArray[i].toObject();
+
+        VideoInfo info;
+
+        info.loadVideoInfoFromJson(videoInfoSingle);
+        userVideoList->addVideoInfo(info);
+    }
+
+    int videoTotalCount = resultJson["totalCount"].toInt();
+
+    userVideoList->setVideoTotalCount(videoTotalCount);
+
+    if(0 == videoListArray.size())
+    {
+        userVideoList->setPageIndex(userVideoList->getPageIndex()-1);
+    }
+
+}
+//////////////////////////////////////
+
+
+
+//////////////////////////////////////
+/// \brief DataCenter::getUserVideoList
+/// \return
+///
+VideoList *DataCenter::getUserVideoList()
+{
+    return userVideoList.get();
+}
+//////////////////////////////////////
+
 
 
 
@@ -442,9 +633,9 @@ DataCenter *DataCenter::getInstance()
 /// \brief DataCenter::getMyselfUserInfo
 /// \return
 ///
-std::shared_ptr<UserInfo> DataCenter::getMyselfUserInfo() const
+UserInfo* DataCenter::getMyselfUserInfo() const
 {
-    return myselfInfo;
+    return myselfInfo.get();
 }
 ///////////////////////////////////////
 
@@ -454,9 +645,24 @@ std::shared_ptr<UserInfo> DataCenter::getMyselfUserInfo() const
 /// \brief DataCenter::getOtherUserInfo
 /// \return
 ///
-std::shared_ptr<UserInfo> DataCenter::getOtherUserInfo() const
+UserInfo* DataCenter::getOtherUserInfo() const
 {
-    return otherInfo;
+    return otherInfo.get();
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::buildTempUserInfo
+/// 构造临时 用户信息
+void DataCenter::buildTempUserInfo()
+{
+
+    if (myselfInfo != nullptr){
+        myselfInfo = std::make_unique<UserInfo>();
+    }
+    myselfInfo->buildTmpUserInfo();
 }
 ///////////////////////////////////////
 

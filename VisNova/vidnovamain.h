@@ -29,6 +29,9 @@ public:
 
     void showSystemBtn(bool is_show);
 
+    void switchMyPageForOtherUser(const QString& user_id);
+
+    void onlySwitchPage(int page_id);
 
 private:
     VidNovaMain(QWidget *parent = nullptr);
@@ -41,13 +44,14 @@ private:
 
 // 槽函数
 private slots:
-    void onSwitchPage(int page_id);
+    void onSwitchPageAndUpdataUi(int page_id);
 
 private:
     QPoint dragPosition;
     bool isDragging;
     void resetSwitchButton(int page_id);
     Ui::VidNovaMain *ui;
+    static VidNovaMain* instance;
 
 };
 

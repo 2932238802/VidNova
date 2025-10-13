@@ -95,6 +95,52 @@ void net::NetClient::setAvatar(const QString &fileId)
 ///////////////////////////////////////
 
 
+
+///////////////////////////////////////
+/// \brief net::NetClient::getCodeFromEmail
+/// \param email
+///
+void net::NetClient::getCodeFromEmail(const QString &email)
+{
+#ifdef NETCLIENT_TEST
+    LOG()<<"进入 getCodeFromEmail ..." << "email 是 " << email;
+#endif
+
+    QJsonObject replyBody ; // 构造请求体
+    replyBody["sessionId"] = dataCenter->getSessionId(); //登录之后 获得的
+    replyBody["email"] = email;
+
+    // 发送请求
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/get_code_from_email",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        // handHttpResponse 会处理这个 ok 到底 不ok
+        // 还有就是这个消息
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        QJsonObject rltObject = replyObject["result"].toObject();
+        QString authCode = rltObject["authCode"].toString();
+
+#ifdef NETCLIENT_TEST
+        LOG() << "net::NetClient::getCodeFromEmail(const QString &email)";
+        LOG() << "从服务器获得验证码: " << authCode;
+#endif
+
+        emit dataCenter->_getCodeFromEmailDone(authCode); // 把验证码发出去
+    });
+}
+///////////////////////////////////////
+
+
+
 ///////////////////////////////////////
 /// \brief net::netClient::sendHttpRequest
 /// \param request_path
@@ -109,13 +155,8 @@ QNetworkReply *net::NetClient::sendHttpRequest(const QString &request_path, QJso
     QNetworkRequest httpReq;
     httpReq.setUrl(baseUrl + request_path);
 
-#ifdef NETCLIENT_TEST
-    LOG()<<"请求路径为..."<<baseUrl + request_path;
-#endif
-
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader,"application/json; charset=utf8");
 
-    //
     QJsonDocument document(json_body);
 
     // 这里会发出 一个 信号
@@ -557,6 +598,7 @@ void net::NetClient::getUserInfo(const QString &userId)
     QJsonObject replyBody ; // 构造请求体
     replyBody["requestId"] = makeRequestUuid();
     replyBody["sessionId"] = dataCenter->getSessionId(); //登录之后 获得的
+    replyBody["userId"] = userId;
 
     // 发送请求
     QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/get_user_info",replyBody);
@@ -574,6 +616,11 @@ void net::NetClient::getUserInfo(const QString &userId)
             return;
         }
 
+#ifdef NETCLIENT_TEST
+        LOG() << "用戶身份是:" << replyObject["userId"].toString();
+#endif
+
+
         QJsonObject resultObject = replyObject["result"].toObject();
         QJsonObject userInfo = resultObject["userInfo"].toObject();
         if(userId.isEmpty())
@@ -589,6 +636,44 @@ void net::NetClient::getUserInfo(const QString &userId)
 
     });
 
+}
+///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::getVideoListForMyselfOrOther
+/// \param userId
+/// \param pageIndex
+///
+void net::NetClient::getVideoListForMyselfOrOther(const QString &userId, int page_index)
+{
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["requestId"] = makeRequestUuid();
+    request["userId"] = userId;
+    request["pageIndex"] = page_index;
+    request["pageCount"] = model::VideoList::PAGE_COUNT; // 一次性要多少个
+
+
+    QNetworkReply* reply = sendHttpRequest("/VidNova/data/user_video_list",request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        QJsonObject resultJson = replyObject["result"].toObject();
+
+        dataCenter->setUserVideoList(resultJson);
+
+        emit dataCenter->_getVideoListForMyselfOrOtherDone(userId);
+
+    });
 }
 ///////////////////////////////////////
 
@@ -651,6 +736,80 @@ void net::NetClient::isLikeBtnClicked(const QString &videoId)
         QJsonObject resultJson = replyObject["result"].toObject();
 
         emit dataCenter->_isLikeBtnClicked(videoId,resultJson["isLiked"].toBool());
+
+        reply->deleteLater();
+    });
+}
+///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::alterAttention
+/// \param user_id
+///
+void net::NetClient::alterAttention(const QString &user_id)
+{
+#ifdef NETCLIENT_TEST
+    LOG() << "net::NetClient::alterAttention(const QString &user_id)";
+    LOG() << "更改关注状态";
+    LOG() << "user_id" << user_id;
+#endif
+
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["userId"] = user_id;
+    request["requestId"] = makeRequestUuid();
+    QNetworkReply* reply = sendHttpRequest("/VidNova/data/alter_attention",request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+        else{
+            LOG() <<"alterAttention请求发送成功";
+        }
+        reply->deleteLater();
+    });
+}
+///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::addAttention
+/// \param user_id
+///
+void net::NetClient::addAttention(const QString &user_id)
+{
+
+#ifdef NETCLIENT_TEST
+    LOG() << "net::NetClient::addAttention(const QString &user_id)";
+    LOG() << "关注了一个up主：";
+    LOG() << "user_id" << user_id;
+#endif
+
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["userId"] = user_id;
+    request["requestId"] = makeRequestUuid();
+    QNetworkReply* reply = sendHttpRequest("/VidNova/data/add_attention",request);
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+        else{
+            LOG() <<"addAttention请求发送成功";
+        }
+        emit dataCenter->_addAttention();
 
         reply->deleteLater();
     });
@@ -783,6 +942,85 @@ void net::NetClient::uploadPhoto(const QByteArray &photo_data)
     });
 }
 ///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::deleteVideo
+/// \param video_id
+///
+void net::NetClient::deleteVideo(const QString &video_id)
+{
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["videoId"] = video_id;
+
+#ifdef NETCLIENT_TEST
+    LOG ()<<"net::NetClient::deleteVideo(const QString &video_id)";
+    LOG() << "video_id" << video_id;
+#endif
+
+    QNetworkReply *reply =
+        sendHttpRequest("/VidNova/data/delete_video", request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"deleteVideo 请求出错了..." << reason;
+            return;
+        }
+        else{
+            LOG() <<"deleteVideo 请求发送成功";
+        }
+
+
+        emit dataCenter->_deleteVideoDone(video_id);
+        reply->deleteLater();
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::delAttention
+/// \param user_id
+/// 取消了一个关注
+void net::NetClient::delAttention(const QString &user_id)
+{
+#ifdef NETCLIENT_TEST
+    LOG() << "net::NetClient::delAttention(const QString &user_id)";
+    LOG() << "取关了一个up主：";
+    LOG() << "user_id" << user_id;
+#endif
+
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["userId"] = user_id;
+    request["requestId"] = makeRequestUuid();
+    QNetworkReply* reply = sendHttpRequest("/VidNova/data/del_attention",request);
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+        else{
+            LOG() <<"delAttention请求发送成功";
+        }
+
+        emit dataCenter->_delAttention();
+        reply->deleteLater();
+    });
+}
+///////////////////////////////////////
+
 
 
 

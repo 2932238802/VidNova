@@ -11,7 +11,6 @@
 namespace model{
 
 enum RoleType{
-
     SuperAdmin = 1,
     Admin,
     User,
@@ -50,7 +49,8 @@ public:
 
     bool isTempUser() const; // 检测是不是临时用户
 
-
+public:
+    void buildTmpUserInfo();
 };
 
 

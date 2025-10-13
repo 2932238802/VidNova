@@ -36,4 +36,24 @@ inline static QString getFileName(const QString& path)
 
 #define NETCLIENT_TEST
 
+#define MYPAGE_TEST
+
+#define DATACENTER_TEST
+
+#define VIDNOVAMAIN_TEST
+
+#define PAGESWITCHBTN_TEST
+
+#define ATTENTIONBTN_TEST
+
+#define CONFIRM_DIALOG_TEST
+
+
+
+
+
+
+
+
+
 

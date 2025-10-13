@@ -13,12 +13,15 @@ PageSwitchBtn::PageSwitchBtn(QWidget *parent):QPushButton{parent}
     setFixedSize(48,46);
     icon = new QLabel(this);
     icon->setGeometry(12,0,24,24);
+    icon->setAttribute(Qt::WA_TransparentForMouseEvents);
+
     text = new QLabel(this);
     text->setGeometry(0,30,48,16);
+    text->setAttribute(Qt::WA_TransparentForMouseEvents);
 }
 
 
-///
+///////////////////////////
 /// \brief PageSwitchBtn::setImageAndText
 /// \param imagePath
 /// \param textContent
@@ -42,8 +45,11 @@ void PageSwitchBtn::mousePressEvent(QMouseEvent *event)
     // (void*)event;
     Q_UNUSED(event);
     // setTextColor("#000000"); // 高亮显示
-    emit switchPage(pageId);
 
+#ifdef PAGESWITCHBTN_TEST
+    LOG()<<"PageSwitchBtn::mousePressEvent(QMouseEvent *event)..." << "pageId 是" << pageId;
+#endif
+    emit switchPage(pageId);
 }
 
 

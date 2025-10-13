@@ -6,15 +6,16 @@
 #include <QNetworkAccessManager>
 #include <QUuid>
 #include <QStandardPaths>
-#include "dataCenter/videoInfo.h"
 #include "common/myLog.h"
 #include "common/ReadLocalFile.h"
+#include "dataCenter/videoInfo.h"
 #include "dataCenter/bulletInfo.h"
+#include "dataCenter/videoList.h"
 
 
 // 前向声明 告诉编译器 别担心 这里会有一个类
 namespace model {
-class DataCenter;
+    class DataCenter;
 }
 
 
@@ -30,24 +31,32 @@ public:
 
     QString makeRequestUuid();
 
-    void setAvatar(const QString& fileId);
+    void setAvatar(const QString& file_id);
 
+    void getCodeFromEmail(const QString& email);
     void getAllVidelList();
-    void getVideoByKind(int kindId);
+    void getVideoByKind(int kind_id);
     void getVideoByTag(int tagId);
     void getAllVideoListSearchText(const QString&str);
-    void getBullets(const QString& videoId);
-    void getUserInfo(const QString&userId);
+    void getBullets(const QString& video_id);
+    void getUserInfo(const QString&user_id);
+    void getVideoListForMyselfOrOther(const QString& user_id,int page_index);
 
-    void downloadPhoto(const QString&photeId);
+    void downloadPhoto(const QString&phote_id);
 
-    void addPlayNumber(const QString& videoId);
-    void isLikeBtnClicked(const QString&videoId);
+    void isLikeBtnClicked(const QString&video_id);
+    void addPlayNumber(const QString& video_id);
+    void alterAttention(const QString& user_id);
+    void addAttention(const QString& user_id);
+
     void addLikeNumber(const QString&videoId);
 
-    void sendBullet(const QString&videoId,const model::BulletInfo&bulletInfo);
+    void sendBullet(const QString&video_id,const model::BulletInfo&bullet_info);
     void uploadPhoto(const QByteArray& photo_data);
 
+    void deleteVideo(const QString& video_id);
+
+    void delAttention(const QString& user_id);
     // void downloadVideo(const QString& videoId);
 
 private:

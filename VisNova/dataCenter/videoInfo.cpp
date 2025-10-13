@@ -18,6 +18,14 @@ void VideoInfo::loadVideoInfoFromJson(const QJsonObject &videoInfoJson)
         videoDuration= videoInfoJson["videoDuration"].toInteger();
         loadupTime= videoInfoJson["loadupTime"].toString();
 
+        videoStatus = videoInfoJson["videoStatus"].toInt(); // 视频状态
+
+        checkerId = videoInfoJson["checkerId"].toString(); // 审核管理员的Id
+
+        checkerName = videoInfoJson["checkerName"].toString(); // 审核管理员的名字
+
+        checkAvatarId = videoInfoJson["checkAvatarId"].toString(); // 审核管理员的图像Id
+
 #ifdef VIDEOINFO_TEST
         QJsonDocument doc(videoInfoJson);
         QByteArray fromat = doc.toJson(QJsonDocument::Indented);
