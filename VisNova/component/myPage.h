@@ -27,11 +27,11 @@ public:
     void getMyselfInfo();
     void loadMyselfInfoAndVideo();
     void loadOtherUserInfoAndVideo(const QString& user_id);
+    void loadTempUserInfo();
 
     ~MyPage();
 
 private:
-    void initUi();
     void initConnect();
 
     void hideWidget(bool is_hide = true);
@@ -41,7 +41,6 @@ private:
     void deleteVideo(const QString& video_id);
 
     // 获取其它用户的个人信息
-
     void getOtherUserInfo(const QString& user_id);
 
 private slots:
@@ -62,6 +61,7 @@ private slots:
 
     void onAddAttentionSuc();
     void ondelAttentionSuc();
+    void onLoginSuc();
 
     void deleteVideoDone(const QString& video_id);
 

@@ -40,6 +40,7 @@ namespace model
         const QHash<int64_t,QList<BulletInfo>>& getBullets();
         UserInfo* getMyselfUserInfo() const; // 获取个人信息
         UserInfo* getOtherUserInfo() const;
+        const QString& getUserId();
 
         void buildTempUserInfo();
 
@@ -48,6 +49,9 @@ namespace model
     public:
         void helloAsync();
         void tempLoginAsync();
+
+        void lrByAuthCodeAsync(const QString &email, const QString &auth_code,const QString&codeId);
+        void lrByPdAsync(const QString& at,const QString& pd);
 
         void setAvatarAsync(const QString& fileId);
         void setUserIdOnce(const QString& userId);
@@ -83,6 +87,12 @@ namespace model
         void _helloDone();
         void _loginSucDone();
 
+        void _lrByAuthCodeSuc();
+        void _lrByAuthCodeFailed(const QString& msg);
+
+        void _lrByPdSuc(); // 登录成功
+        void _lrByPdFailed(const QString& msg); // 登录失败
+
         void _isLikeBtnClicked(const QString& videoId,bool is_liked);
 
         void _downloadPhotoDone(const QString& photeId,QByteArray imageData);
@@ -96,7 +106,7 @@ namespace model
         void _getMyselfInfoDone();
         void _getOtherInfoDone();
         void _getVideoListForMyselfOrOtherDone(const QString& userId);
-        void _getCodeFromEmailDone(const QString& authCode);
+        void _getCodeFromEmailDone(const QString& authCode,const QString& codeId);
 
         void _uploadPhotoDone(const QString& file_id);
         void _setAvatarDone(); // 这个表示用户头像设置成功
@@ -124,7 +134,6 @@ namespace model
         QString sessionId;
 
         QString userId; // 这个存放userId // 只能被登录的时候初始化一次
-        QString userIdInMyPage;
 
         bool isAppend;
         bool isOriginUser = false;

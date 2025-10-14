@@ -65,7 +65,6 @@ void StartPage::initConnect()
 {
     auto dataCenter = model::DataCenter::getInstance();
     connect(dataCenter,&model::DataCenter::_loginSucDone,this,&StartPage::onTempLogin);
-
 }
 ////////////////////////////////////
 

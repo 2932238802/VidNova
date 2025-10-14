@@ -9,9 +9,11 @@ MyPage::MyPage(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MyPage)
 {
+
+
     login = std::make_unique<Login>();
 
-    ui->setupUi(this);initUi();initConnect();
+    ui->setupUi(this);initConnect();
 
     ui->titleBar->setStyleSheet("background-color: rgb(172, 172, 172);");
 }
@@ -33,14 +35,16 @@ MyPage::~MyPage()
 ///////////////////////////
 /// \brief MyPage::getMyselfInfo
 /// 切换到 我的界面的时候 调用的函数
+/// 获取个人信息
 ///
 void MyPage::getMyselfInfo()
 {
     auto dataCenter = model::DataCenter::getInstance();
-
     auto myselfInfoPtr = dataCenter->getMyselfUserInfo();
+
     if(myselfInfoPtr == nullptr)
     {
+
 #ifdef MYPAGE_TEST
         LOG() << "myselfInfoPtr 的信息为空 这个来自dataCenter->getMyselfUserInfo()";
         LOG() << "开始调用 dataCenter->getMyselfInfoAsync()";
@@ -52,30 +56,12 @@ void MyPage::getMyselfInfo()
         LOG()<<"myselfInfoPtr 不为空 直接调用 onGetMyselfInfoDone 函数...";
 #endif
 
+        // _getMyselfInfoDone 这个信号 也会调用下面这个函数
         onGetMyselfInfoDone();
     }
 }
 ////////////////////////
 
-
-
-
-////////////////////////
-/// \brief MyPage::initUi
-///
-void MyPage::initUi()
-{
-    ui->attentionBtn->hide();
-
-#ifdef MY_PAGE_TEST
-    for(int i = 0; i< 16;i++)
-    {
-        VideoBox* vedioBox = new VideoBox();
-        ui->layout->addWidget(vedioBox,i/4,i%4,1,1);
-    }
-#endif
-}
-////////////////////////
 
 
 
@@ -115,6 +101,7 @@ void MyPage::initConnect()
     connect(dataCenter,&model::DataCenter::_addAttention,this,&MyPage::onAddAttentionSuc);
     connect(dataCenter,&model::DataCenter::_delAttention,this,&MyPage::ondelAttentionSuc);
 
+    connect(login.get(),&Login::_loginSuc,this,&MyPage::onLoginSuc);
 
 }
 ////////////////////////
@@ -191,32 +178,52 @@ void MyPage::getUserVideoList(const QString &user_id, int page_index)
 {
 
 #ifdef MYPAGE_TEST
+
     LOG() << "MyPage::getUserVideoList(const QString &user_id, int page_index)...";
+    LOG() << "准备获取用户视频...";
     LOG() << "page_index:" << page_index;
     LOG() << "user_id:" << user_id;
 #endif
 
     auto dataCenter = model::DataCenter::getInstance();
-    auto userVideoList = dataCenter->getUserVideoList();
 
-    if(userVideoList == nullptr)
+    if(dataCenter->getMyselfUserInfo()->isTempUser())
     {
 #ifdef MYPAGE_TEST
         LOG() << "MyPage::getUserVideoList(const QString &user_id, int page_index)...";
-        LOG() << "userVideoList 空指针:" << page_index;
+        LOG() << "是临时用户..." << page_index;
+
 #endif
+        return; // 临时用户 就不获取视频了
+    }
+
+    auto userVideoList = dataCenter->getUserVideoList();
+    if(userVideoList == nullptr)
+    {
+
+#ifdef MYPAGE_TEST
+        LOG() << "MyPage::getUserVideoList(const QString &user_id, int page_index)...";
+        LOG() << "userVideoList 空指针" ;
+#endif
+        dataCenter->getVideoListForMyselfOrOtherAsync(user_id,1);
+
         return;
     }
 
     if(1 == page_index)
     {
         // 清空
-        userVideoList->clearVideoList();
         clearVideoList();
+        userVideoList->clearVideoList();
+#ifdef MYPAGE_TEST
+        LOG() << "MyPage::getUserVideoList(const QString &user_id, int page_index)...";
+        LOG() << "清空ui列表 和 数据列表" << page_index;
+#endif
     }
 
-    dataCenter->getVideoListForMyselfOrOtherAsync(user_id,page_index);
+    dataCenter->getVideoListForMyselfOrOtherAsync(user_id,1);
     userVideoList->setPageIndex(page_index+1);
+
 }
 ////////////////////////
 
@@ -242,6 +249,7 @@ void MyPage::clearVideoList()
 ////////////////////////
 /// \brief MyPage::loadMyselfInfo
 /// 切换按钮的时候 触发的函数 就是从其它的界面 切换到我的界面的时候触发的函数
+///
 void MyPage::loadMyselfInfoAndVideo()
 {
 #ifdef MYPAGE_TEST
@@ -254,7 +262,7 @@ void MyPage::loadMyselfInfoAndVideo()
     getMyselfInfo();
 
     // 获取视频列表
-    getUserVideoList("",1);
+    getUserVideoList(model::DataCenter::getInstance()->getUserId(),1);
 
     ui->avatarBtn->setMaskState(true);
     ui->avatarBtn->setEnabled(true);
@@ -359,6 +367,8 @@ void MyPage::onAttentionBtnClicked()
         LOG() << "myselfInfo 是空指针的";
 #endif
         connect(dataCenter,&model::DataCenter::_getMyselfInfoDone,this,&MyPage::onAttentionBtnClicked,Qt::SingleShotConnection);
+
+        //
         dataCenter->getMyselfInfoAsync();
         return;
     }
@@ -367,12 +377,12 @@ void MyPage::onAttentionBtnClicked()
     if(myselfInfo->isTempUser())
     {
 #ifdef MYPAGE_TEST
-            LOG() << "onAttentionBtnClicked()";
-            LOG() << "是临时用户...";
+        LOG() << "onAttentionBtnClicked()";
+        LOG() << "是临时用户...";
 #endif
-            Toast::showMsg("请先登录哦...");
-            login->show();
-            return ;
+        Toast::showMsg("请先登录哦...");
+        login->show();
+        return ;
     }
 
 
@@ -432,11 +442,17 @@ void MyPage::onNickNameBtnClicked()
 
     if(userInfo->isTempUser())
     {
+        if(login == nullptr)
+        {
+            login = std::make_unique<Login>();
+        }
+
         login->show();
 #ifdef MYPAGE_TEST
         LOG() << "onNickNameBtnClicked()";
         LOG() << "是临时用户 请先登录...";
 #endif
+
         Toast::showMsg("请先登录...");
     }
 
@@ -480,6 +496,8 @@ void MyPage::onGetMyselfInfoDone()
     LOG() << "MyPage::onGetMyselfInfoDone()...";
 #endif
 
+    hideWidget(false);
+
     // 如果不为空 那么就是 查看其它用户
     if(!user_id_cur.isEmpty())
     {
@@ -488,7 +506,6 @@ void MyPage::onGetMyselfInfoDone()
 #endif
         return;
     }
-
 
     auto dataCenter = model::DataCenter::getInstance();
     auto myselfInfo = dataCenter->getMyselfUserInfo();
@@ -552,7 +569,15 @@ void MyPage::onGetMyselfInfoDone()
     }
 
     // 隐藏关注的按钮
+#ifdef MYPAGE_TEST
+    LOG()<< "attentionBtn按钮打隐藏...";
+    LOG()<< "exitBtn按钮打开...";
     ui->attentionBtn->hide();
+    ui->exitBtn->show();
+#endif
+
+
+
     ui->myVideoLabel->setText("我的视频");
     ui->avatarBtn->setEnabled(true);
 }
@@ -618,6 +643,7 @@ void MyPage::uploadAvatarFileId2()
 void MyPage::onGetUserVideoListDone(const QString &user_id)
 {
     // 显示到界面上
+
 
 #ifdef MYPAGE_TEST
     LOG() << "onGetUserVideoList()";
@@ -727,6 +753,26 @@ void MyPage::ondelAttentionSuc()
 
 
 ////////////////////////
+/// \brief MyPage::onLoginSuc
+/// 用户登录成功了
+void MyPage::onLoginSuc()
+{
+#ifdef MYPAGE_TEST
+    LOG() << "用户登录成功~ ";
+#endif
+
+    // 因为登录成功了 所以要重新获取一下 用户的信息
+    auto dataCenter = model::DataCenter::getInstance();
+    // dataCenter->getMyselfInfoAsync();
+
+    loadMyselfInfoAndVideo();
+}
+////////////////////////
+
+
+
+
+////////////////////////
 /// \brief MyPage::deleteVideoDone
 /// \param video_id
 /// 删除完 视频 接受到信号 触发的槽函数
@@ -778,12 +824,53 @@ void MyPage::loadOtherUserInfoAndVideo(const QString &user_id)
 
 
 
+////////////////////////
+/// \brief MyPage::loadTempUserInfo
+///
+///
+void MyPage::loadTempUserInfo()
+{
+    auto dataCenter = model::DataCenter::getInstance();
+
+    QJsonObject obj;
+
+    obj["userId"] = "0";
+    obj["photoNumber"] = "0";
+    obj["nickName"] = "临时用户";
+
+    QJsonArray arr;
+    arr.append(4);
+
+    obj["roleType"] = arr;
+
+    obj["likeCount"] = 0;
+    obj["playCount"] = 0;
+    obj["fansCount"] = 0;
+
+    obj["userState"] = 0;
+    obj["isFollowed"] = 0;
+
+    obj["userMemo"] = "作为临时用户...";
+    obj["userCreateTime"] = "";
+    obj["avatarFileId"] = "";
+
+    dataCenter->setMyselfInfo(obj);
+}
+////////////////////////
+
+
+
+
 
 ////////////////////////
 /// \brief MyPage::getOtherUserInfoDone
 /// 获取其它个人信息 完毕
 void MyPage::getOtherUserInfoDone()
 {
+#ifdef MYPAGE_TEST
+    LOG()<<"MyPage::getOtherUserInfoDone()...";
+#endif
+
     hideWidget(false);
 
     ui->modifyBtn->hide();
@@ -830,6 +917,10 @@ void MyPage::getOtherUserInfoDone()
 /// 获取其它个人信息
 void MyPage::getOtherUserInfo(const QString &user_id)
 {
+#ifdef MYPAGE_TEST
+    LOG()<<"MyPage::getOtherUserInfo(const QString &user_id)";
+#endif
+
     auto dataCenter = model::DataCenter::getInstance();
     dataCenter->getOtherInfoAsync(user_id);
 }

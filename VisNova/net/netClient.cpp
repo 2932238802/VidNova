@@ -128,13 +128,14 @@ void net::NetClient::getCodeFromEmail(const QString &email)
 
         QJsonObject rltObject = replyObject["result"].toObject();
         QString authCode = rltObject["authCode"].toString();
+        QString codeId = rltObject["codeId"].toString();
 
 #ifdef NETCLIENT_TEST
         LOG() << "net::NetClient::getCodeFromEmail(const QString &email)";
         LOG() << "从服务器获得验证码: " << authCode;
 #endif
 
-        emit dataCenter->_getCodeFromEmailDone(authCode); // 把验证码发出去
+        emit dataCenter->_getCodeFromEmailDone(authCode,codeId); // 把验证码发出去
     });
 }
 ///////////////////////////////////////
@@ -253,6 +254,112 @@ void net::NetClient::loginTemplateAccess()
     });
 }
 ///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::lrByAuthCode
+/// \param email
+/// \param auth_code
+///
+void net::NetClient::lrByAuthCode(const QString &email, const QString &auth_code,const QString &codeId)
+{
+    QJsonObject replyBody ; // 构造请求体
+    auto videoList = dataCenter->getVideoList();
+    int curPageIndex = videoList->getPageIndex();
+
+#ifdef NETCLIENT_TEST
+    LOG()<< "net::NetClient::lrByAuthCode(const QString &email, const QString &auth_code,const QString &codeId)";
+    LOG()<< "email: " << email;
+    LOG()<< "authCode" << auth_code;
+    LOG()<< "codeId" << codeId;
+#endif
+
+    replyBody["requestId"] = makeRequestUuid();
+    replyBody["sessionId"] = dataCenter->getSessionId();
+
+    replyBody["email"] = email;
+    replyBody["authCode"] = auth_code; // 每次请求 20 个
+
+    replyBody["codeId"] = codeId;
+
+    // 发送请求
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/lr_by_authcode",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+
+        if(!ok)
+        {
+            LOG()<<"请求出错了...";
+            emit dataCenter->_lrByAuthCodeFailed(reason);
+            return;
+        }
+
+        // TODO: 这里还没有改
+        emit dataCenter->_lrByAuthCodeSuc(); // 发送登录 成功信号/
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::lrByPd
+/// \param at
+/// \param pd
+///
+void net::NetClient::lrByPd(const QString &at, const QString &pd)
+{
+    QJsonObject replyBody ; // 构造请求体
+
+#ifdef NETCLIENT_TEST
+    LOG()<< "net::NetClient::lrByPd(const QString &at, const QString &pd)";
+    LOG()<< "at: " << at; // 请求的账号
+    LOG()<< "pd: " << pd; // 请求的密码
+#endif
+
+    replyBody["requestId"] = makeRequestUuid();
+    replyBody["sessionId"] = dataCenter->getSessionId();
+
+    replyBody["account"] = at;
+    replyBody["password"] = pd;
+
+    // 发送请求 账号密码登录
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/lr_by_pd",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+
+        if(!ok)
+        {
+            LOG()<<"请求出错了...";
+            LOG()<<"登录失败了...";
+            emit dataCenter->_lrByPdFailed(reason);
+            return;
+        }
+
+        // TODO: 这里还没有改
+        QString userId = replyObject["userId"].toString();
+
+#ifdef NETCLIENT_TEST
+        LOG()<< "net::NetClient::lrByPd(const QString &at, const QString &pd)";
+        LOG()<< "服务器返回内容是:" << replyObject;
+        LOG()<< "userId " << userId; // 请求的账号
+#endif
+
+        dataCenter->setUserIdOnce(userId);
+        emit dataCenter->_lrByPdSuc(); // 发送登录 成功信号/
+    });
+}
+///////////////////////////////////////
+
+
 
 ///////////////////////////////////////
 /// \brief net::NetClient::getAllVidelList
@@ -616,14 +723,9 @@ void net::NetClient::getUserInfo(const QString &userId)
             return;
         }
 
-#ifdef NETCLIENT_TEST
-        LOG() << "用戶身份是:" << replyObject["userId"].toString();
-#endif
-
-
         QJsonObject resultObject = replyObject["result"].toObject();
         QJsonObject userInfo = resultObject["userInfo"].toObject();
-        if(userId.isEmpty())
+        if(userId == dataCenter->getUserId())
         {
             dataCenter->setMyselfInfo(userInfo);
             emit dataCenter->_getMyselfInfoDone();

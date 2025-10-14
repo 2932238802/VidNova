@@ -8,7 +8,12 @@ void DataCenter::setMode(bool is_append)
 {
     isAppend = is_append;
 
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::setMode(bool is_append)";
     LOG() << "isAppend is "  << is_append;
+#endif
+
+
 }
 
 DataCenter::DataCenter(QObject *parent)
@@ -60,6 +65,39 @@ void DataCenter::tempLoginAsync()
     client->loginTemplateAccess();
 }
 ///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::lrByAuthCodeAsync
+/// \param email
+/// \param auth_code
+///
+void DataCenter::lrByAuthCodeAsync(const QString &email, const QString &auth_code,const QString&codeId)
+{
+    client->lrByAuthCode(email,auth_code,codeId);
+}
+///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief DataCenter::lrByPdAsync
+/// \param at
+/// \param pd
+///
+void DataCenter::lrByPdAsync(const QString &at, const QString &pd)
+{
+
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::lrByPdAsync(const QString &at, const QString &pd)";
+    LOG() << "at:" << at;
+    LOG() << "pd:" << pd;
+#endif
+
+    client->lrByPd(at,pd);
+}
+///////////////////////////////////////
+
 
 
 
@@ -316,9 +354,9 @@ void DataCenter::getMyselfInfoAsync()
 {
 #ifdef DATACENTER_TEST
     LOG() << "进入 DataCenter 的 getMyselfInfoAsync 函数...";
+    LOG() << "userId: " << userId;
 #endif
-
-    client->getUserInfo("");
+    client->getUserInfo(userId);
 }
 ///////////////////////////////////////
 
@@ -334,28 +372,12 @@ void DataCenter::getOtherInfoAsync(const QString &user_id)
 #ifdef DATACENTER_TEST
     LOG() << "进入getOtherInfoAsync 函数...";
 #endif
-
-    client->getUserInfo(user_id);
+    if(user_id != userId)
+    {
+        client->getUserInfo(user_id);
+    }
 }
 ///////////////////////////////////////
-
-
-
-
-
-
-
-
-///////////////////////////////////////
-/// \brief DataCenter::downloadVideoAsync
-/// \param videoId
-///
-// void DataCenter::downloadVideoAsync(const QString &videoId)
-// {
-//    client.downloadVideo(videoId);
-// }
-///////////////////////////////////////
-
 
 
 
@@ -369,6 +391,8 @@ void DataCenter::setSessionId(const QString &session_id)
     sessionId = session_id;
 }
 ///////////////////////////////////////
+
+
 
 ///////////////////////////////////////
 /// \brief DataCenter::getSessionId
@@ -414,7 +438,7 @@ void DataCenter::setVideoList(const QJsonObject &videoListJsonObject)
     if(!isAppend)
     {
 #ifdef DATACENTER_TEST
-        LOG()<<"不是追加模式 情理中...";
+        LOG()<<"不是追加模式 清理中...";
 #endif
         videoList->clearVideoList();
     }
@@ -439,7 +463,6 @@ void DataCenter::setVideoList(const QJsonObject &videoListJsonObject)
     {
         videoList->setPageIndex(videoList->getPageIndex()-1);
     }
-
 }
 //////////////////////////////////////
 
@@ -493,11 +516,8 @@ void DataCenter::setBulletArray(const QJsonArray &bulletArray)
 ///
 void DataCenter::setMyselfInfo(const QJsonObject &myself_json)
 {
-    if(myselfInfo == nullptr)
-    {
-        myselfInfo = std::make_unique<UserInfo>();
-    }
-
+    myselfInfo = std::make_unique<UserInfo>();
+    otherInfo = std::make_unique<UserInfo>();
     myselfInfo->loadUserInfo(myself_json);
 }
 //////////////////////////////////////
@@ -510,11 +530,8 @@ void DataCenter::setMyselfInfo(const QJsonObject &myself_json)
 ///
 void DataCenter::setOtherInfo(const QJsonObject &other_json)
 {
-    if(otherInfo == nullptr)
-    {
-        otherInfo = std::make_unique<UserInfo>();
-    }
-
+    otherInfo = std::make_unique<UserInfo>();
+    myselfInfo = std::make_unique<UserInfo>();
     otherInfo->loadUserInfo(other_json);
 }
 //////////////////////////////////////
@@ -556,11 +573,9 @@ void DataCenter::setUserVideoList(const QJsonObject &resultJson)
         info.loadVideoInfoFromJson(videoInfoSingle);
         userVideoList->addVideoInfo(info);
     }
-
     int videoTotalCount = resultJson["totalCount"].toInt();
 
     userVideoList->setVideoTotalCount(videoTotalCount);
-
     if(0 == videoListArray.size())
     {
         userVideoList->setPageIndex(userVideoList->getPageIndex()-1);
@@ -648,6 +663,17 @@ UserInfo* DataCenter::getMyselfUserInfo() const
 UserInfo* DataCenter::getOtherUserInfo() const
 {
     return otherInfo.get();
+}
+///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief DataCenter::getUserId
+/// \return
+///
+const QString& DataCenter::getUserId()
+{
+    return userId;
 }
 ///////////////////////////////////////
 

@@ -29,6 +29,9 @@ public:
     void hello();
     void loginTemplateAccess();
 
+    void lrByAuthCode(const QString &email, const QString &auth_code,const QString &codeId);
+    void lrByPd(const QString& at, const QString& pd);
+
     QString makeRequestUuid();
 
     void setAvatar(const QString& file_id);

@@ -14,9 +14,20 @@ void model::UserInfo::loadUserInfo(const QJsonObject &user_info)
     nickName = user_info.value("nickName").toString();
     QJsonArray arrayRole = user_info.value("roleType").toArray();
 
+    if(!arrayRole.empty())
+    {
+        roleType.clear();
+    }
+
     for(int i = 0 ; i < arrayRole.size() ; i++)
     {
-        roleType.append(arrayRole[i].toInt());
+        int type = arrayRole[i].toInt();
+
+#ifdef USERINFO_TEST
+        LOG()<<"type: " << type;
+#endif
+
+        roleType.append(type);
     }
 
 
@@ -69,6 +80,10 @@ bool model::UserInfo::isTempUser() const
 {
     for(auto a: roleType)
     {
+
+#ifdef USERINFO_TEST
+        LOG() << "用户身份: " << a;
+#endif
 
         if( a == RoleType::TempUser)
         {

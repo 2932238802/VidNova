@@ -87,6 +87,114 @@ QHttpServerResponse HttpServer::tempLoginService(const QHttpServerRequest &reque
 ////////////////////////////////////
 
 
+////////////////////////////////////
+/// \brief HttpServer::lrByAuthCode
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::lrByAuthCode(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+
+    const QJsonObject& jsonObject = docReq.object();
+
+    LOG()<<"收到请求"<<jsonObject["requestId"];
+
+    QJsonObject jsonBody;
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+
+    jsonBody["errorCode"] = 0;
+
+    jsonBody["errorMsg"] = "";
+
+    QString email = jsonBody["email"].toString();
+
+    QString code = jsonBody["authCode"].toString();
+
+    QString codeId = jsonBody["codeId"].toString();
+
+#ifdef HTTPSERVER_TEST
+    LOG() << "HttpServer::lrByAuthCode(const QHttpServerRequest &request)";
+    LOG() << "email: " << email;
+    LOG() << "authCode: " << email;
+    LOG() << "codeId: " << email;
+#endif
+
+    QJsonDocument docRes;
+
+    docRes.setObject(jsonBody);
+
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+
+    QHttpHeaders headers;
+
+    headers.append("Content-Type", "application/json; charset=utf-8");
+
+    httpRes.setHeaders(headers);
+
+    return httpRes;
+}
+////////////////////////////////////
+
+
+
+////////////////////////////////////
+/// \brief HttpServer::lrByPd
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::lrByPd(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+
+    const QJsonObject& jsonObject = docReq.object();
+
+    QJsonObject jsonBodyForReply;
+
+    jsonBodyForReply["requestId"] = jsonObject["requestId"].toString();
+
+    QString pd = jsonObject["password"].toString();
+
+    QString at = jsonObject["account"].toString();
+
+#ifdef HTTPSERVER_TEST
+    LOG() << "HttpServer::lrByPd(const QHttpServerRequest &request)";
+    LOG() << "pd: " << pd;
+    LOG() << "at: " << at;
+#endif
+
+    QJsonDocument docRes;
+
+    if(pd == "123" && at == "123")
+    {
+        jsonBodyForReply["userId"] = "123";
+
+        jsonBodyForReply["errorCode"] = 0;
+
+        jsonBodyForReply["errorMsg"] = "";
+    }
+    else
+    {
+        // TODO 修改一下
+        jsonBodyForReply["errorCode"] = 700;
+
+        jsonBodyForReply["errorMsg"] = "密码账号错误(测试)";
+    }
+
+    docRes.setObject(jsonBodyForReply);
+
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+
+    QHttpHeaders headers;
+
+    headers.append("Content-Type", "application/json; charset=utf-8");
+
+    httpRes.setHeaders(headers);
+
+    return httpRes;
+}
+////////////////////////////////////
+
 
 
 ////////////////////////////////////
@@ -97,6 +205,7 @@ QHttpServerResponse HttpServer::tempLoginService(const QHttpServerRequest &reque
 QHttpServerResponse HttpServer::allVideoList(const QHttpServerRequest &request)
 {
     // 获取 到 请求中数据
+
     QJsonDocument docReq = QJsonDocument::fromJson(request.body());
 
     const QJsonObject& jsonObject = docReq.object();
@@ -104,18 +213,24 @@ QHttpServerResponse HttpServer::allVideoList(const QHttpServerRequest &request)
     LOG()<<"收到请求"<<jsonObject["requestId"].toString();
 
     QJsonObject jsonBody; // 总的
-    jsonBody["requestId"] = jsonObject["requestId"].toString();
-    jsonBody["errorCode"] = 0;
-    jsonBody["errorMsg"] = "";
 
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+
+    jsonBody["errorCode"] = 0;
+
+    jsonBody["errorMsg"] = "";
 
     // JsonBody 部分
     QJsonObject resultObject;
+
     resultObject["totalCount"] = 100;
 
 #ifdef TEST_VIDEOLIST
+
     int videoId = 10000;
+
     int userId = 10000;
+
     int resourceId = 10000;
 
     QJsonArray videoLists;
@@ -123,21 +238,31 @@ QHttpServerResponse HttpServer::allVideoList(const QHttpServerRequest &request)
     for(int i = 0; i < pageCount ;i ++)
     {
         QJsonObject videoJsonObject;
+
         videoJsonObject["videoId"] = QString::number(videoId++);
+
         videoJsonObject["userId"] = QString::number(userId++);
+
         videoJsonObject["photoId"] = QString::number(resourceId++); // 视频封面
+
         videoJsonObject["userAvatarId"] = QString::number(resourceId++);
+
         videoJsonObject["videoFileId"] = QString::number(resourceId++);
 
         videoJsonObject["nickname"] = "用户昵称";
 
-
         videoJsonObject["likeCount"] = 645;
+
         videoJsonObject["playCount"] = 645;
+
         videoJsonObject["videoSize"] = 654645;
+
         videoJsonObject["nickname"] = "用户昵称";
+
         videoJsonObject["videoDesc"] = "qwertyuiopasdfghjklzxcvbnm";
+
         videoJsonObject["videoTitle"] = "qwertyuiop";
+
         videoJsonObject["videoDuration"] = 10;
 
         videoJsonObject["loadupTime"] = "9-16 12:28:58";
@@ -150,18 +275,17 @@ QHttpServerResponse HttpServer::allVideoList(const QHttpServerRequest &request)
 
     jsonBody["result"] = resultObject;
 
-
-
     QJsonDocument docRes;
     docRes.setObject(jsonBody);
 
-
     QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
 
-
     QHttpHeaders headers;
+
     headers.append("Content-Type", "application/json; charset=utf-8");
+
     httpRes.setHeaders(headers);
+
     return httpRes;
 }
 ////////////////////////////////////
@@ -184,22 +308,23 @@ QHttpServerResponse HttpServer::videoByKind(const QHttpServerRequest &request)
     LOG()<<"videoByKind 收到请求"<<jsonObject["requestId"];
 
     QJsonObject jsonBody; // 总的
-    jsonBody["requestId"] = jsonObject["requestId"].toString();
-    jsonBody["errorCode"] = 0;
-    jsonBody["errorMsg"] = "";
 
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+
+    jsonBody["errorCode"] = 0;
+
+    jsonBody["errorMsg"] = "";
 
     // JsonBody 部分
     QJsonObject resultObject;
 
-
     resultObject["totalCount"] = 100; // 区分一下
-
-
 
 #ifdef TEST_VIDEOLIST
     int videoId = 20000;
+
     int userId = 20000;
+
     int resourceId = 20000;
 
     QJsonArray videoLists;
@@ -952,6 +1077,12 @@ QHttpServerResponse HttpServer::getCodeFromEmail(const QHttpServerRequest &reque
 
     QJsonObject jsonBody;
 
+    QString email = jsonReq["email"].toString();
+
+#ifdef HTTPSERVER_TEST
+    LOG() << "email：" << email;
+#endif
+
     jsonBody["requestId"] = jsonReq["requestId"].toString();
     jsonBody["errorCode"] = 0;
     jsonBody["errorMsg"] = "";
@@ -1294,6 +1425,15 @@ bool HttpServer::init()
     httpServer->route("/VidNova/data/get_code_from_email",[=](const QHttpServerRequest& req){
         return this->getCodeFromEmail(req);
     });
+
+    httpServer->route("/VidNova/data/lr_by_authcode",[=](const QHttpServerRequest& req){
+        return this->lrByAuthCode(req);
+    });
+
+    httpServer->route("/VidNova/data/lr_by_pd",[=](const QHttpServerRequest& req){
+        return this->lrByPd(req);
+    });
+
 
     httpServer->route("/<arg:.*>", [](const QHttpServerRequest &request) {
         LOG() << "URL:" << request.url().toString();

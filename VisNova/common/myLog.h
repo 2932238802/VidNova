@@ -48,7 +48,9 @@ inline static QString getFileName(const QString& path)
 
 #define CONFIRM_DIALOG_TEST
 
+#define LOGIN_TEST
 
+#define USERINFO_TEST
 
 
 

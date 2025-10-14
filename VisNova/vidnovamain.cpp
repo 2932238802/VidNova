@@ -12,9 +12,11 @@ VidNovaMain::VidNovaMain(QWidget *parent)
     isDragging(false)
     , ui(new Ui::VidNovaMain)
 {
-    ui->setupUi(this);
+    ui->setupUi(this); // 这里就会调用构造函数了
 
     setStyleSheet("background-color:#FFFFFF");
+
+    ui->myPage->loadTempUserInfo();
 
     initUi();
 

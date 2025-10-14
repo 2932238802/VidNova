@@ -39,6 +39,10 @@ private:
     QHttpServerResponse helloService(const QHttpServerRequest& request);
     QHttpServerResponse tempLoginService(const QHttpServerRequest& request);
 
+    QHttpServerResponse lrByAuthCode(const QHttpServerRequest& request);
+    QHttpServerResponse lrByPd(const QHttpServerRequest& request);
+
+
     QHttpServerResponse downloadPhoto(const QHttpServerRequest& request);
     QHttpServerResponse downloadVideoM3u8File(const QHttpServerRequest& request);
     QHttpServerResponse downloadVideoSegmentation(const QString& request);

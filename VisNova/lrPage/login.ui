@@ -484,7 +484,7 @@ QPushButton{
 
 }</string>
             </property>
-            <widget class="QFrame" name="phoneBox">
+            <widget class="QFrame" name="emailBox">
              <property name="geometry">
               <rect>
                <x>0</x>
@@ -499,7 +499,7 @@ QPushButton{
              <property name="frameShadow">
               <enum>QFrame::Shadow::Raised</enum>
              </property>
-             <widget class="QLabel" name="phoneLabel">
+             <widget class="QLabel" name="emailLabel">
               <property name="geometry">
                <rect>
                 <x>40</x>
@@ -512,7 +512,7 @@ QPushButton{
                <string>+86</string>
               </property>
              </widget>
-             <widget class="QLineEdit" name="phoneEdit">
+             <widget class="QLineEdit" name="emailEdit">
               <property name="geometry">
                <rect>
                 <x>108</x>
