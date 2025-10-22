@@ -22,6 +22,27 @@ inline const QString MYPAGE_AVATAR_CLEAR_STYLE = R"(
     border: none;
     border-radius: 30px;
 )";
+inline const QString MYPAGE_ATTENTIONED_BTN = R"(
+    QPushButton{
+        color: #3ECEFE;
+        font-size: 15px;
+        border-radius:4px;
+        border: 2px solid #3ECEFE;
+        padding-left: 13px;
+        padding-right: 13px;
+    }
+)";
+
+inline const QString MYPAGE_UNATTENTIONED_BTN = R"(
+    QPushButton{
+        color: #FFCCCC;
+        font-size: 15px;
+        border-radius:4px;
+        border: 2px solid #FFCCCC;
+        padding-left: 13px;
+        padding-right: 13px;
+    }
+)";
 ////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -113,6 +134,14 @@ inline const QString LOGIN_TOGGLE_BTNUNCHOOSED = R"(
         border-bottom: 2px solid #B5ECFF;
     }
 )";
+
+
+// inline const QString LOGIN_EDIT = R"(
+//     ELineEdit{
+
+
+//     }
+// )";
 ////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -224,6 +253,7 @@ inline const QString UPLOADPA_TAG = R"(
 
 
 
+////////////////////////////////////////////////////////////////////////////////////
 inline const QString VIDEO_TITLE_LABEL = R"(
     color: #000000;
     font-weight: bold;
@@ -246,7 +276,78 @@ inline const QString VIDEO_INFO_BOX = R"(
 )";
 
 
+inline QString VIDEO_MENU = R"(
+    QMenu{
+        background-color: #FFFFFF;
+        border: none;
+        border-radius: 6px;
+        padding: 0;
+    }
 
+QMenu::item{
+    background-color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    min-width: 50px;
+    min-height: 32px;
+    font-size: 12px;
+    color: #222222;
+    padding-left: 24px;
+}
+
+QMenu::item:select{
+    background-color: rgb(62,206,254);
+    color: #FFFFFF;
+}
+
+)";
+
+////////////////////////////////////////////////////////////////////////////////////
+
+
+
+inline const QString BG_FOR_CONFIRMBACKGROUND = R"(
+    background-color: rgba(0,0,0,0.3);
+)";
+
+
+
+inline const QString CONTENT_FOR_CONFIRMBACKGROUND = R"(
+    #content{
+        background-color: #FFFFFF;
+        border-radius: 10px;
+    }
+    *{
+        font-family: 微软雅黑;
+        font-size: 16px;
+    }
+)";
+
+
+inline const QString TEXT_LABEL_FOR_CONFIRMBACKGROUND = R"(
+    QLabel {
+        background-color: #FFFFFF;
+        color: #000000;
+    }
+)";
+
+inline const QString CONFIRM_BTN_FOR_CONFIRMBACKGROUND = R"(
+    background-color: #3ECEFF;
+    border-radius: 8px;
+    color: #FFFFFF;
+)";
+
+inline const QString CANCEL_BTN_FOR_CONFIRMBACKGROUND = R"(
+    background-color: #3ECEFF;
+    border-radius: 8px;
+    border: 1px solid #DEDEDE;
+)";
+
+
+
+inline const QString UPLOADVIDEOPAGE_IMAGELABEL = R"(
+    border-image: url(":/image/vedioFirstPage.png");
+)";
 
 
 

@@ -1,11 +1,9 @@
 #include "vidnovamain.h"
 #include "ui_vidnovamain.h"
 
+VidNovaMain* VidNovaMain::instance = nullptr;
 
-
-VidNovaMain* instance = nullptr;
-
-///
+//////////////////////////////
 /// \brief VidNovaMain::VidNovaMain
 /// \param parent
 /// 初始化 包括 调用一些 初始化的函数
@@ -14,12 +12,18 @@ VidNovaMain::VidNovaMain(QWidget *parent)
     isDragging(false)
     , ui(new Ui::VidNovaMain)
 {
-    ui->setupUi(this);
+    ui->setupUi(this); // 这里就会调用构造函数了
+
+    setStyleSheet("background-color:#FFFFFF");
+
     initUi();
+
     connectSignalAndSlot();
 }
+//////////////////////////////
 
-///
+
+//////////////////////////////
 /// \brief VidNovaMain::initUi
 /// 初始化 阴影 边框 一些图标
 void VidNovaMain::initUi()
@@ -62,6 +66,18 @@ void VidNovaMain::initUi()
         "管理",
         StackWidgetPage::SYSTEM_PAGE
         );
+
+
+    auto dataCenter = model::DataCenter::getInstance();
+    auto myselfInfo = dataCenter->getMyselfUserInfo();
+
+    if(myselfInfo && !myselfInfo->isB())
+    {
+        ui->sysPageBtn->hide();
+    }
+    else{
+        ui->sysPageBtn->show();
+    }
 }
 
 ///
@@ -71,28 +87,36 @@ void VidNovaMain::connectSignalAndSlot()
 {
     // 第三个参数 是信号的接受者
     connect(ui->minBtn,&QPushButton::clicked,this,&QWidget::showMinimized);
+
     connect(ui->quitBtn,&QPushButton::clicked,this,&QWidget::close);
 
-    connect(ui->homePageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPage);
-    connect(ui->myPageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPage);
-    connect(ui->sysPageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPage);
-    connect(ui->myPage,&MyPage::switchUploadVedioPage,this,&VidNovaMain::onSwitchPage);
-    connect(ui->uploadVedioPage,&UploadVideoPage::returnMyPage,this,&VidNovaMain::onSwitchPage);
+    // 三个主要逻辑 按钮的点击
+    connect(ui->homePageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onlySwitchPage);
 
+    connect(ui->myPageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onSwitchPageAndUpdataUiForMyPage);
+
+    connect(ui->sysPageBtn,&PageSwitchBtn::switchPage,this,&VidNovaMain::onlySwitchPage);
+
+    // 上传视频的槽函数绑定
+    connect(ui->myPage,&MyPage::switchUploadVideoPage,this,&VidNovaMain::onSwitchPageAndUpdataUiForUploadVideoPage);
+
+    //
+    connect(ui->uploadVedioPage,&UploadVideoPage::returnMyPage,this,&VidNovaMain::onlySwitchPage);
 }
 
 
 
 ///
 /// \brief VidNovaMain::resetSwitchButton
-/// \param page_id
+/// \param getPageId
 /// 重置按钮颜色
 void VidNovaMain::resetSwitchButton(int page_id)
 {
+
     QList<PageSwitchBtn*> switch_buttons = findChildren<PageSwitchBtn*>();
-    for(auto a: switch_buttons)
+    for(auto& a: switch_buttons)
     {
-        if(a->page_id() != page_id)
+        if(a->getPageId() != page_id)
         {
             a->setTextColor(BODY_LEFT_BUTTON_UNPRESS_FONT_COLOR); // 没有点击 设置成灰色
         }
@@ -169,24 +193,121 @@ void VidNovaMain::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-///
-/// \brief VidNovaMain::onSwitchPage
+
+
+////////////////////////
+/// \brief VidNovaMain::onSwitchPageAndUpdataUiForMyPage
 /// \param page_id
-/// 槽函数
-void VidNovaMain::onSwitchPage(int page_id)
+///
+void VidNovaMain::onSwitchPageAndUpdataUiForMyPage(int page_id)
 {
-    // resetSwitchButton对应这个 表上 选择 其它 变暗
+#ifdef VIDNOVAMAIN_TEST
+    LOG() << "进入VidNovaMain::onSwitchPageAndUpdataUi(int page_id)函数... " << "page_id是:" << page_id;
+#endif
+
     ui->stackedWidget->setCurrentIndex(page_id);
     resetSwitchButton(page_id);
-    qDebug()<<"[info] 切换界面 "<<page_id;
-}
 
+    ui->myPage->loadMyselfInfoAndVideo();
+}
+////////////////////////
+
+
+////////////////////////
+/// \brief VidNovaMain::onSwitchPageAndUpdataUiForUploadVideoPage
+/// \param page_id
+/// \param filename
 ///
-/// \brief VidNovaMain::~VidNovaMain
+void VidNovaMain::onSwitchPageAndUpdataUiForUploadVideoPage(int page_id, const QString &filename)
+{
+#ifdef VIDNOVAMAIN_TEST
+    LOG() << "onSwitchPageAndUpdataUiForUploadVideoPage(int page_id, const QString &filename) ";
+    LOG() << "filename: " << filename;
+#endif
+
+    ui->uploadVedioPage->setTitleAndPath(filename);
+
+    ui->stackedWidget->setCurrentIndex(page_id);
+    resetSwitchButton(page_id);
+
+
+}
+////////////////////////
+
+
+
+////////////////////////
+/// \brief getInstance::~getInstance
 /// 析构
 VidNovaMain *VidNovaMain::getInstance()
 {
-    static VidNovaMain instance;
-    return &instance;
+    if(instance == nullptr)
+    {
+        instance = new VidNovaMain();
+    }
+    return instance;
 }
+////////////////////////
+
+
+
+////////////////////////
+/// \brief VidNovaMain::showSystemBtn
+/// \param is_show
+///
+void VidNovaMain::showSystemBtn(bool is_show)
+{
+    if(is_show)
+    {
+        ui->sysBtn->show();
+    }
+    else{
+        ui->sysBtn->hide();
+    }
+}
+////////////////////////
+
+
+
+////////////////////////
+/// \brief VidNovaMain::switchMyPageForOtherUser
+/// \param user_id
+/// 更换到 个人界面 显示其它用户
+void VidNovaMain::switchMyPageForOtherUser(const QString &user_id)
+{
+#ifdef VIDNOVAMAIN_TEST
+    LOG() << "switchMyPageForOtherUser()";
+    LOG() << "由于点击了视频播放中的 其它用户的头像 所以展示其它用户的个人信息:";
+    LOG() << "user_id 是" << user_id;
+#endif
+
+    // 切换界面
+    onlySwitchPage(StackWidgetPage::MY_PAGE);
+
+    // 加载其它用户的个人信息
+    auto dataCenter = model::DataCenter::getInstance();
+    if(dataCenter->getUserId() == user_id)
+    {
+        ui->myPage->loadMyselfInfoAndVideo();
+    }else{
+        ui->myPage->loadOtherUserInfoAndVideo(user_id);
+    }
+}
+
+
+////////////////////////
+/// \brief VidNovaMain::onlySwitchPage
+/// \param page_id
+///
+void VidNovaMain::onlySwitchPage(int page_id)
+{
+    ui->stackedWidget->setCurrentIndex(page_id);
+    resetSwitchButton(page_id);
+
+
+}
+////////////////////////
+
+
+
 

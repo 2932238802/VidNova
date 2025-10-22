@@ -478,10 +478,10 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">#delVedioBtn{
+         <string notr="true">#delVideoBtn{
 	border-image: url(&quot;:/image/del.png&quot;);
 	border:none;
-	background-color: transparent;
+
 }</string>
         </property>
         <property name="text">

@@ -13,14 +13,15 @@ int main(int argc, char *argv[])
     VidNovaMain*w = VidNovaMain::getInstance();
 
     // 先显示启动
+
     StartPage startPage;
-    startPage.exec();
 
-#ifdef HTTP_TEST
-    TestFromRequest();
-#endif
 
-    w->show();
+    QObject::connect(&startPage, &StartPage::_loginCompleted, w, &VidNovaMain::show);
+
+
+    startPage.show();
+
 
     return a.exec();
 }

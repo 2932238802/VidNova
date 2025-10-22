@@ -3,6 +3,7 @@
 #include <QDialog>
 #include <QRegularExpression>
 #include "common/myLog.h"
+#include "dataCenter/dataCenter.h"
 
 namespace Ui {
 class ModifyPd;
@@ -20,10 +21,12 @@ public:
 
 private:
     bool check();
+    bool initConnect();
 
-private slots:
+public slots:
     void onEdittingFinished();
     void onSubminBtnClicked();
+    void setPasswordDone();
 
 private:
     Ui::ModifyPd *ui;

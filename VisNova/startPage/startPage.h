@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QTime>
 #include "dataCenter/dataCenter.h"
+#include "toast.h"
 
 class StartPage : public QDialog
 {
@@ -17,12 +18,11 @@ public:
 private:
     void initConnect();
 
-private slots:
-    void onTempLogin();
+signals:
+    void _loginCompleted();
 
 private:
-    bool isLoginIn = false;
-
+    bool isLoadCompleted = false;
 signals:
 };
 

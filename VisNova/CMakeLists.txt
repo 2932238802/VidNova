@@ -15,6 +15,12 @@ find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS HttpServer)
 find_package(Qt6 REQUIRED COMPONENTS Network)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 
 
@@ -31,6 +37,7 @@ set(COMMON_DIR common)
 set(LRPAGR_DIR lrPage)
 set(DATA_CENTER_DIR dataCenter)
 set(MPV_DIR mpv)
+set(NET_DIR net)
 
 set(SOURCES
     main.cpp
@@ -62,9 +69,21 @@ set(SOURCES
     ${COMPONENT_DIR}/mpvPlayer.cpp
     ${COMPONENT_DIR}/bulletItem.cpp
     ${COMPONENT_DIR}/bulletManage.cpp
-    ${LRPAGR_DIR}/login.cpp
-    ${DATA_CENTER_DIR}/dataCenter.cpp
+    ${COMPONENT_DIR}/attentionBtn.cpp
+    ${COMPONENT_DIR}/confirmDialog.cpp
 
+    ${DATA_CENTER_DIR}/dataCenter.cpp
+    ${DATA_CENTER_DIR}/kindAndTags.cpp
+    ${DATA_CENTER_DIR}/videoInfoForLoad.cpp
+    ${DATA_CENTER_DIR}/bulletInfo.cpp
+    ${DATA_CENTER_DIR}/userInfo.cpp
+    ${DATA_CENTER_DIR}/videoList.cpp
+    ${DATA_CENTER_DIR}/videoInfoForUpload.cpp
+
+    ${LRPAGR_DIR}/login.cpp
+
+    ${NET_DIR}/netClient.cpp
+    ${COMMON_DIR}/rand.cpp
 )
 
 set(HEADERS
@@ -77,10 +96,16 @@ set(HEADERS
     ${COMPONENT_DIR}/playerSlider.h
     ${COMPONENT_DIR}/volume.h
     ${COMPONENT_DIR}/playSpeed.h
+
     ${STYLE_DIR}/style.h
+
     ${COMMON_DIR}/myLog.h
     ${COMMON_DIR}/readLocalFile.h
     ${COMMON_DIR}/constants.h
+    ${COMMON_DIR}/intToString.h
+    ${COMMON_DIR}/stringToTime.h
+    ${COMMON_DIR}/rand.h
+
     ${COMPONENT_DIR}/bulletEdit.h
     ${COMPONENT_DIR}/myPage.h
     ${COMPONENT_DIR}/myPageAvatarBtn.h
@@ -100,13 +125,26 @@ set(HEADERS
     ${COMPONENT_DIR}/mpvPlayer.h
     ${COMPONENT_DIR}/bulletItem.h
     ${COMPONENT_DIR}/bulletManage.h
+    ${COMPONENT_DIR}/attentionBtn.h
+    ${COMPONENT_DIR}/confirmDialog.h
     ${LRPAGR_DIR}/login.h
+
     ${MPV_DIR}/client.h
     ${MPV_DIR}/render.h
     ${MPV_DIR}/render_gl.h
     ${MPV_DIR}/stream_cb.h
+
     ${DATA_CENTER_DIR}/dataCenter.h
-    ${DATA_CENTER_DIR}/data.h
+    ${DATA_CENTER_DIR}/kindAndTags.h
+    ${DATA_CENTER_DIR}/videoInfoForLoad.h
+    ${DATA_CENTER_DIR}/videoList.h
+    ${DATA_CENTER_DIR}/bulletInfo.h
+    ${DATA_CENTER_DIR}/userInfo.h
+    ${DATA_CENTER_DIR}/videoInfoForUpload.h
+
+
+    ${NET_DIR}/netClient.h
+    ${NET_DIR}/testHttp.h
 )
 
 set(UI_FILES
@@ -139,12 +177,7 @@ qt_add_executable(VisNova
     ${SOURCES}
     ${HEADERS}
     ${UI_FILES}
-    dataCenter/data.cpp
-    net/netClient.h net/netClient.cpp
-    net/testHttp.h
-    common/intToString.h
-    common/stringToTime.h
-    common/rand.h common/rand.cpp
+
 
 )
 
@@ -153,6 +186,7 @@ target_sources(VisNova PRIVATE ${RESOURCES})
 # ==================== 包含目录设置 ====================
 target_include_directories(VisNova PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/${COMPONENT_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/${START_PAGE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/${COMPONENT_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/${STYLE_DIR}
@@ -176,6 +210,12 @@ target_link_libraries(VisNova PRIVATE Qt6::Widgets)
 target_link_libraries(VisNova PRIVATE Qt6::Network)
 target_link_libraries(VisNova PRIVATE Qt6::Core)
 target_link_libraries(VisNova PRIVATE Qt6::HttpServer)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
+target_link_libraries(VisNova PRIVATE Qt6::Core)
 
 # ==================== 安装配置 ====================
 include(GNUInstallDirs)

@@ -3,7 +3,7 @@
 
 
 
-VideoBox::VideoBox(const model::VideoInfo&video_info, QWidget *parent)
+VideoBox::VideoBox(const model::VideoInfoForLoad&video_info, QWidget *parent)
     :QWidget(parent)
     , ui(new Ui::VideoBox),videoInfo(video_info)
 {
@@ -32,7 +32,7 @@ VideoBox::VideoBox(const model::VideoInfo&video_info, QWidget *parent)
     connect(dataCenter,&model::DataCenter::_isLikeBtnClicked,this,&VideoBox::setLikeBtn);
     connect(dataCenter,&model::DataCenter::_downloadPhotoDone,this,&VideoBox::getVideoImage);
     connect(dataCenter,&model::DataCenter::_downloadPhotoDone,this,&VideoBox::onUserAvatarGeted);
-
+    connect(ui->delVideoBtn,&QPushButton::clicked,this,&VideoBox::onMoreBtnClicked);
 }
 
 
@@ -64,6 +64,17 @@ bool VideoBox::eventFilter(QObject *watched, QEvent *event)
 const QString &VideoBox::getVideoId() const
 {
     return videoInfo.videoId;
+}
+
+void VideoBox::showMoreBtn(bool is_show)
+{
+    if(is_show)
+    {
+        ui->delVideoBtn->show();
+    }
+    else{
+        ui->delVideoBtn->hide();
+    }
 }
 
 
@@ -140,11 +151,8 @@ void VideoBox::onUserAvatarGeted(const QString &avatar_id, QByteArray imageData)
     }
 
     //
-
     userAvatar =  makeIcon(imageData,(ui->userIcon->width()/2),(ui->userIcon->height()/2));
     ui->userIcon->setPixmap(userAvatar);
-
-
 }
 ////////////////////////
 
@@ -187,6 +195,39 @@ void VideoBox::setLikeBtn(const QString &videoId, bool is_liked)
     }
 }
 ////////////////////////
+
+
+
+////////////////////////
+/// \brief VideoBox::onMoreBtnClicked
+///
+void VideoBox::onMoreBtnClicked()
+{
+    // 创建一个菜单 项
+    QMenu menu(this);
+    menu.setStyleSheet(VIDEO_MENU);
+    menu.setWindowFlags(menu.windowFlags()| Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+
+    menu.setAttribute(Qt::WA_TranslucentBackground);
+
+    menu.addAction("删除");
+
+    QPoint point = QCursor::pos();
+
+    QAction* action = menu.exec(point);
+
+    if (action != nullptr)
+    {
+        if (action->text() == "删除")
+        {
+
+            emit _deleteVideo(videoInfo.videoId);
+        }
+    }
+
+}
+////////////////////////
+
 
 
 

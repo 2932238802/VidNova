@@ -9,6 +9,7 @@ StartPage::StartPage(QDialog *parent)
     // Qt::Tool 这个表示是 工具窗口 就不会在任务栏 显示
     setWindowFlags(Qt::FramelessWindowHint|Qt::Tool);
 
+
     // 图片
     setFixedSize(1450,860);
     setStyleSheet("background-color: #FFFFFF");
@@ -34,28 +35,31 @@ StartPage::StartPage(QDialog *parent)
                         "background-color: transparent;"
                         );
 
-
+    initConnect();
     startTimer();
 }
-
 void StartPage::startTimer()
 {
     QTimer* timer = new QTimer(this);
     timer->setSingleShot(false);
-    connect(timer,&QTimer::timeout,this,[this,timer]{
-        timer->stop();
-        delete timer;
-        close();
+    connect(timer, &QTimer::timeout, this, [=]{
+        if (isLoadCompleted) // 只检查这一个标志位
+        {
+            LOG() << "加载流程完成，关闭启动页。";
+            timer->stop();
+            delete timer;
+            emit _loginCompleted();
+            close();
+        }
     });
 
-
     timer->start(2000);
-
     auto dataCenter = model::DataCenter::getInstance();
-    dataCenter->tempLoginAsync();
+    QString sessionId = dataCenter->getSessionId();
 
-    // 完成用户的自动登录 和 获取信息
-    // TODO ...
+
+    dataCenter->loginBySessionAsync();
+
 }
 
 ////////////////////////////////////
@@ -63,22 +67,59 @@ void StartPage::startTimer()
 ///
 void StartPage::initConnect()
 {
+#ifdef STARTPAGE_TEST
+    LOG() << "StartPage::initConnect()... ";
+#endif
+
     auto dataCenter = model::DataCenter::getInstance();
-    connect(dataCenter,&model::DataCenter::_loginSucDone,this,&StartPage::onTempLogin);
 
+    connect(dataCenter, &model::DataCenter::_loginBySessionSuc, this, [=](bool isTempUser){
+        if (isTempUser) {
+
+#ifdef STARTPAGE_TEST
+            LOG() << "是临时用户，直接完成。";
+#endif
+
+            isLoadCompleted = true;
+            dataCenter->loadTempUserInfo();
+
+            emit dataCenter->_getMyselfInfoDone();
+
+        } else {
+
+#ifdef STARTPAGE_TEST
+            LOG() << "不是临时用户 获取信息中...";
+#endif
+            dataCenter->getMyselfInfoAsync();
+        }
+    });
+
+    connect(dataCenter, &model::DataCenter::_loginBySessionFailed, this, [=](const QString& msg){
+#ifdef STARTPAGE_TEST
+        LOG() << "Session登录失败: " << msg;
+#endif
+
+        Toast::showMsg("自动登录失败，将以临时用户身份继续");
+        dataCenter->loadTempUserInfo();
+        emit dataCenter->_getMyselfInfoDone();
+        isLoadCompleted = true;
+    });
+
+
+    connect(dataCenter, &model::DataCenter::_getMyselfInfoDone, this, [=](){
+
+#ifdef STARTPAGE_TEST
+        LOG() << "获取个人信息成功";
+#endif
+        isLoadCompleted = true;
+    });
 }
+
 ////////////////////////////////////
 
 
 
-////////////////////////////////////
-/// \brief StartPage::onTempLogin
-///
-void StartPage::onTempLogin()
-{
-    isLoginIn = true;
-}
-////////////////////////////////////
+
 
 
 

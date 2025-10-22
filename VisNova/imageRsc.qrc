@@ -42,5 +42,6 @@
         <file>image/likeBtnClicked.png</file>
         <file>image/likeBtnUnclicked.png</file>
         <file>image/likeBtnClicked2.png</file>
+        <file>image/defaultAvatar.png</file>
     </qresource>
 </RCC>

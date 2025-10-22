@@ -2,6 +2,9 @@
 #include <QObject>
 #include<QWidget>
 #include <mpv/client.h>
+#include <QStringList>
+#include <QDir>
+#include <QProcess>
 #include "common/constants.h"
 #include "common/myLog.h"
 
@@ -11,14 +14,20 @@ class MpvPlayer : public QObject
 public:
     explicit MpvPlayer(QWidget* videoRenderWnd = nullptr,QObject *parent = nullptr);
     ~MpvPlayer();
-    void startPlay(const QString& videoPath);
-    void setSpeed(double speed);
+
+    double getPlayTotalTime() const;
+    static QString getVideoFirstPage(const QString& video_path);
+
+    void mute(bool isMute);
+
     void play(); // 开始
     void pause(); // 暂停
-    void mute(bool isMute);
+
+    void startPlay(const QString& video_path);
+    void setSpeed(double speed);
+    void setTimePos(double time_pos); //
     void setVolume(int64_t volume); // 音量调节方法
-    void setTimePos(double timePos); //
-    double getPlayTotalTime() const;
+
 
 private:
     void handleMpvEvent(mpv_event* event);
@@ -37,6 +46,7 @@ signals:
     void playPositionSignals(double seconds);
     void medioLoaded(double totalTime);
     void medioFinished();
+    void _duration(int64_t duration);
 };
 
 

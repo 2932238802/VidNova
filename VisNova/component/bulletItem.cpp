@@ -24,7 +24,11 @@ BulletItem::BulletItem(QWidget *parent)
     layout->setContentsMargins(10,4,19,4);
     layout->setSpacing(8);
 }
+////////////////////////////////////////////////////////////
 
+
+
+////////////////////////////////////////////////////////////
 /// \brief BulletItem::setText
 /// \param text
 /// 设置文本
@@ -33,7 +37,11 @@ void BulletItem::setText(const QString &text)
     textLabel->setText(text);
     textLabel->adjustSize();
 }
+////////////////////////////////////////////////////////////
 
+
+
+////////////////////////////////////////////////////////////
 /// \brief BulletItem::setIcon
 /// \param pixmap
 /// 设置头像
@@ -43,7 +51,15 @@ void BulletItem::setIcon(const QPixmap &pixmap)
     imageLabel->show();
     this->setStyleSheet(BULLET);
 }
+////////////////////////////////////////////////////////////
 
+
+
+////////////////////////////////////////////////////////////
+/// \brief BulletItem::setAnimation
+/// \param xPos
+/// \param duration
+///
 void BulletItem::setAnimation(int xPos, int duration)
 {
     // 第一个this 是 针对的对象 第二个this是父
@@ -51,9 +67,12 @@ void BulletItem::setAnimation(int xPos, int duration)
     animation->setDuration(duration);
     animation->setStartValue(QPoint(xPos,0));
     animation->setEndValue(QPoint(0-this->width(),0));
-
 }
+////////////////////////////////////////////////////////////
 
+
+
+////////////////////////////////////////////////////////////
 /// \brief BulletItem::startAnimation
 /// 开启动画
 void BulletItem::startAnimation()
@@ -64,7 +83,7 @@ void BulletItem::startAnimation()
     // 确保元素被删除了
     connect(animation,&QPropertyAnimation::finished,this,&BulletItem::deleteLater);
 }
-
+////////////////////////////////////////////////////////////
 
 
 

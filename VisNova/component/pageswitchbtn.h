@@ -16,7 +16,7 @@ public:
 
     void setTextColor(const QString& color);
     void setImage(const QString& image_path);
-    int page_id();
+    int getPageId();
 
 private:
     ///

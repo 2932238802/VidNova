@@ -283,7 +283,7 @@ void homePageCpt::initVideos()
 /// \brief homePageCpt::openPlayerPage
 /// \param path
 ///
-void homePageCpt::openPlayerPage(const model::VideoInfo& video_info)
+void homePageCpt::openPlayerPage(const model::VideoInfoForLoad& video_info)
 {
 
 }
@@ -399,7 +399,6 @@ void homePageCpt::updataVideoList()
         // 从视频列表 开始
 
         VideoBox* videoBox = new VideoBox(videoList[i]);
-
 
         connect(videoBox,&VideoBox::_onPlayBtnClicked,this,[=](){
             PlayerPage* page = new PlayerPage(videoList[i]);

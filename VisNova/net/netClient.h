@@ -6,14 +6,19 @@
 #include <QNetworkAccessManager>
 #include <QUuid>
 #include <QStandardPaths>
-#include "dataCenter/data.h"
+#include <QUrlQuery>
 #include "common/myLog.h"
 #include "common/ReadLocalFile.h"
+#include "common/constants.h"
+#include "dataCenter/videoInfoForLoad.h"
+#include "dataCenter/bulletInfo.h"
+#include "dataCenter/videoList.h"
+#include "dataCenter/videoInfoForUpload.h"
 
 
 // 前向声明 告诉编译器 别担心 这里会有一个类
 namespace model {
-class DataCenter;
+    class DataCenter;
 }
 
 
@@ -24,21 +29,44 @@ class NetClient : public QObject
     Q_OBJECT
 public:
     explicit NetClient(model::DataCenter* dataCenter);
-    void hello();
-
     QString makeRequestUuid();
+
+    void addPlayNumber(const QString& video_id);
+    void alterAttention(const QString& user_id);
+    void addAttention(const QString& user_id);
+    void addLikeNumber(const QString&videoId);
+
+    void deleteVideo(const QString& video_id);
+    void delAttention(const QString& user_id);
+    void downloadPhoto(const QString&phote_id);
+
+    void hello();
+    void isLikeBtnClicked(const QString&video_id);
+
     void loginTemplateAccess();
+    void lrByAuthCode(const QString &email, const QString &auth_code,const QString &codeId);
+    void lrByPd(const QString& at, const QString& pd);
+    void loginBySession();
+    void logout();
+
+    void setAvatar(const QString& file_id);
+    void setNewPassword(const QString& password);
+    void setNickname(const QString& nickname);
+
+    void getCodeFromEmail(const QString& email);
     void getAllVidelList();
-    void getVideoByKind(int kindId);
+    void getVideoByKind(int kind_id);
     void getVideoByTag(int tagId);
     void getAllVideoListSearchText(const QString&str);
-    void downloadPhoto(const QString&photeId);
-    void getBullets(const QString& videoId);
-    void addPlayNumber(const QString& videoId);
-    void isLikeBtnClicked(const QString&videoId);
-    void addLikeNumber(const QString&videoId);
-    void sendBullet(const QString&videoId,const model::BulletInfo&bulletInfo);
-    // void downloadVideo(const QString& videoId);
+    void getBullets(const QString& video_id);
+    void getUserInfo(const QString&user_id);
+    void getVideoListForMyselfOrOther(const QString& user_id,int page_index);
+
+    void sendBullet(const QString&video_id,const model::BulletInfo&bullet_info);
+
+    void uploadPhoto(const QByteArray& photo_data,PhotoUploadPurpose pup);
+    void uploadVideo(const QString& video_path);
+    void uploadVideoInfoForUpload(const model::VideoInfoForUpload& video_info_for_upload);
 
 private:
     // 封装好的 发送 请求

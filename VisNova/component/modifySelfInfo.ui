@@ -225,7 +225,7 @@ color: #000000;</string>
 color: #000000;</string>
         </property>
         <property name="text">
-         <string>1234567890</string>
+         <string/>
         </property>
         <property name="readOnly">
          <bool>true</bool>
@@ -290,7 +290,7 @@ color: #000000;</string>
 }</string>
         </property>
         <property name="text">
-         <string>手机号: 19857198709</string>
+         <string/>
         </property>
        </widget>
       </item>

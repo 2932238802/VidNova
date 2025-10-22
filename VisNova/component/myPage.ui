@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:#FFFFFF;</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -84,7 +84,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
-          <number>7</number>
+          <number>8</number>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -118,7 +118,7 @@
 	background-color: transparent;
 	border: none;
 	border-radius: 30px;
-	border-image: url(&quot;:/image/txMan.png&quot;);
+	
 }</string>
            </property>
            <property name="text">
@@ -133,28 +133,16 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="nickNameLabel">
-           <property name="minimumSize">
-            <size>
-             <width>125</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>125</width>
-             <height>16777215</height>
-            </size>
-           </property>
+          <widget class="QPushButton" name="nickNameBtn">
            <property name="styleSheet">
-            <string notr="true">#nickNameLabel {
-font-family : 微软雅⿊;
-font-size: 18px;
-color: #222222;
+            <string notr="true">#nickNameBtn{
+	border:none;
+	color: black;
+
 }</string>
            </property>
            <property name="text">
-            <string>用户1231111112313</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -307,7 +295,7 @@ color: #222222;
 }</string>
            </property>
            <property name="text">
-            <string>123</string>
+            <string/>
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -324,7 +312,7 @@ color: #222222;
 }</string>
            </property>
            <property name="text">
-            <string>123</string>
+            <string/>
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -341,7 +329,7 @@ color: #222222;
 }</string>
            </property>
            <property name="text">
-            <string>123</string>
+            <string/>
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -358,7 +346,7 @@ color: #222222;
 }</string>
            </property>
            <property name="text">
-            <string>123</string>
+            <string/>
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -385,7 +373,7 @@ color: #222222;
         <property name="styleSheet">
          <string notr="true"/>
         </property>
-        <widget class="QPushButton" name="attentionBtn">
+        <widget class="AttentionBtn" name="attentionBtn">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -453,10 +441,10 @@ color: #222222;
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
-       <number>0</number>
+       <number>6</number>
       </property>
       <property name="leftMargin">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
        <number>0</number>
@@ -496,7 +484,7 @@ color:black;
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="uploadVedioBtn">
+       <widget class="QPushButton" name="uploadVideoBtn">
         <property name="minimumSize">
          <size>
           <width>30</width>
@@ -510,7 +498,7 @@ color:black;
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">#uploadVedioBtn{
+         <string notr="true">#uploadVideoBtn{
 	border-radius: 15px;
 	border-image: url(&quot;:/image/upload.png&quot;);
 
@@ -689,6 +677,11 @@ QScrollBar::down-arrow:vertical
    <class>MyPageAvatarBtn</class>
    <extends>QPushButton</extends>
    <header location="global">mypageavatarbtn.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AttentionBtn</class>
+   <extends>QPushButton</extends>
+   <header location="global">attentionBtn.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
