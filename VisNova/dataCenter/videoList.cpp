@@ -4,20 +4,29 @@ namespace model{
 
 VideoList::VideoList()
 {
-
+    pageIndex = 1; // 初始化页码
 }
 
 
 void VideoList::setPageIndex(int page_index)
 {
+#ifdef VIDEOLIST_TEST
+    LOG() << "VideoList::setPageIndex(int page_index)";
+    LOG() << "page_index:" << page_index;
+#endif
+
     this->pageIndex = page_index;
 }
 
 
 int VideoList::getPageIndex() const
 {
-    return pageIndex;
 
+#ifdef VIDEOLIST_TEST
+    LOG() << "VideoList::getPageIndex()";
+    LOG() << "pageIndex:" << pageIndex;
+#endif
+    return pageIndex;
 }
 
 int VideoList::getVideoCount() const
@@ -46,7 +55,7 @@ void VideoList::setVideoTotalCount(int64_t count)
 /// \brief VideoList::addVideoInfo
 /// \param info
 /// 增加Video
-void VideoList::addVideoInfo(const VideoInfo &info)
+void VideoList::addVideoInfo(const VideoInfoForLoad &info)
 {
     videoInfoLists.append(info);
 }
@@ -57,7 +66,7 @@ void VideoList::addVideoInfo(const VideoInfo &info)
 /// \brief VideoList::getVideoListOfVideoInfo
 /// \return
 ///
-const QList<VideoInfo> &VideoList::getVideoListOfVideoInfo() const
+const QList<VideoInfoForLoad> &VideoList::getVideoListOfVideoInfo() const
 {
     return videoInfoLists;
 }

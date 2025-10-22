@@ -7,6 +7,7 @@
 #include<QApplication>
 #include<QScreen>
 #include "style.h"
+#include "myLog.h"
 
 class Toast : public QDialog
 {

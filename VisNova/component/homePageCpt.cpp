@@ -283,7 +283,7 @@ void homePageCpt::initVideos()
 /// \brief homePageCpt::openPlayerPage
 /// \param path
 ///
-void homePageCpt::openPlayerPage(const model::VideoInfo& video_info)
+void homePageCpt::openPlayerPage(const model::VideoInfoForLoad& video_info)
 {
 
 }

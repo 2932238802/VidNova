@@ -1,14 +1,18 @@
 #pragma once
 #include <QObject>
 #include <QJsonArray>
+#include <QStandardPaths>
+#include <QDir>
+#include <QFileInfo>
 #include "net/netClient.h"
 #include "bulletInfo.h"
 #include "kindandtags.h"
 #include "videoList.h"
 #include "dataCenter/userInfo.h"
 #include "dataCenter/videoList.h"
-
+#include "dataCenter/videoInfoForUpload.h"
 #include "common/myLog.h"
+#include "common/constants.h"
 
 namespace model
 {
@@ -31,6 +35,10 @@ namespace model
         void setAvatar(const QString& fileId); // 设置头像 个人的
         void setUserVideoList(const QJsonObject& videoList); // 设置用户的视频列表
 
+        void initDataFile();
+        void saveDataFile();
+        void loadDataFile();
+
         VideoList* getUserVideoList();
         static DataCenter* getInstance();
         const QString& getSessionId()const;
@@ -42,19 +50,19 @@ namespace model
         UserInfo* getOtherUserInfo() const;
         const QString& getUserId();
 
-        void buildTempUserInfo();
+        void clear();
 
         ~DataCenter();
 
     public:
-        void helloAsync();
-        void tempLoginAsync();
+        void alterAttentionAsync(const QString& user_id);
+        void addPlayNumberAsync(const QString& videoId); // 增加播放量
+        void addLikeNumberAsync(const QString& videoId);
+        void addAttentionAsync(const QString& userId); // 新增关注
 
-        void lrByAuthCodeAsync(const QString &email, const QString &auth_code,const QString&codeId);
-        void lrByPdAsync(const QString& at,const QString& pd);
-
-        void setAvatarAsync(const QString& fileId);
-        void setUserIdOnce(const QString& userId);
+        void downloadPhotoAsync(const QString& photeId); // 下载图片
+        void deleteVideoAsync(const QString& video);
+        void delAttentionAsync(const QString&userId); // 取消关注
 
         void getCodeFromEmailAsync(const QString& email);
         void getAllVideoListAsync();
@@ -66,37 +74,35 @@ namespace model
         void getMyselfInfoAsync();
         void getOtherInfoAsync(const QString& user_id);
 
-        void downloadPhotoAsync(const QString& photeId); // 下载图片
+        void helloAsync();
 
         void isLikeBtnClickedAsync(const QString& videoId); // 是否被点赞过
-        void alterAttentionAsync(const QString& user_id);
 
-        void addPlayNumberAsync(const QString& videoId); // 增加播放量
-        void addLikeNumberAsync(const QString& videoId);
-        void addAttentionAsync(const QString& userId); // 新增关注
+        void logoutAsync();        // 登出
+        void loadTempUserInfo();
+        void lrByAuthCodeAsync(const QString &email, const QString &auth_code,const QString&codeId);
+        void lrByPdAsync(const QString& at,const QString& pd);
+        void loginBySessionAsync();
 
+        void setAvatarAsync(const QString& fileId);
+        void setUserIdOnce(const QString& userId);
+        void setNewPasswordAsync(const QString& password);
+        void setNicknameAsync(const QString& nickname);
         void sendBulletAsync(const QString& videoId,const BulletInfo& bulletInfo);
-        void uploadPhotoAsync(const QByteArray& photo);
-        // void downloadVideoAsync(const QString& videoId);
 
-        void deleteVideoAsync(const QString& video);
-        void delAttentionAsync(const QString&userId); // 取消关注
+        void tempLoginAsync();
 
-    // 信号
+        void uploadPhotoAsync(const QByteArray& photo,PhotoUploadPurpose pup);
+        void uploadVideoAsync(const QString& video_path);
+        void uploadVideoInfoForUploadAsync(const VideoInfoForUpload& videoInfoForUpload);
+
     signals:
-        void _helloDone();
-        void _loginSucDone();
-
-        void _lrByAuthCodeSuc();
-        void _lrByAuthCodeFailed(const QString& msg);
-
-        void _lrByPdSuc(); // 登录成功
-        void _lrByPdFailed(const QString& msg); // 登录失败
-
-        void _isLikeBtnClicked(const QString& videoId,bool is_liked);
+        void _addAttention();
 
         void _downloadPhotoDone(const QString& photeId,QByteArray imageData);
         void _downloadVideoDone(const QString&  m3u8Path,const QString& videoId);
+        void _deleteVideoDone(const QString& userId);
+        void _delAttention();
 
         void _getVideoBySearchTextDone(const QString& searchText);
         void _getBulletsDone(const QString& videoId);
@@ -108,14 +114,25 @@ namespace model
         void _getVideoListForMyselfOrOtherDone(const QString& userId);
         void _getCodeFromEmailDone(const QString& authCode,const QString& codeId);
 
-        void _uploadPhotoDone(const QString& file_id);
-        void _setAvatarDone(); // 这个表示用户头像设置成功
+        void _helloDone();
 
-        void _deleteVideoDone(const QString& userId);
-        void _delAttention();
-        void _addAttention();
+        void _isLikeBtnClicked(const QString& videoId,bool is_liked);
 
+        void _loginSucDone();
+        void _lrByAuthCodeSuc();
+        void _lrByAuthCodeFailed(const QString& msg);
+        void _loginBySessionSuc(bool isTemp);
+        void _loginBySessionFailed(const QString& msg);
+        void _logoutDone();
+        void _lrByPdSuc();                                   // 登录成功
+        void _lrByPdFailed(const QString& msg);             // 登录失败
 
+        void _setAvatarDone();                              // 这个表示用户头像设置成功
+        void _setPasswordDone();                            // 设置密码
+        void _setNicknameDone(const QString& nickname);                            // 设置昵称成功
+        void _uploadPhotoDone(const QString& file_id,PhotoUploadPurpose pup);
+        void _uploadVideoDone(const QString& video_path);
+        void _uploadVideoInfoForUpload();
 
     private:
         static DataCenter* instance;
@@ -131,8 +148,8 @@ namespace model
         std::unique_ptr<UserInfo> otherInfo;
 
         const QString serverUrl = "http://127.0.0.1:8080";
-        QString sessionId;
 
+        QString sessionId;
         QString userId; // 这个存放userId // 只能被登录的时候初始化一次
 
         bool isAppend;

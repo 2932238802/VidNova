@@ -73,12 +73,12 @@ set(SOURCES
     ${COMPONENT_DIR}/confirmDialog.cpp
 
     ${DATA_CENTER_DIR}/dataCenter.cpp
-    ${DATA_CENTER_DIR}/videoInfo.cpp
     ${DATA_CENTER_DIR}/kindAndTags.cpp
-    ${DATA_CENTER_DIR}/videoInfo.cpp
+    ${DATA_CENTER_DIR}/videoInfoForLoad.cpp
     ${DATA_CENTER_DIR}/bulletInfo.cpp
     ${DATA_CENTER_DIR}/userInfo.cpp
     ${DATA_CENTER_DIR}/videoList.cpp
+    ${DATA_CENTER_DIR}/videoInfoForUpload.cpp
 
     ${LRPAGR_DIR}/login.cpp
 
@@ -136,10 +136,12 @@ set(HEADERS
 
     ${DATA_CENTER_DIR}/dataCenter.h
     ${DATA_CENTER_DIR}/kindAndTags.h
-    ${DATA_CENTER_DIR}/videoInfo.h
+    ${DATA_CENTER_DIR}/videoInfoForLoad.h
     ${DATA_CENTER_DIR}/videoList.h
     ${DATA_CENTER_DIR}/bulletInfo.h
     ${DATA_CENTER_DIR}/userInfo.h
+    ${DATA_CENTER_DIR}/videoInfoForUpload.h
+
 
     ${NET_DIR}/netClient.h
     ${NET_DIR}/testHttp.h
@@ -175,8 +177,6 @@ qt_add_executable(VisNova
     ${SOURCES}
     ${HEADERS}
     ${UI_FILES}
-
-
 
 
 )

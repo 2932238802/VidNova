@@ -134,6 +134,14 @@ inline const QString LOGIN_TOGGLE_BTNUNCHOOSED = R"(
         border-bottom: 2px solid #B5ECFF;
     }
 )";
+
+
+// inline const QString LOGIN_EDIT = R"(
+//     ELineEdit{
+
+
+//     }
+// )";
 ////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -337,7 +345,9 @@ inline const QString CANCEL_BTN_FOR_CONFIRMBACKGROUND = R"(
 
 
 
-
+inline const QString UPLOADVIDEOPAGE_IMAGELABEL = R"(
+    border-image: url(":/image/vedioFirstPage.png");
+)";
 
 
 

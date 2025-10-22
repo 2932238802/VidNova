@@ -1,6 +1,7 @@
 #pragma once
 #include <QObject>
-#include "videoInfo.h"
+#include "videoInfoForLoad.h"
+#include "myLog.h"
 
 namespace model{
 
@@ -16,13 +17,13 @@ public:
 
     int getVideoTotalCount() const;
     void setVideoTotalCount(int64_t count) ;
-    void addVideoInfo(const VideoInfo& info);
-    const QList<VideoInfo>& getVideoListOfVideoInfo() const;
+    void addVideoInfo(const VideoInfoForLoad& info);
+    const QList<VideoInfoForLoad>& getVideoListOfVideoInfo() const;
     void clearVideoList(); // 清空一下任务列表
     void updateLikeNumber(const QString& videoId,int64_t likeCount);
 
 public:
-    QList<VideoInfo> videoInfoLists;
+    QList<VideoInfoForLoad> videoInfoLists;
     int pageIndex;
     int64_t videoCount;
     int64_t videoTotalCount;

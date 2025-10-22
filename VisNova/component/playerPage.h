@@ -15,7 +15,7 @@
 #include "common/myLog.h"
 #include "bulletEdit.h"
 #include "bulletManage.h"
-#include "dataCenter/videoInfo.h"
+#include "dataCenter/videoInfoForLoad.h"
 #include "dataCenter/dataCenter.h"
 #include "common/intToString.h"
 #include "lrPage/login.h"
@@ -30,7 +30,7 @@ class PlayerPage : public QWidget
 
 // 外部函数
 public:
-    explicit PlayerPage(const model::VideoInfo& info,QWidget *parent = nullptr);
+    explicit PlayerPage(const model::VideoInfoForLoad& info,QWidget *parent = nullptr);
     void setUserAvatar(QPixmap &&avatar);
     void startPlay();
 
@@ -38,6 +38,8 @@ public:
 private:
     void initConnect();
     void initBullet();
+
+    bool loginCheck();
 
     // 音量大小的位置设置
     void moveVolumeWindow(const QPoint& point);
@@ -120,7 +122,7 @@ private:
     std::unique_ptr<BulletManage> bm;
 
     Volume* volume;
-    model::VideoInfo videoInfo;
+    model::VideoInfoForLoad videoInfo;
     MpvPlayer* mpvPlayer = nullptr;
     PlaySpeed* speedCtl;
     BulletEdit* bulletEdit;

@@ -45,46 +45,46 @@ QHttpServerResponse HttpServer::helloService(const QHttpServerRequest &request)
     return httpRes;
 }
 
-////////////////////////////////////
-/// \brief HttpServer::tempLoginService
-/// \param request
-/// \return
-///
-QHttpServerResponse HttpServer::tempLoginService(const QHttpServerRequest &request)
-{
-    // 获取 到 请求中数据
-    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+// ////////////////////////////////////
+// /// \brief HttpServer::tempLoginService
+// /// \param request
+// /// \return
+// ///
+// QHttpServerResponse HttpServer::tempLoginService(const QHttpServerRequest &request)
+// {
+//     // 获取 到 请求中数据
+//     QJsonDocument docReq = QJsonDocument::fromJson(request.body());
 
-    const QJsonObject& jsonObject = docReq.object();
+//     const QJsonObject& jsonObject = docReq.object();
 
-    LOG()<<"收到请求"<<jsonObject["requestId"];
+//     LOG()<<"收到请求"<<jsonObject["requestId"];
 
-    QJsonObject jsonBody;
-    jsonBody["requestId"] = jsonObject["requestId"].toString();
-    jsonBody["errorCode"] = 0;
-    jsonBody["errorMsg"] = "";
+//     QJsonObject jsonBody;
+//     jsonBody["requestId"] = jsonObject["requestId"].toString();
+//     jsonBody["errorCode"] = 0;
+//     jsonBody["errorMsg"] = "";
 
-    QJsonObject dataObject;
-    QString sessionId = QUuid::createUuid().toString();
-    sessionId = sessionId.mid(25,12);
+//     QJsonObject dataObject;
+//     QString sessionId = QUuid::createUuid().toString();
+//     sessionId = sessionId.mid(25,12);
 
-    dataObject["sessionId"] = sessionId;
+//     dataObject["sessionId"] = sessionId;
 
-    jsonBody["result"] = dataObject;
+//     jsonBody["result"] = dataObject;
 
-    QJsonDocument docRes;
-    docRes.setObject(jsonBody);
+//     QJsonDocument docRes;
+//     docRes.setObject(jsonBody);
 
-    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+//     QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
 
-    LOG()<<"docRes.toJson()"<<docRes.toJson();
+//     LOG()<<"docRes.toJson()"<<docRes.toJson();
 
-    QHttpHeaders headers;
-    headers.append("Content-Type", "application/json; charset=utf-8");
-    httpRes.setHeaders(headers);
-    return httpRes;
-}
-////////////////////////////////////
+//     QHttpHeaders headers;
+//     headers.append("Content-Type", "application/json; charset=utf-8");
+//     httpRes.setHeaders(headers);
+//     return httpRes;
+// }
+// ////////////////////////////////////
 
 
 ////////////////////////////////////
@@ -157,6 +157,8 @@ QHttpServerResponse HttpServer::lrByPd(const QHttpServerRequest &request)
 
     QString at = jsonObject["account"].toString();
 
+    QString sessionId = QUuid::createUuid().toString();
+
 #ifdef HTTPSERVER_TEST
     LOG() << "HttpServer::lrByPd(const QHttpServerRequest &request)";
     LOG() << "pd: " << pd;
@@ -165,13 +167,17 @@ QHttpServerResponse HttpServer::lrByPd(const QHttpServerRequest &request)
 
     QJsonDocument docRes;
 
-    if(pd == "123" && at == "123")
+    if(pd == "!Lsj20041021" && at == "19857198709")
     {
         jsonBodyForReply["userId"] = "123";
 
         jsonBodyForReply["errorCode"] = 0;
 
         jsonBodyForReply["errorMsg"] = "";
+
+        jsonBodyForReply["sessionId"] = sessionId;
+
+        m_sessions.insert(sessionId,"123");
     }
     else
     {
@@ -191,6 +197,107 @@ QHttpServerResponse HttpServer::lrByPd(const QHttpServerRequest &request)
 
     httpRes.setHeaders(headers);
 
+    return httpRes;
+}
+////////////////////////////////////
+
+
+
+////////////////////////////////////
+/// \brief HttpServer::loginBySession
+/// \param request
+/// \return
+/// 通过sessionId 登录
+QHttpServerResponse HttpServer::loginBySession(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+
+    const QJsonObject& jsonObject = docReq.object();
+
+    QJsonObject jsonBodyForReply;
+
+    jsonBodyForReply["requestId"] = jsonObject["requestId"].toString();
+
+    QString sessionId = jsonObject["sessionId"].toString();
+
+#ifdef HTTPSERVER_TEST
+    LOG () << "sessionId" <<  sessionId;
+#endif
+
+    QJsonDocument docRes;
+
+    if(m_sessions.contains(sessionId))
+    {
+
+        jsonBodyForReply["errorCode"] = 0;
+        jsonBodyForReply["errorMsg"] = "";
+        QJsonObject rlt;
+
+        rlt["isTemp"] = false ;
+        rlt["userId"] = m_sessions.value(sessionId);
+        jsonBodyForReply["result"] = rlt;
+
+    }else{
+        jsonBodyForReply["errorCode"] = 6001;
+        jsonBodyForReply["errorMsg"] = "session登录失败 重新登录";
+    }
+
+    docRes.setObject(jsonBodyForReply);
+
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+
+    QHttpHeaders headers;
+
+    headers.append("Content-Type", "application/json; charset=utf-8");
+
+    httpRes.setHeaders(headers);
+
+    return httpRes;
+}
+////////////////////////////////////
+
+
+
+
+////////////////////////////////////
+/// \brief HttpServer::logout
+/// \param request
+/// \return
+/// 退出登录的亲求
+QHttpServerResponse HttpServer::logout(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+
+    const QJsonObject& jsonObject = docReq.object();
+
+    QJsonObject jsonBodyForReply;
+
+    jsonBodyForReply["requestId"] = jsonObject["requestId"].toString();
+
+    QString sessionId = jsonObject["sessionId"].toString();
+
+#ifdef HTTPSERVER_TEST
+    LOG () << "sessionId" <<  sessionId;
+#endif
+
+    QJsonDocument docRes;
+
+    jsonBodyForReply["requestId"] = jsonObject["requestId"].toString();
+    jsonBodyForReply["errorCode"] = 0;
+    jsonBodyForReply["errorMsg"] = "";
+
+    QJsonObject result;
+
+    result["sessionId"] = sessionId ; // TODO
+    jsonBodyForReply["result"] = result;
+
+
+    docRes.setObject(jsonBodyForReply);
+
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
     return httpRes;
 }
 ////////////////////////////////////
@@ -970,6 +1077,64 @@ QHttpServerResponse HttpServer::newBullet(const QHttpServerRequest &request)
 
 
 ////////////////////////////////////
+/// \brief HttpServer::newVideo
+/// \param request
+/// \return
+/// 上传 创造视频
+QHttpServerResponse HttpServer::newVideo(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+    const QJsonObject& jsonObject = docReq.object();
+
+#ifdef HTTPSERVER_TEST
+    LOG()<<"HttpServer::newVideo(const QHttpServerRequest &request)";
+#endif
+
+    // 总的 jsonBody 回复体
+    QJsonObject jsonBody;
+
+    QJsonObject videoInfo = jsonObject["videoInfo"].toObject();
+    QString videoFileId = jsonObject["videoId"].toString();
+    QString videoTitleId = jsonObject["videoTitleId"].toString();
+    QString photoFileId = jsonObject["photoFileId"].toString();
+    int videoType = jsonObject["videoType"].toInt();
+    QString videoDesc = jsonObject["videoDesc"].toString();
+    int64_t duration = jsonObject["duration"].toInt();
+
+#ifdef HTTPSERVER_TEST
+    LOG() << "videoInfo: " << videoInfo;
+    LOG() << "videoFileId: " << videoFileId;
+    LOG() << "photoFileId: " << photoFileId;
+    LOG() << "photoFileId: " << photoFileId;
+    LOG() << "videoType: " << videoType;
+    LOG() << "videoDesc: " << videoDesc;
+    LOG() << "duration: " << duration;
+#endif
+
+    QJsonArray tagsArray = jsonObject["videoTags"].toArray();
+    for(int i =0 ;i < tagsArray.size() ;i++)
+    {
+        int tagId = tagsArray[i].toInt();
+        LOG() << "tagId" << i << " = " << tagId;
+    }
+
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+
+////////////////////////////////////
 /// \brief HttpServer::getUserInfo
 /// \param request
 /// \return
@@ -1019,9 +1184,9 @@ QHttpServerResponse HttpServer::getUserInfo(const QHttpServerRequest &request)
         userInfoJson["userCreateTime"] = "";
         userInfoJson["avatarFileId"] = "10001";
     }
-    else{
-        userInfoJson["userId"] = "2088322392";
-        userInfoJson["photoNumber"] = "09809876543";
+    else if(userId == "123"){
+        userInfoJson["userId"] = "123";
+        userInfoJson["photoNumber"] = "19857198709";
         userInfoJson["nickName"] = "lsj";
         QJsonArray userType;
         userType.append(3);
@@ -1044,6 +1209,31 @@ QHttpServerResponse HttpServer::getUserInfo(const QHttpServerRequest &request)
         userInfoJson["userMemo"] = "其它用户";
         userInfoJson["userCreateTime"] = "";
         userInfoJson["avatarFileId"] = "20001";
+    }else{
+        userInfoJson["userId"] = "111";
+        userInfoJson["photoNumber"] = "1111";
+        userInfoJson["nickName"] = "11111";
+        QJsonArray userType;
+        userType.append(3);
+        userInfoJson["roleType"] = userType;
+
+        QJsonArray identityType;
+        identityType.append(1);
+        userInfoJson["identityType"] = identityType;
+
+        userInfoJson["likeCount"] = 99999;
+
+        userInfoJson["playCount"] = 999999;
+
+        userInfoJson["fansCount"] = 99999;
+
+        userInfoJson["followCount"] = 99;
+
+        userInfoJson["userState"] = 0;
+        userInfoJson["isFollowed"] = 0;
+        userInfoJson["userMemo"] = "其它用户";
+        userInfoJson["userCreateTime"] = "";
+        userInfoJson["avatarFileId"] = "30001";
     }
 
     QJsonObject rstJson;
@@ -1154,6 +1344,60 @@ QHttpServerResponse HttpServer::uploadPhoto(const QHttpServerRequest &request)
 
 
 ////////////////////////////////////
+/// \brief HttpServer::uploadVideo
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::uploadVideo(const QHttpServerRequest &request)
+{
+    QUrlQuery query(request.url());
+    QString requestId = query.queryItemValue("requestId");
+
+#ifdef HTTPSERVER_TEST
+    LOG() << "HttpServer::uploadVideo(const QHttpServerRequest &request)";
+    LOG() << "requestId: " << requestId;
+#endif
+
+    QByteArray videoData = request.body();
+
+    QDir dir(QDir::currentPath()); // exe 所在的目录
+    dir.cdUp();
+    dir.cdUp();
+    QString videoPath = dir.absolutePath();
+    videoPath += idPathMap["60000"];
+    videoPath += "222.mp4";
+
+#ifdef HTTPSERVER_TEST
+    LOG() <<videoPath;
+#endif
+
+    writeByteArrayToFile(videoPath,videoData);
+
+    // 构建响应体
+    QJsonObject jsonBody;
+    jsonBody["requestId"] = requestId;
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+
+    QJsonObject resultJson;
+    resultJson["fileId"] = "60000";
+    jsonBody["result"] = resultJson;
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+
+////////////////////////////////////
 /// \brief HttpServer::setAvatar
 /// \param request
 /// \return
@@ -1182,6 +1426,67 @@ QHttpServerResponse HttpServer::setAvatar(const QHttpServerRequest &request)
     return httpRes;
 }
 ////////////////////////////////////
+
+
+////////////////////////////////////
+/// \brief HttpServer::setPassword
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::setPassword(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+    const QJsonObject& jsonObject = docReq.object();
+
+#ifdef HTTPSERVER_TEST
+    LOG()<<"setPassword 收到请求 收到的密码是:" << jsonObject["password"].toString();
+#endif
+
+    QJsonObject jsonBody;
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+////////////////////////////////////
+/// \brief HttpServer::setNickname
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::setNickname(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+    const QJsonObject& jsonObject = docReq.object();
+
+#ifdef HTTPSERVER_TEST
+    LOG()<<"setNickname 收到请求 收到的昵称是:" << jsonObject["nickname"].toString();
+#endif
+
+    QJsonObject jsonBody;
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
 
 
 ////////////////////////////////////
@@ -1296,7 +1601,6 @@ void HttpServer::buildResponseData()
         idPathMap.insert(QString::number(resourceId++),"/image/videoImage2.png");
         idPathMap.insert(QString::number(resourceId++),"/image/touXiang2.png");
         idPathMap.insert(QString::number(resourceId++),"/video/output.m3u8");
-
     }
 
     resourceId = 40000;
@@ -1315,9 +1619,10 @@ void HttpServer::buildResponseData()
         idPathMap.insert(QString::number(resourceId++),"/video/output.m3u8");
     }
 
+
+    idPathMap.insert(QString::number(60000),"/video/");
 }
 ////////////////////////////////////
-
 
 
 
@@ -1331,9 +1636,9 @@ bool HttpServer::init()
         return this->helloService(req);
     });
 
-    httpServer->route("/VidNova/auth/login",[=](const QHttpServerRequest& req){
-        return this->tempLoginService(req);
-    });  // 接收到 /VidNova/auth/login 来自这个请求 提供对应的 tempLoginService 服务
+    // httpServer->route("/VidNova/auth/login",[=](const QHttpServerRequest& req){
+    //     return this->tempLoginService(req);
+    // });  // 接收到 /VidNova/auth/login 来自这个请求 提供对应的 tempLoginService 服务
 
     httpServer->route("/VidNova/data/get_all_video",[=](const QHttpServerRequest& req){
         return this->allVideoList(req);
@@ -1426,14 +1731,38 @@ bool HttpServer::init()
         return this->getCodeFromEmail(req);
     });
 
-    httpServer->route("/VidNova/data/lr_by_authcode",[=](const QHttpServerRequest& req){
+    httpServer->route("/VidNova/auth/lr_by_authcode",[=](const QHttpServerRequest& req){
         return this->lrByAuthCode(req);
     });
 
-    httpServer->route("/VidNova/data/lr_by_pd",[=](const QHttpServerRequest& req){
+    httpServer->route("/VidNova/auth/lr_by_pd",[=](const QHttpServerRequest& req){
         return this->lrByPd(req);
     });
 
+    httpServer->route("/VidNova/auth/login_by_session",[=](const QHttpServerRequest& req){
+        return this->loginBySession(req);
+    });
+
+    httpServer->route("/VidNova/auth/logout",[=](const QHttpServerRequest& req){
+        return this->logout(req);
+    });
+
+    // 设置密码
+    httpServer->route("/VidNova/data/set_password",[=](const QHttpServerRequest& req){
+        return this->setPassword(req);
+    });
+
+    httpServer->route("/VidNova/data/set_nickname",[=](const QHttpServerRequest& req){
+        return this->setNickname(req);
+    });
+
+    httpServer->route("/VidNova/data/upload_video",[=](const QHttpServerRequest& req){
+        return this->uploadVideo(req);
+    });
+
+    httpServer->route("/VidNova/data/newVideo",[=](const QHttpServerRequest& req){
+        return this->newVideo(req);
+    });
 
     httpServer->route("/<arg:.*>", [](const QHttpServerRequest &request) {
         LOG() << "URL:" << request.url().toString();

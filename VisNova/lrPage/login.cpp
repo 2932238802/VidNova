@@ -7,7 +7,7 @@ Login::Login(QWidget *parent)
     , ui(new Ui::Login)
 {
     ui->setupUi(this);
-    setAttribute(Qt::WA_DeleteOnClose);
+    // setAttribute(Qt::WA_DeleteOnClose);
     // 不需要 手动设置
     // setAttribute(Qt::WA_ShowModal,true); // 没有意义了
     // setAttribute(Qt::FramelessWindowHint);
@@ -73,6 +73,10 @@ void Login::styleInit()
     setAttribute(Qt::WA_TranslucentBackground); // 让阴影能够被看到
     // QGraphicsDropShadowEffect 主要是为了 投影的效果
     QGraphicsDropShadowEffect* dropShadow = new QGraphicsDropShadowEffect(this); //  这个设置内存管理
+
+    // 设置输入样式
+    // ui->content->setStyleSheet();
+
     dropShadow->setColor(Qt::black);
     dropShadow->setBlurRadius(3);
     // dx dy 左右偏移量

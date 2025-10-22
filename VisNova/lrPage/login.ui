@@ -212,6 +212,7 @@
             <string notr="true">#content{
 	font-family: &quot;微软雅黑&quot;;
 	font-size: 22px;
+ 	color: black;
 }</string>
            </property>
            <widget class="QLabel" name="logLabel">
@@ -315,6 +316,7 @@ QLineEdit{
 	font-size: 18px;
 	border:none;	
 	background-color: #F5F4F5;
+	color: black;
 }</string>
             </property>
             <widget class="QFrame" name="accountBox">
@@ -353,6 +355,9 @@ QLineEdit{
                 <width>400</width>
                 <height>25</height>
                </rect>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: black;</string>
               </property>
               <property name="echoMode">
                <enum>QLineEdit::EchoMode::Normal</enum>
@@ -398,6 +403,9 @@ QLineEdit{
                 <width>400</width>
                 <height>25</height>
                </rect>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: black;</string>
               </property>
               <property name="echoMode">
                <enum>QLineEdit::EchoMode::Password</enum>
@@ -470,6 +478,7 @@ QLineEdit{
 QLineEdit{
 	border: none;
 	font-size: 18px;
+	color: black;
 	background-color: #F5F4F5;
 }
 
@@ -520,6 +529,9 @@ QPushButton{
                 <width>350</width>
                 <height>24</height>
                </rect>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: black;</string>
               </property>
               <property name="placeholderText">
                <string>输入手机号...</string>
@@ -573,6 +585,9 @@ QPushButton{
                 <width>350</width>
                 <height>24</height>
                </rect>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: black;</string>
               </property>
               <property name="placeholderText">
                <string>请输入验证码</string>

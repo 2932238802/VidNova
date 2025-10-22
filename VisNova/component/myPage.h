@@ -15,8 +15,11 @@
 #include "confirmDialog.h"
 
 namespace Ui {
-class MyPage;
+    class MyPage;
 }
+
+
+
 
 class MyPage : public QWidget
 {
@@ -24,52 +27,50 @@ class MyPage : public QWidget
 
 public:
     explicit MyPage(QWidget *parent = nullptr);
+
+#ifdef MYPAGE_DISCARD
     void getMyselfInfo();
+#endif
+
     void loadMyselfInfoAndVideo();
     void loadOtherUserInfoAndVideo(const QString& user_id);
-    void loadTempUserInfo();
 
     ~MyPage();
 
 private:
     void initConnect();
-
     void hideWidget(bool is_hide = true);
-
     void getUserVideoList(const QString& user_id,int page_index);
     void clearVideoList();
     void deleteVideo(const QString& video_id);
 
-    // 获取其它用户的个人信息
+#ifdef MYPAGE_DISCARD
     void getOtherUserInfo(const QString& user_id);
+#endif
 
 private slots:
     void onAvatarBtnClicked();
-    void onModifyBtnClicked();
-    void onUploadVideoBtnClicked();
-    void onAttentionBtnClicked();
-    void onNickNameBtnClicked();
-    void onExitBtnClicked();
-
-    void onGetMyselfInfoDone();
-    void getAvatarDone(const QString& file_id,const QByteArray& avatar_data);
-    void uploadAvatarFileId(const QString& user_id);
-    void uploadAvatarFileId2();
-
-    void onGetUserVideoListDone(const QString& user_id);
-    void onScrollAreaValueChanged(int value);
-
     void onAddAttentionSuc();
-    void ondelAttentionSuc();
+    void onAttentionBtnClicked();
+    void onDelAttentionSuc();
+    void onDeleteVideoDone(const QString& video_id);
+    void onExitBtnClicked();
+    void onGetOtherUserInfoDone(); // 获取 其它用户信息 成功之后 调用的槽函数
+    void onGetMyselfInfoDoneOrResetMypage();
+    void onGetUserVideoListDone(const QString& user_id);
+    void onGetAvatarDone(const QString& file_id,const QByteArray& avatar_data);
+    void onLogoutDone();
     void onLoginSuc();
-
-    void deleteVideoDone(const QString& video_id);
-
-    // 获取 其它用户信息 成功之后 调用的槽函数
-    void getOtherUserInfoDone();
+    void onModifyBtnClicked();
+    void onNickNameBtnClicked();
+    void onSetNicknameDone(const QString& nickname);
+    void onScrollAreaValueChanged(int value);
+    void onUploadVideoBtnClicked();
+    void onUploadAvatarFileId(const QString& user_id,PhotoUploadPurpose pup);
+    void onUploadAvatarFileId2();
 
 signals:
-    void switchUploadVideoPage(int page_id);
+    void switchUploadVideoPage(int page_id,const QString& filename);
 
 private:
     std::unique_ptr<Login> login;

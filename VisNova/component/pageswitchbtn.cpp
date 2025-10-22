@@ -49,6 +49,8 @@ void PageSwitchBtn::mousePressEvent(QMouseEvent *event)
 #ifdef PAGESWITCHBTN_TEST
     LOG()<<"PageSwitchBtn::mousePressEvent(QMouseEvent *event)..." << "pageId 是" << pageId;
 #endif
+
+    // 这里释放的 自己封装的信息
     emit switchPage(pageId);
 }
 

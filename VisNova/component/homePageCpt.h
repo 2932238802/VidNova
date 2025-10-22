@@ -5,14 +5,14 @@
 #include <QVBoxLayout>
 #include <QButtonGroup>
 #include <QScrollBar>
-#include "ui_homePageCpt.h"
-#include"dataCenter/videoInfo.h"
+
+#include"dataCenter/videoInfoForLoad.h"
 #include "dataCenter/dataCenter.h"
 #include "common/myLog.h"
 #include"style/style.h"
 #include "videoBox.h"
 #include "dataCenter/dataCenter.h"
-#include "dataCenter/videoInfo.h"
+#include "dataCenter/videoInfoForLoad.h"
 
 namespace Ui {
     class homePageCpt;
@@ -45,7 +45,7 @@ private:
     void initRefreshAndTopBtn();
     void initConnect();
     void initKindAndTags();
-    void openPlayerPage(const model::VideoInfo& video_info);
+    void openPlayerPage(const model::VideoInfoForLoad& video_info);
     void clearLayoutAndBtn(QLayout* layout);
 
 private slots: // 槽函数 被调用函数

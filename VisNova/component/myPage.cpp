@@ -37,8 +37,13 @@ MyPage::~MyPage()
 /// 切换到 我的界面的时候 调用的函数
 /// 获取个人信息
 ///
+#ifdef MYPAGE_DISCARD
 void MyPage::getMyselfInfo()
 {
+#ifdef MYPAGE_TEST
+    LOG() << "MyPage::getMyselfInfo()";
+#endif
+
     auto dataCenter = model::DataCenter::getInstance();
     auto myselfInfoPtr = dataCenter->getMyselfUserInfo();
 
@@ -60,6 +65,7 @@ void MyPage::getMyselfInfo()
         onGetMyselfInfoDone();
     }
 }
+#endif
 ////////////////////////
 
 
@@ -72,37 +78,27 @@ void MyPage::getMyselfInfo()
 void MyPage::initConnect()
 {
     auto dataCenter = model::DataCenter::getInstance();
+    connect(login.get(),&Login::_loginSuc,this,&MyPage::onLoginSuc);
+
     connect(ui->avatarBtn,&QPushButton::clicked,this,&MyPage::onAvatarBtnClicked);
     connect(ui->modifyBtn,&QPushButton::clicked,this,&MyPage::onModifyBtnClicked);
     connect(ui->uploadVideoBtn,&QPushButton::clicked,this,&MyPage::onUploadVideoBtnClicked);
     connect(ui->attentionBtn,&QPushButton::clicked,this,&MyPage::onAttentionBtnClicked);
     connect(ui->exitBtn,&QPushButton::clicked,this,&MyPage::onExitBtnClicked);
     connect(ui->nickNameBtn,&QPushButton::clicked,this,&MyPage::onNickNameBtnClicked);
-
-    connect(dataCenter,&model::DataCenter::_getMyselfInfoDone,this,&MyPage::onGetMyselfInfoDone);
-
-    // 获取个人头像
-    connect(dataCenter,&model::DataCenter::_downloadPhotoDone,this,&MyPage::getAvatarDone);
-
-    // 设置图片的信号槽
-    connect(dataCenter,&model::DataCenter::_uploadPhotoDone,this,&MyPage::uploadAvatarFileId);
-    connect(dataCenter,&model::DataCenter::_setAvatarDone,this,&MyPage  ::uploadAvatarFileId2);
-    //
-    connect(dataCenter,&model::DataCenter::_getVideoListForMyselfOrOtherDone,this,&MyPage::onGetUserVideoListDone);
-
-    // 移动滚动条 重新加载的 槽函数绑定
     connect(ui->scrollArea->verticalScrollBar(),&QScrollBar::valueChanged,this,&MyPage::onScrollAreaValueChanged);
 
-    // 删除视频的槽函数绑定
-    connect(dataCenter,&model::DataCenter::_deleteVideoDone,this,&MyPage::deleteVideoDone);
-
-    // 其它用户信息 获取 成功的槽函数绑定
-    connect(dataCenter,&model::DataCenter::_getOtherInfoDone,this,&MyPage::getOtherUserInfoDone);
+    connect(dataCenter,&model::DataCenter::_logoutDone,this,&MyPage::onLogoutDone);
+    connect(dataCenter,&model::DataCenter::_getMyselfInfoDone,this,&MyPage::onGetMyselfInfoDoneOrResetMypage);
+    connect(dataCenter,&model::DataCenter::_setNicknameDone,this,&MyPage::onSetNicknameDone);
+    connect(dataCenter,&model::DataCenter::_downloadPhotoDone,this,&MyPage::onGetAvatarDone);
+    connect(dataCenter,&model::DataCenter::_uploadPhotoDone,this,&MyPage::onUploadAvatarFileId);
+    connect(dataCenter,&model::DataCenter::_setAvatarDone,this,&MyPage::onUploadAvatarFileId2);
+    connect(dataCenter,&model::DataCenter::_getVideoListForMyselfOrOtherDone,this,&MyPage::onGetUserVideoListDone);
+    connect(dataCenter,&model::DataCenter::_deleteVideoDone,this,&MyPage::onDeleteVideoDone);
+    connect(dataCenter,&model::DataCenter::_getOtherInfoDone,this,&MyPage::onGetOtherUserInfoDone);
     connect(dataCenter,&model::DataCenter::_addAttention,this,&MyPage::onAddAttentionSuc);
-    connect(dataCenter,&model::DataCenter::_delAttention,this,&MyPage::ondelAttentionSuc);
-
-    connect(login.get(),&Login::_loginSuc,this,&MyPage::onLoginSuc);
-
+    connect(dataCenter,&model::DataCenter::_delAttention,this,&MyPage::onDelAttentionSuc);
 }
 ////////////////////////
 
@@ -198,6 +194,7 @@ void MyPage::getUserVideoList(const QString &user_id, int page_index)
     }
 
     auto userVideoList = dataCenter->getUserVideoList();
+
     if(userVideoList == nullptr)
     {
 
@@ -256,13 +253,21 @@ void MyPage::loadMyselfInfoAndVideo()
     LOG () <<"进入MyPage loadMyselfInfoAndVideo函数...";
 #endif
 
+
     user_id_cur = "";
+    auto dataCenter = model::DataCenter::getInstance();
 
-    // 获取 个人信息
-    getMyselfInfo();
+    if(dataCenter->getUserId() == "")
+    {
 
-    // 获取视频列表
-    getUserVideoList(model::DataCenter::getInstance()->getUserId(),1);
+#ifdef MYPAGE_TEST
+        LOG () <<"是临时用户 获取信息失败...";
+#endif
+        return;
+    }
+
+    dataCenter->getVideoListForMyselfOrOtherAsync(dataCenter->getUserId(),1);
+    dataCenter->getMyselfInfoAsync();
 
     ui->avatarBtn->setMaskState(true);
     ui->avatarBtn->setEnabled(true);
@@ -298,7 +303,7 @@ void MyPage::onAvatarBtnClicked()
         LOG()<<"[err] 读取文件失败!";
         return;
     }
-    dataCenter->uploadPhotoAsync(fileData);
+    dataCenter->uploadPhotoAsync(fileData,PhotoUploadPurpose::Avatar);
 }
 
 
@@ -347,7 +352,12 @@ void MyPage::onUploadVideoBtnClicked()
 
         return;
     }
-    emit switchUploadVideoPage(StackWidgetPage::UPLOADVEDIO_PAGE);
+
+
+    auto dc = model::DataCenter::getInstance();
+    dc->uploadVideoAsync(filePath);
+
+    emit switchUploadVideoPage(StackWidgetPage::UPLOADVEDIO_PAGE,filePath);
 }
 ////////////////////////
 
@@ -437,8 +447,21 @@ void MyPage::onAttentionBtnClicked()
 ///
 void MyPage::onNickNameBtnClicked()
 {
+
+#ifdef MYPAGE_TEST
+    LOG() << "MyPage::onNickNameBtnClicked()";
+#endif
+
     auto dataCenter = model::DataCenter::getInstance();
     auto userInfo = dataCenter->getMyselfUserInfo();
+
+    if(userInfo == nullptr)
+    {
+#ifdef MYPAGE_TEST
+        LOG() << "userInfo 是空指针";
+#endif
+        return;
+    }
 
     if(userInfo->isTempUser())
     {
@@ -448,6 +471,7 @@ void MyPage::onNickNameBtnClicked()
         }
 
         login->show();
+
 #ifdef MYPAGE_TEST
         LOG() << "onNickNameBtnClicked()";
         LOG() << "是临时用户 请先登录...";
@@ -455,9 +479,38 @@ void MyPage::onNickNameBtnClicked()
 
         Toast::showMsg("请先登录...");
     }
-
 }
 ////////////////////////
+
+
+
+////////////////////////
+/// \brief MyPage::onSetNicknameDone
+///
+void MyPage::onSetNicknameDone(const QString& nickname)
+{
+#ifdef MYPAGE_TEST
+    LOG() << "MyPage::onSetNicknameDone(const QString& nickname)" ;
+#endif
+
+    // 修改我的界面中的昵称
+    ui->nickNameBtn->setText(nickname);
+    ui->nickNameBtn->adjustSize();
+
+    QRect rect = ui->nickNameBtn->geometry();
+    ui->modifyBtn->move(rect.x() + rect.width() + 8,rect.y());
+
+    //
+    auto dataCenter = model::DataCenter::getInstance();
+    auto myselfInfo = dataCenter->getMyselfUserInfo();
+    if(myselfInfo)
+    {
+        myselfInfo->nickName = nickname;
+    }
+}
+////////////////////////
+
+
 
 
 ////////////////////////
@@ -466,6 +519,8 @@ void MyPage::onNickNameBtnClicked()
 void MyPage::onExitBtnClicked()
 {
 
+
+    // 弹出对话框
     ConfirmDialog dialog;
     dialog.setText("确认退出登录嘛...");
     dialog.exec();
@@ -477,8 +532,65 @@ void MyPage::onExitBtnClicked()
         LOG() << "onExitBtnClicked()";
         LOG() << "退出登录...";
 #endif
+        // 清理 本地sessionId
+        model::DataCenter::getInstance()->logoutAsync();
     }
 
+}
+
+
+////////////////////////
+/// \brief MyPage::onLogoutDone
+///
+void MyPage::onLogoutDone()
+{
+#ifdef MYPAGE_TEST
+    LOG() << "MyPage::onLogoutDone()";
+#endif
+
+    auto dataCenter = model::DataCenter::getInstance();
+    auto myselfInfo = dataCenter->getMyselfUserInfo();
+
+    dataCenter->clear();
+    dataCenter->saveDataFile();
+    dataCenter->loadTempUserInfo();
+
+    if(myselfInfo == nullptr)
+    {
+#ifdef MYPAGE_TEST
+        LOG() << "myselfInfo 是悬挂指针 返回!";
+#endif
+        return;
+    }
+
+    // 根据 当前用户的类型 决定显示哪些内容
+    if( myselfInfo->isTempUser())
+    {
+
+#ifdef MYPAGE_TEST
+        LOG() << "确定是临时 用户 开始设置临时用户的信息...";
+#endif
+
+        hideWidget(true);
+
+        ui->avatarBtn->setIcon(QIcon(":/image/defaultAvatar.png"));
+        // 临时 用户 不能修改 头像
+        ui->avatarBtn->setEnabled(false);
+
+        ui->nickNameBtn->setText("请先登录...");
+
+        ui->nickNameBtn->setEnabled(true);
+
+        ui->nickNameBtn->adjustSize(); // 自动进行调整
+
+        ui->nickNameBtn->setEnabled(true);
+
+        return;
+    }else{
+#ifdef MYPAGE_TEST
+        LOG() << "退出登录 逻辑有误...";
+#endif
+    }
 }
 ////////////////////////
 
@@ -487,9 +599,9 @@ void MyPage::onExitBtnClicked()
 
 
 ////////////////////////
-/// \brief MyPage::onGetMyselfInfoDone
+/// \brief MyPage::onGetMyselfInfoDoneOrResetMypage
 /// 服务器 表示 用户信息 保存成功的槽函数
-void MyPage::onGetMyselfInfoDone()
+void MyPage::onGetMyselfInfoDoneOrResetMypage()
 {
 
 #ifdef MYPAGE_TEST
@@ -510,8 +622,17 @@ void MyPage::onGetMyselfInfoDone()
     auto dataCenter = model::DataCenter::getInstance();
     auto myselfInfo = dataCenter->getMyselfUserInfo();
 
+    if(myselfInfo == nullptr)
+    {
+#ifdef MYPAGE_TEST
+        LOG() << "myselfInfo 是悬挂指针 返回!";
+#endif
+        return;
+    }
+
+
     // 根据 当前用户的类型 决定显示哪些内容
-    if(myselfInfo->isTempUser())
+    if( myselfInfo->isTempUser())
     {
 
 #ifdef MYPAGE_TEST
@@ -576,8 +697,6 @@ void MyPage::onGetMyselfInfoDone()
     ui->exitBtn->show();
 #endif
 
-
-
     ui->myVideoLabel->setText("我的视频");
     ui->avatarBtn->setEnabled(true);
 }
@@ -586,11 +705,11 @@ void MyPage::onGetMyselfInfoDone()
 
 
 ////////////////////////
-/// \brief MyPage::getAvatarDone
+/// \brief MyPage::onGetAvatarDone
 /// \param file_id
 /// \param avatar_data
 ///
-void MyPage::getAvatarDone(const QString &file_id,const QByteArray& avatar_data)
+void MyPage::onGetAvatarDone(const QString &file_id,const QByteArray& avatar_data)
 {
     auto myselfInfo = model::DataCenter::getInstance()->getMyselfUserInfo();
     if(myselfInfo!=nullptr && file_id == myselfInfo->avatarFileId)
@@ -611,10 +730,27 @@ void MyPage::getAvatarDone(const QString &file_id,const QByteArray& avatar_data)
 
 
 ////////////////////////
-/// \brief MyPage::uploadAvatarFileId
+/// \brief MyPage::onUploadAvatarFileId
 ///
-void MyPage::uploadAvatarFileId(const QString& fileId)
+void MyPage::onUploadAvatarFileId(const QString& fileId,PhotoUploadPurpose pup)
 {
+
+#ifdef MYPAGE_TEST
+    LOG () << "MyPage::onUploadAvatarFileId(const QString& fileId)";
+#endif
+
+    if(pup != PhotoUploadPurpose::Avatar)
+    {
+
+#ifdef MYPAGE_TEST
+        LOG () << "不是设置 头像返回...";
+#endif
+
+        return;
+    }
+
+
+
     // 使用 fileId 修改服务器
     auto dataCenter = model::DataCenter::getInstance();
     dataCenter->setAvatarAsync(fileId);
@@ -624,10 +760,23 @@ void MyPage::uploadAvatarFileId(const QString& fileId)
 
 
 ////////////////////////
-/// \brief MyPage::uploadAvatarFileId2
+/// \brief MyPage::onUploadAvatarFileId2
 ///
-void MyPage::uploadAvatarFileId2()
+void MyPage::onUploadAvatarFileId2()
 {
+
+//     if(pup != PhotoUploadPurpose::Avatar)
+//     {
+// #ifdef MYPAGE_TEST
+//         LOG () << "不是设置 头像返回...";
+// #endif
+//         return;
+//     }
+
+#ifdef MYPAGE_TEST
+    LOG() << "MyPage::onUploadAvatarFileId2()";
+#endif
+
     auto dataCenter = model::DataCenter::getInstance();
     auto myselfInfo = dataCenter->getMyselfUserInfo();
     dataCenter->downloadPhotoAsync(myselfInfo->avatarFileId);
@@ -710,7 +859,6 @@ void MyPage::onScrollAreaValueChanged(int value)
 #endif
 
         dataCenter->getVideoListForMyselfOrOtherAsync(user_id_cur,pageIndex);
-
         userVideoList->setPageIndex(pageIndex+1);
     }
 }
@@ -735,9 +883,9 @@ void MyPage::onAddAttentionSuc()
 
 
 ////////////////////////
-/// \brief MyPage::ondelAttentionSuc
+/// \brief MyPage::onDelAttentionSuc
 ///
-void MyPage::ondelAttentionSuc()
+void MyPage::onDelAttentionSuc()
 {
     auto dataCenter = model::DataCenter::getInstance();
     auto otherUserInfo = dataCenter->getOtherUserInfo();
@@ -763,9 +911,9 @@ void MyPage::onLoginSuc()
 
     // 因为登录成功了 所以要重新获取一下 用户的信息
     auto dataCenter = model::DataCenter::getInstance();
-    // dataCenter->getMyselfInfoAsync();
 
-    loadMyselfInfoAndVideo();
+    dataCenter->getMyselfInfoAsync();
+    dataCenter->getVideoListForMyselfOrOtherAsync(dataCenter->getUserId(),1);
 }
 ////////////////////////
 
@@ -773,10 +921,10 @@ void MyPage::onLoginSuc()
 
 
 ////////////////////////
-/// \brief MyPage::deleteVideoDone
+/// \brief MyPage::onDeleteVideoDone
 /// \param video_id
 /// 删除完 视频 接受到信号 触发的槽函数
-void MyPage::deleteVideoDone(const QString &video_id)
+void MyPage::onDeleteVideoDone(const QString &video_id)
 {
 #ifdef MYPAGE_TEST
     LOG() << "MyPage::deleteVideo(const QString &video_id)";
@@ -809,63 +957,30 @@ void MyPage::deleteVideo(const QString &video_id)
 ///
 void MyPage::loadOtherUserInfoAndVideo(const QString &user_id)
 {
+#ifdef MYPAGE_TEST
+    LOG() << "MyPage::loadOtherUserInfoAndVideo(const QString &user_id)";
+    LOG() << "user_id" << user_id;
+#endif
+
     user_id_cur = user_id;
     // 获取视频列表
-    getUserVideoList(user_id,1);
-
-    // 加载个人信息
-    getOtherUserInfo(user_id);
+    auto dataCenter = model::DataCenter::getInstance();
+    dataCenter->getVideoListForMyselfOrOtherAsync(user_id,1);
+    dataCenter->getOtherInfoAsync(user_id);
 
     ui->avatarBtn->setMaskState(false);
-
     ui->avatarBtn->setEnabled(false);
 }
 ////////////////////////
 
 
 
-////////////////////////
-/// \brief MyPage::loadTempUserInfo
-///
-///
-void MyPage::loadTempUserInfo()
-{
-    auto dataCenter = model::DataCenter::getInstance();
-
-    QJsonObject obj;
-
-    obj["userId"] = "0";
-    obj["photoNumber"] = "0";
-    obj["nickName"] = "临时用户";
-
-    QJsonArray arr;
-    arr.append(4);
-
-    obj["roleType"] = arr;
-
-    obj["likeCount"] = 0;
-    obj["playCount"] = 0;
-    obj["fansCount"] = 0;
-
-    obj["userState"] = 0;
-    obj["isFollowed"] = 0;
-
-    obj["userMemo"] = "作为临时用户...";
-    obj["userCreateTime"] = "";
-    obj["avatarFileId"] = "";
-
-    dataCenter->setMyselfInfo(obj);
-}
-////////////////////////
-
-
-
 
 
 ////////////////////////
-/// \brief MyPage::getOtherUserInfoDone
+/// \brief MyPage::onGetOtherUserInfoDone
 /// 获取其它个人信息 完毕
-void MyPage::getOtherUserInfoDone()
+void MyPage::onGetOtherUserInfoDone()
 {
 #ifdef MYPAGE_TEST
     LOG()<<"MyPage::getOtherUserInfoDone()...";
@@ -902,9 +1017,6 @@ void MyPage::getOtherUserInfoDone()
     else{
         dataCenter->downloadPhotoAsync(otherUserInfo->avatarFileId);
     }
-
-
-
 }
 ////////////////////////
 
@@ -915,6 +1027,7 @@ void MyPage::getOtherUserInfoDone()
 /// \brief MyPage::getOtherUserInfo
 /// \param user_id
 /// 获取其它个人信息
+#ifdef MYPAGE_DISCARD
 void MyPage::getOtherUserInfo(const QString &user_id)
 {
 #ifdef MYPAGE_TEST
@@ -924,6 +1037,7 @@ void MyPage::getOtherUserInfo(const QString &user_id)
     auto dataCenter = model::DataCenter::getInstance();
     dataCenter->getOtherInfoAsync(user_id);
 }
+#endif
 ////////////////////////
 
 

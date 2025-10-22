@@ -5,7 +5,7 @@
 /// \brief PlayerPage::PlayerPage
 /// \param parent
 ///
-PlayerPage::PlayerPage(const model::VideoInfo& video_info,QWidget *parent)
+PlayerPage::PlayerPage(const model::VideoInfoForLoad& video_info,QWidget *parent)
     : QWidget(parent),
     videoInfo(video_info)
     , ui(new Ui::PlayerPage)
@@ -61,6 +61,30 @@ void PlayerPage::initBullet()
     }
 }
 /////////////////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////////////////
+/// \brief PlayerPage::loginCheck
+///
+bool PlayerPage::loginCheck()
+{
+    auto dataCenter = model::DataCenter::getInstance();
+    auto myselfInfo = dataCenter->getMyselfUserInfo();
+
+    if(myselfInfo && myselfInfo->isTempUser())
+    {
+        Toast::showMsg("请先登录哦...");
+
+        Login* login = new Login(this);
+        login->exec();
+        return false;
+    }
+
+    return true;
+}
+/////////////////////////////////////////////////////////
+
 
 
 
@@ -311,6 +335,15 @@ void PlayerPage::onBulletScreenBtnClicked()
 /// 发送弹幕信息
 void PlayerPage::onAcceptSignalsByBulletEdit(const QString& str)
 {
+//     if(!loginCheck())
+//     {
+
+// #ifdef PLAYERPAGE_TEST
+//         LOG() << "用户还没有登录 先登录 才能点赞哦...";
+// #endif
+//         return;
+//     }
+
     if(!isShowBullet){
         Toast::showMsg("请打开弹幕开关...");
         return ;
@@ -320,7 +353,6 @@ void PlayerPage::onAcceptSignalsByBulletEdit(const QString& str)
     BulletItem* item = bm->buildBullet(BulletPosition::TOP);
     item->setText(str);
     item->startAnimation();
-
 
     // 给服务器发送 请求
     model::BulletInfo info;
@@ -365,8 +397,22 @@ void PlayerPage::isLikeBtnClicked(const QString &video_id, bool is_liked)
 ///
 void PlayerPage::onLikeBtnClicked()
 {
+#ifdef PLAYERPAGE_TEST
+    LOG() << "PlayerPage::onLikeBtnClicked()...";
+#endif
+
     // Login* login = new Login();
     // Toast::showMsg("先登录哦~",login);
+    // 如果 没有登录 返回 false
+    // 如果登录 了 返回 true
+    if(!loginCheck())
+    {
+#ifdef PLAYERPAGE_TEST
+        LOG() << "用户还没有登录 先登录 才能点赞哦...";
+#endif
+        return;
+    }
+
 
     isLikedAfter = !isLikedAfter;
     if(isLikedAfter)
@@ -394,6 +440,7 @@ void PlayerPage::onAvatarClicked()
     LOG ()<<"onAvatarClicked()";
     LOG()<<"关闭 PlayerPage 界面";
     LOG()<<"打开 个人信息界面 展示其它用户的个人信息";
+    LOG() << "userId: " << videoInfo.userId;
 #endif
 
     // 关闭窗口
@@ -529,6 +576,8 @@ void PlayerPage::initConnect()
     connect(ui->bulletScreenBtn,&QPushButton::clicked,this,&PlayerPage::onBulletScreenBtnClicked);
     connect(ui->likeImageBtn,&QPushButton::clicked,this,&PlayerPage::onLikeBtnClicked);
     connect(ui->userAvator,&QPushButton::clicked,this,&PlayerPage::onAvatarClicked);
+
+    // 发送弹幕 信息
     connect(ui->bulletScreenText,&BulletEdit::sendBullet,this,&PlayerPage::onAcceptSignalsByBulletEdit);
 
     connect(speedCtl,&PlaySpeed::speedSignals,this,&PlayerPage::onPlaySpeedChanged);

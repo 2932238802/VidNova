@@ -13,7 +13,7 @@
 #include "common/ReadLocalFile.h"
 #include"toast.h"
 #include"lrPage/login.h"
-#include "dataCenter/videoInfo.h"
+#include "dataCenter/videoInfoForLoad.h"
 #include "dataCenter/dataCenter.h"
 #include "intToString.h"
 #include "stringToTime.h"
@@ -28,7 +28,7 @@ class VideoBox : public QWidget
     Q_OBJECT
 
 public:
-    explicit VideoBox(const model::VideoInfo& videoInfo,QWidget *parent = nullptr);
+    explicit VideoBox(const model::VideoInfoForLoad& videoInfo,QWidget *parent = nullptr);
 
     ~VideoBox();
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -59,7 +59,7 @@ public slots:
 private:
     QPixmap videoCoverImage; // 封面图
     QPixmap userAvatar; // 用户头像
-    model::VideoInfo videoInfo; // 该视频的相关信息
+    model::VideoInfoForLoad videoInfo; // 该视频的相关信息
 
     Ui::VideoBox *ui;
 };

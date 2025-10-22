@@ -30,11 +30,25 @@ MpvPlayer::MpvPlayer(QWidget* videoRenderWnd,QObject *parent)
     // 设置 视频的渲染窗口
     // 将 窗口的id 给 mpv
     // 本质是一个 句柄 在windows
-    int64_t wid_handle = videoRenderWnd->winId();
-    mpv_set_option(mpv,"wid",MPV_FORMAT_INT64,&wid_handle);
+    if(videoRenderWnd)
+    {
+        int64_t wid_handle = videoRenderWnd->winId();
+        mpv_set_option(mpv,"wid",MPV_FORMAT_INT64,&wid_handle);
+    }else{
+        // 不需要 播放视频
+        // 禁止视频画面输出
+        // 音频的输出
+        mpv_set_option_string(mpv,"vo","null");
+        mpv_set_option_string(mpv,"ao","null");
+    }
+
 
     // 订阅time-pos属性
+    //  调用libmpv核心函数 订阅一个属性
+    // 在time_pos 这个属性发生任何变化的时候 通知我
     mpv_observe_property(mpv,0,"time-pos",MPV_FORMAT_DOUBLE);
+    mpv_observe_property(mpv,0,"duration",MPV_FORMAT_DOUBLE);
+
 
     // 设置 mpv 事件触发的回调函数
     mpv_set_wakeup_callback(mpv,wakeUp,this);
@@ -137,6 +151,69 @@ double MpvPlayer::getPlayTotalTime() const
 
 
 
+////////////////////////////////////////////////////////
+/// \brief MpvPlayer::getVideoFirstPage
+/// \param video_path
+/// \return
+///
+QString MpvPlayer::getVideoFirstPage(const QString &video_path)
+{
+    QString curPath = QDir::currentPath();
+    QDir dir(QDir::currentPath());
+    dir.cdUp();
+    dir.cdUp();
+    QString ffmpegPath = dir.path() + "/ffmpeg/ffmpeg.exe";
+
+    QString filePath = curPath += "/firstFrame.png" ;
+
+    QStringList cmds;
+    cmds << "-y"
+         << "-ss"
+         << "00:00:00"
+         << "-i"
+         << video_path
+         <<"-vframes"
+         << "1"
+         << filePath;
+
+    // 创建进程
+    QProcess ffmpegProgress;
+    ffmpegProgress.start(ffmpegPath,cmds);
+
+    // -1 就是无限等待
+    if(ffmpegProgress.waitForFinished(-1))
+    {
+        if(ffmpegProgress.exitCode() == 0)
+        {
+#ifdef MPVPLAYER_TEST
+            LOG()<<"成功生成截图";
+            return filePath;
+#endif
+        } else {
+
+#ifdef MPVPLAYER_TEST
+            LOG() << "ffmpeg 进程执行失败，退出码: " << ffmpegProgress.exitCode();
+            LOG() << "错误详情: " << ffmpegProgress.readAllStandardError();
+#endif
+            return "";
+        }
+#ifdef MPVPLAYER_TEST
+        LOG()<<"进程执行失败...";
+        return "";
+#endif
+    }else {
+
+#ifdef MPVPLAYER_TEST
+        LOG() << "等待 ffmpeg 进程时出错: " << ffmpegProgress.errorString();
+#endif
+
+        return "";
+    }
+}
+////////////////////////////////////////////////////////
+
+
+
 
 
 ////////////////////////////////////////////////////////
@@ -160,6 +237,12 @@ void MpvPlayer::handleMpvEvent(mpv_event *event)
                 // 发生信号 通知界面更新 当前时间
 
                 emit playPositionSignals(seconds);
+            }
+            else if(0 == strcmp(eventProperty->name,"duration"))
+            {
+                double durationSeconds = *((double*)eventProperty->data);
+                int durationInt = static_cast<int>(durationSeconds);
+                emit _duration(durationInt);
             }
             break;
         }

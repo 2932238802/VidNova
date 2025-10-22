@@ -48,9 +48,11 @@ void Toast::initUi(const QString &msg)
 {
     // 去除 窗口标题
     // Qt::Tool 这个是 浮动的
-    setWindowFlags(Qt::FramelessWindowHint|Qt::Tool);
+    setWindowFlags(Qt::FramelessWindowHint|Qt::Tool)
+        ;
     // 设置透明
     setAttribute(Qt::WA_TranslucentBackground);
+
     // 添加一个背景
     QWidget* toastBg = new QWidget(this);
     toastBg->setFixedSize(800,60);
@@ -74,8 +76,18 @@ void Toast::initUi(const QString &msg)
     QScreen* screen = QApplication::primaryScreen();
     int width = screen->size().width();
     int height = screen->size().height();
+
+    // 纵坐标和横坐标
     int x = (width - this->width())/2;
-    int y = height - this->height() - 100; // 减法 是往上走一点
+    int y = (height - this->height())*3/4; // 减法 是往上走一点
+
+#ifdef TOAST_TEST
+    LOG() << "x: " << x;
+    LOG() << "y: " << y;
+    LOG() << "width: " << width;
+    LOG() << "height: " << height;
+#endif
+
     this->move(x,y);
 }
 

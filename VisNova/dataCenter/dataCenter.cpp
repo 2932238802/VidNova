@@ -20,17 +20,17 @@ DataCenter::DataCenter(QObject *parent)
     : QObject{parent}, isAppend(false)
 {
     client = std::make_unique<net::NetClient>(this);
-
     userVideoList = std::make_unique<VideoList>();
-
     kat = std::make_unique<KindAndTags>();
-
     videoList = std::make_unique<VideoList>();
+    myselfInfo = std::make_unique<UserInfo>();
+    otherInfo = std::make_unique<UserInfo>();
 
-    myselfInfo = nullptr;
-
-    otherInfo = nullptr;
+    // 初始化的时候 尝试从本地 读取到 sessionId
+    // 所以 一开始 其实 就应该是有数据的
+    loadDataFile();
 }
+
 
 KindAndTags *DataCenter::getkatPtr()
 {
@@ -45,7 +45,7 @@ KindAndTags *DataCenter::getkatPtr()
 
 DataCenter::~DataCenter()
 {
-
+    saveDataFile();
 }
 
 ///////////////////////////////////////
@@ -62,7 +62,64 @@ void DataCenter::helloAsync()
 ///
 void DataCenter::tempLoginAsync()
 {
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::tempLoginAsync()";
+#endif
+
     client->loginTemplateAccess();
+}
+///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief DataCenter::logout
+///
+void DataCenter::logoutAsync()
+{
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::logout()";
+#endif
+
+    client->logout();
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::loadTempUserInfo
+/// 加载临时用户的信息
+void DataCenter::loadTempUserInfo()
+{
+
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::loadTempUserInfo()";
+#endif
+
+    QJsonObject obj;
+
+    obj["userId"] = "0";
+    obj["photoNumber"] = "0";
+    obj["nickName"] = "临时用户";
+
+    QJsonArray arr;
+    arr.append(4);
+
+    obj["roleType"] = arr;
+
+    obj["likeCount"] = 0;
+    obj["playCount"] = 0;
+    obj["fansCount"] = 0;
+
+    obj["userState"] = 0;
+    obj["isFollowed"] = 0;
+
+    obj["userMemo"] = "作为临时用户...";
+    obj["userCreateTime"] = "";
+    obj["avatarFileId"] = "";
+
+    setMyselfInfo(obj);
+
 }
 ///////////////////////////////////////
 
@@ -75,6 +132,13 @@ void DataCenter::tempLoginAsync()
 ///
 void DataCenter::lrByAuthCodeAsync(const QString &email, const QString &auth_code,const QString&codeId)
 {
+
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::lrByAuthCodeAsync(const QString &email, const QString &auth_code,const QString&codeId)";
+
+#endif
+
+
     client->lrByAuthCode(email,auth_code,codeId);
 }
 ///////////////////////////////////////
@@ -97,6 +161,17 @@ void DataCenter::lrByPdAsync(const QString &at, const QString &pd)
     client->lrByPd(at,pd);
 }
 ///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief DataCenter::loginBySessionAsync
+/// session登录
+void DataCenter::loginBySessionAsync()
+{
+    client->loginBySession();
+}
+///////////////////////////////////////
+
 
 
 
@@ -130,6 +205,31 @@ void DataCenter::setUserIdOnce(const QString &user_id)
 ///////////////////////////////////////
 
 
+
+///////////////////////////////////////
+/// \brief DataCenter::setNewpassWord
+/// \param password
+///
+void DataCenter::setNewPasswordAsync(const QString &password)
+{
+    client->setNewPassword(password);
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::setNicknameAsync
+/// \param nickname
+/// 修改昵称
+void DataCenter::setNicknameAsync(const QString &nickname)
+{
+    client->setNickname(nickname);
+}
+///////////////////////////////////////
+
+
+
 ///////////////////////////////////////
 /// \brief DataCenter::getCodeFromEmail
 /// \param email
@@ -152,6 +252,7 @@ void DataCenter::getAllVideoListAsync()
 ///////////////////////////////////////
 
 
+
 ///////////////////////////////////////
 /// \brief DataCenter::getVideoByKindAsync
 /// \param kindId
@@ -161,6 +262,7 @@ void DataCenter::getVideoByKindAsync(int kindId)
     client->getVideoByKind(kindId);
 }
 ///////////////////////////////////////
+
 
 
 ///////////////////////////////////////
@@ -174,17 +276,18 @@ void DataCenter::getVideoByTagAsync(int tagId)
 ///////////////////////////////////////
 
 
+
 ///////////////////////////////////////
 /// \brief DataCenter::getVideoListForMyselfOrOtherAsync
 /// \param userId
 /// \param pageIndex
 /// 获取视频列表
-void DataCenter::getVideoListForMyselfOrOtherAsync(const QString &userId, int pageIndex)
+void DataCenter::getVideoListForMyselfOrOtherAsync(const QString &user_id, int pageIndex)
 {
 
 #ifdef DATACENTER_TEST
     LOG() << "DataCenter::getVideoListForMyselfOrOtherAsync(const QString &userId, int pageIndex)..."
-          << "\nuserId: " << userId
+          << "\nuserId: " << user_id
           << "\npageIndex: " << pageIndex;
 #endif
 
@@ -311,9 +414,38 @@ void DataCenter::sendBulletAsync(const QString &videoId, const BulletInfo &bulle
 /// \brief DataCenter::uploadPhotoAsync
 /// \param photo
 ///
-void DataCenter::uploadPhotoAsync(const QByteArray &photo)
+void DataCenter::uploadPhotoAsync(const QByteArray &photo,PhotoUploadPurpose pup)
 {
-    client->uploadPhoto(photo);
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::uploadPhotoAsync(const QByteArray &photo,PhotoUploadPurpose pup)";
+    LOG() <<  "pup" << static_cast<int>(pup);
+#endif
+
+    client->uploadPhoto(photo,pup);
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::uploadVideoAsync
+/// \param video_path
+///
+void DataCenter::uploadVideoAsync(const QString &video_path)
+{
+    client->uploadVideo(video_path);
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::uploadVideoInfoForUploadAsync
+/// \param videoInfoForUpload
+///
+void DataCenter::uploadVideoInfoForUploadAsync(const model::VideoInfoForUpload &videoInfoForUpload)
+{
+    client->uploadVideoInfoForUpload(videoInfoForUpload);
 }
 ///////////////////////////////////////
 
@@ -388,7 +520,12 @@ void DataCenter::getOtherInfoAsync(const QString &user_id)
 ///
 void DataCenter::setSessionId(const QString &session_id)
 {
-    sessionId = session_id;
+
+    if(session_id != sessionId)
+    {
+        sessionId = session_id;
+        saveDataFile();
+    }
 }
 ///////////////////////////////////////
 
@@ -452,7 +589,7 @@ void DataCenter::setVideoList(const QJsonObject &videoListJsonObject)
     for(int i = 0 ;i < videoListArray.size() ; i++)
     {
         QJsonObject videoInfoObj = videoListArray[i].toObject();
-        VideoInfo videoInfo;
+        VideoInfoForLoad videoInfo;
         videoInfo.loadVideoInfoFromJson(videoInfoObj);
         videoList->addVideoInfo(videoInfo);
     }
@@ -568,7 +705,7 @@ void DataCenter::setUserVideoList(const QJsonObject &resultJson)
     {
         QJsonObject videoInfoSingle = videoListArray[i].toObject();
 
-        VideoInfo info;
+        VideoInfoForLoad info;
 
         info.loadVideoInfoFromJson(videoInfoSingle);
         userVideoList->addVideoInfo(info);
@@ -580,6 +717,196 @@ void DataCenter::setUserVideoList(const QJsonObject &resultJson)
     {
         userVideoList->setPageIndex(userVideoList->getPageIndex()-1);
     }
+
+}
+
+
+//////////////////////////////////////
+/// \brief DataCenter::initDataFile
+///
+///
+void DataCenter::initDataFile()
+{
+
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::initDataFile()";
+    LOG() << "初始化文件系统";
+#endif
+
+
+    // 构造出
+    QString basePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
+    QString filePath = basePath + "/Vidnova.json"; // 用json 进行处理
+
+
+#ifdef DATACENTER_TEST
+    LOG() << "filePath：" << filePath;
+#endif
+
+    // 检测路径是不是存在
+    QDir dir;
+
+    if(!dir.exists(basePath))
+    {
+        dir.mkpath(basePath);
+    }
+
+    // 在构建好的路径 创建一下文件
+
+    QFile file(filePath);
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+#ifdef DATACENTER_TEST
+        LOG() << "以写的方式 失败..." << file.errorString();
+#endif
+    }
+
+#ifdef DATACENTER_TEST
+    LOG() << "打开的文件成功...";
+#endif
+
+    QString str{"{\n\n}"};
+    file.write(str.toUtf8());
+    file.close();
+
+}
+//////////////////////////////////////
+
+
+//////////////////////////////////////
+/// \brief DataCenter::savaDataFile
+///
+void DataCenter::saveDataFile()
+{
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::savaDataFile()";
+#endif
+
+    // 构造出
+    QString basePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
+    QString filePath = basePath + "/Vidnova.json"; // 用json 进行处理
+
+    QFile file(filePath);
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        LOG () << "文件打开失败 .." << file.errorString();
+        return;
+    }
+
+    // 写入数据 以json的方式 进行组织
+    QJsonObject json;
+    json["sessionId"] = sessionId;
+    QJsonArray roleType;
+    for(auto& role : myselfInfo->roleType)
+    {
+        roleType.append(role);
+    }
+
+    json["roleType"] = roleType;
+
+    QJsonArray identitys;
+    for(auto& identity : myselfInfo->identityType)
+    {
+        identitys.append(identity);
+    }
+    json["identity"] = identitys;
+
+
+    QJsonDocument jsonDoc(json);
+    QString jsonStr = jsonDoc.toJson();
+    file.write(jsonStr.toUtf8());
+
+    file.close();
+}
+//////////////////////////////////////
+
+
+
+//////////////////////////////////////
+/// \brief DataCenter::loadDataFile
+///
+void DataCenter::loadDataFile()
+{
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::loadDataFile()";
+#endif
+
+    // 加载sessionid等 数据
+
+    // 判断文件是不是存在
+    // 构造出
+    QString basePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
+    QString filePath = basePath + "/Vidnova.json"; // 用json 进行处理
+
+    QFileInfo fileInfo(filePath);
+    if(!fileInfo.exists())
+    {
+
+#ifdef DATACENTER_TEST
+        LOG() << "文件不存在 ...";
+        LOG() << "所以进入 文件的初始化" << " initDataFile()";
+#endif
+
+        initDataFile();
+    }
+
+    QFile file(filePath);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+#ifdef DATACENTER_TEST
+        LOG() << "文件以只读的方式打开失败... " << file.errorString();
+#endif
+        return;
+    }
+
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(file.readAll());
+    if(jsonDoc.isNull())
+    {
+#ifdef DATACENTER_TEST
+
+        LOG() << "解析json的时候出错了 JSON格式有误" << file.errorString();
+#endif
+        return;
+    }
+
+    // 从 Json 中将 数据解析出来
+    QJsonObject jsonObj = jsonDoc.object();
+
+    // 解析出 sessionid
+    sessionId = jsonObj["sessionId"].toString();
+
+#ifdef DATACENTER_TEST
+    LOG() << "本地的session以jsonObj读取 " << jsonObj;
+#endif
+
+    // 解析
+    QJsonArray roleTypeArray = jsonObj["roleType"].toArray();
+
+    if(myselfInfo == nullptr)
+    {
+#ifdef DATACENTER_TEST
+        LOG() << "myselfInfo 是空指针";
+#endif
+        myselfInfo = std::make_unique<UserInfo>();
+    }
+
+    for(int i = 0; i < roleTypeArray.size() ; i++)
+    {
+        myselfInfo->roleType.append(roleTypeArray[i].toInt());
+
+    }
+
+    QJsonArray identityArray = jsonObj["identityType"].toArray();
+    for(int i = 0; i < identityArray.size() ; i++)
+    {
+        myselfInfo->identityType.append(identityArray[i].toInt());
+    }
+
+
+
 
 }
 //////////////////////////////////////
@@ -679,16 +1006,14 @@ const QString& DataCenter::getUserId()
 
 
 
-///////////////////////////////////////
-/// \brief DataCenter::buildTempUserInfo
-/// 构造临时 用户信息
-void DataCenter::buildTempUserInfo()
-{
 
-    if (myselfInfo != nullptr){
-        myselfInfo = std::make_unique<UserInfo>();
-    }
-    myselfInfo->buildTmpUserInfo();
+///////////////////////////////////////
+/// \brief DataCenter::clear
+///
+void DataCenter::clear()
+{
+    sessionId.clear();
+    userId.clear();
 }
 ///////////////////////////////////////
 

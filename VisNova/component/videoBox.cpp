@@ -3,7 +3,7 @@
 
 
 
-VideoBox::VideoBox(const model::VideoInfo&video_info, QWidget *parent)
+VideoBox::VideoBox(const model::VideoInfoForLoad&video_info, QWidget *parent)
     :QWidget(parent)
     , ui(new Ui::VideoBox),videoInfo(video_info)
 {

@@ -4,7 +4,7 @@
 #include <QFrame>
 #include <QWidget>
 #include "common/myLog.h"
-#include "dataCenter/videoInfo.h"
+#include "dataCenter/videoInfoForLoad.h"
 #include "dataCenter/dataCenter.h"
 #include "bulletItem.h"
 

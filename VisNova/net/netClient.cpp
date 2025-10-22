@@ -97,6 +97,91 @@ void net::NetClient::setAvatar(const QString &fileId)
 
 
 ///////////////////////////////////////
+/// \brief net::NetClient::setNewPassword
+/// \param password
+///
+void net::NetClient::setNewPassword(const QString &password)
+{
+#ifdef NETCLIENT_TEST
+    LOG()<<"net::NetClient::setNewPassword(const QString &password)" ;
+#endif
+
+    QJsonObject replyBody ; // 构造请求体
+    replyBody["sessionId"] = dataCenter->getSessionId(); //登录之后 获得的
+    replyBody["password"] = password; //登录之后 获得的
+
+    // 发送请求
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/set_password",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        // handHttpResponse 会处理这个 ok 到底 不ok
+        // 还有就是这个消息
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        // 发送 密码修改成功 的信号
+        emit dataCenter->_setPasswordDone();
+
+#ifdef NETCLIENT_TEST
+        LOG()<<"修改密码 发送成功..." ;
+#endif
+    });
+
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::setNickname
+/// \param nickname
+/// 设置昵称
+void net::NetClient::setNickname(const QString &nickname)
+{
+#ifdef NETCLIENT_TEST
+    LOG()<<"net::NetClient::setNickname(const QString &nickname)" ;
+#endif
+
+    QJsonObject replyBody ; // 构造请求体
+    replyBody["sessionId"] = dataCenter->getSessionId(); //登录之后 获得的
+    replyBody["nickname"] = nickname; //登录之后 获得的
+
+    // 发送请求
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/set_nickname",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        // handHttpResponse 会处理这个 ok 到底 不ok
+        // 还有就是这个消息
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        // 发送 密码修改成功 的信号
+        emit dataCenter->_setNicknameDone(nickname);
+
+#ifdef NETCLIENT_TEST
+        LOG()<<"设置昵称 发送成功..." ;
+#endif
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
 /// \brief net::NetClient::getCodeFromEmail
 /// \param email
 ///
@@ -283,7 +368,7 @@ void net::NetClient::lrByAuthCode(const QString &email, const QString &auth_code
     replyBody["codeId"] = codeId;
 
     // 发送请求
-    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/lr_by_authcode",replyBody);
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/auth/lr_by_authcode",replyBody);
 
     connect(httpReply,&QNetworkReply::finished,this,[=](){
         bool ok = false;
@@ -315,6 +400,8 @@ void net::NetClient::lrByPd(const QString &at, const QString &pd)
 {
     QJsonObject replyBody ; // 构造请求体
 
+    QString sessionId = dataCenter->getSessionId();
+
 #ifdef NETCLIENT_TEST
     LOG()<< "net::NetClient::lrByPd(const QString &at, const QString &pd)";
     LOG()<< "at: " << at; // 请求的账号
@@ -322,13 +409,11 @@ void net::NetClient::lrByPd(const QString &at, const QString &pd)
 #endif
 
     replyBody["requestId"] = makeRequestUuid();
-    replyBody["sessionId"] = dataCenter->getSessionId();
-
     replyBody["account"] = at;
     replyBody["password"] = pd;
 
     // 发送请求 账号密码登录
-    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/lr_by_pd",replyBody);
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/auth/lr_by_pd",replyBody);
 
     connect(httpReply,&QNetworkReply::finished,this,[=](){
         bool ok = false;
@@ -344,8 +429,11 @@ void net::NetClient::lrByPd(const QString &at, const QString &pd)
             return;
         }
 
+
         // TODO: 这里还没有改
         QString userId = replyObject["userId"].toString();
+
+        QString sessionId = replyObject["sessionId"].toString();
 
 #ifdef NETCLIENT_TEST
         LOG()<< "net::NetClient::lrByPd(const QString &at, const QString &pd)";
@@ -354,7 +442,84 @@ void net::NetClient::lrByPd(const QString &at, const QString &pd)
 #endif
 
         dataCenter->setUserIdOnce(userId);
+        dataCenter->setSessionId(sessionId);
         emit dataCenter->_lrByPdSuc(); // 发送登录 成功信号/
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::loginBySession
+///
+void net::NetClient::loginBySession()
+{
+    QJsonObject replyBody ; // 构造请求体
+
+#ifdef NETCLIENT_TEST
+    LOG()<< "net::NetClient::loginBySession()";
+#endif
+
+    replyBody["requestId"] = makeRequestUuid();
+    replyBody["sessionId"] = dataCenter->getSessionId();
+
+    // 发送请求 账号密码登录
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/auth/login_by_session",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+
+#ifdef NETCLIENT_TEST
+        LOG()<< "replyObject: " << replyObject;
+#endif
+
+        if(!ok)
+        {
+            LOG()<<"请求出错了...";
+            LOG()<<"登录失败了...";
+            emit dataCenter->_loginBySessionFailed(reason);
+            return;
+        }
+
+        QJsonObject rst = replyObject["result"].toObject();
+        QString userId = rst["userId"].toString();
+
+        dataCenter->setUserIdOnce(userId);
+
+        emit dataCenter->_loginBySessionSuc(rst["isTemp"].toBool()); // 发送登录 成功信号/
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::logout
+/// 退出登录
+void net::NetClient::logout()
+{
+    QJsonObject replyBody ; // 构造请求体
+
+#ifdef NETCLIENT_TEST
+    LOG()<< "net::NetClient::loginBySession()";
+#endif
+
+    replyBody["requestId"] = makeRequestUuid();
+    replyBody["sessionId"] = dataCenter->getSessionId();
+
+    // 发送请求 账号密码登录
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/auth/logout",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+
+        emit dataCenter->_logoutDone();
     });
 }
 ///////////////////////////////////////
@@ -400,7 +565,7 @@ void net::NetClient::getAllVidelList()
         dataCenter->setVideoList(resultObject);
 
 
-        LOG()<<"[inf] 用户id" << replyObject["requestId"].toString();
+        LOG()<<"requestId是：" << replyObject["requestId"].toString();
 
         emit dataCenter->_getAllVideoListDone(); // 发送登录 成功信号/
     });
@@ -727,10 +892,23 @@ void net::NetClient::getUserInfo(const QString &userId)
         QJsonObject userInfo = resultObject["userInfo"].toObject();
         if(userId == dataCenter->getUserId())
         {
+
+#ifdef NETCLIENT_TEST
+            LOG()<<"获取个人信息";
+            LOG()<< "userId" << userId;
+#endif
+
+
             dataCenter->setMyselfInfo(userInfo);
             emit dataCenter->_getMyselfInfoDone();
         }
         else{
+
+#ifdef NETCLIENT_TEST
+            LOG()<<"获取他人信息";
+            LOG()<< "userId" << userId;
+#endif
+
             dataCenter->setOtherInfo(userInfo);
             emit dataCenter->_getOtherInfoDone(); // 发送登录 成功信号/
         }
@@ -997,7 +1175,7 @@ void net::NetClient::sendBullet(const QString &videoId, const model::BulletInfo 
 /// \brief net::NetClient::uploadPhoto
 /// \param photo_data
 ///  上传图片
-void net::NetClient::uploadPhoto(const QByteArray &photo_data)
+void net::NetClient::uploadPhoto(const QByteArray &photo_data,PhotoUploadPurpose pup)
 {
     // 构造请求
     // 发送请求
@@ -1037,10 +1215,142 @@ void net::NetClient::uploadPhoto(const QByteArray &photo_data)
 
         const QString& fileId = resultObject["fileId"].toString();
 
-        emit dataCenter->_uploadPhotoDone(fileId);
+        emit dataCenter->_uploadPhotoDone(fileId,pup);
 
         reply->deleteLater();
 
+    });
+}
+///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::uploadVideo
+/// \param video_path
+///
+void net::NetClient::uploadVideo(const QString &video_path)
+{
+    // 构造请求
+    // 发送请求
+    // QString queryString;
+    // queryString+="requestId=";
+    // queryString+=makeRequestUuid();
+    // queryString+="&";
+    // queryString+="sessionId=";
+    // queryString+=dataCenter->getSessionId();
+
+
+    QUrl url(baseUrl + "/VidNova/data/upload_video?");
+    QUrlQuery query;
+    query.addQueryItem("requestId",makeRequestUuid());
+    query.addQueryItem("sessionId",dataCenter->getSessionId());
+    url.setQuery(query);
+
+    QNetworkRequest request(url);
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader,"multipart/form-data");
+
+    // 读取文件数据
+    QByteArray videoData = loadFileToByteArray(video_path);
+
+    QNetworkReply* reply = manage.post(request,videoData);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+
+        bool ok = false;
+        QString reason; // 错误原因
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+
+        if(!ok)
+        {
+#ifdef DATACENTER_TEST
+            LOG()<<"请求出错了..." << reason;
+#endif
+            reply->deleteLater();
+            return;
+        }
+        else{
+#ifdef DATACENTER_TEST
+            LOG() <<"uploadVideo 请求发送成功";
+#endif
+        }
+
+        const QString& requestId = replyObject["requestId"].toString();
+
+        QJsonObject resultObject = replyObject["result"].toObject();
+
+        const QString& fileId = resultObject["fileId"].toString();
+
+        // 发送信号
+        emit dataCenter->_uploadVideoDone(fileId);
+        reply->deleteLater();
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::uploadVideoInfoForUpload
+/// \param video_info_for_upload
+///
+void net::NetClient::uploadVideoInfoForUpload(const model::VideoInfoForUpload &video_info_for_upload)
+{
+    QJsonObject reqBody;
+    reqBody["requestId"] = makeRequestUuid();
+    reqBody["sessionId"] = dataCenter->getSessionId();
+
+    QJsonObject videoInfo;
+    videoInfo["videoFileId"] = video_info_for_upload.videoFileId;
+    videoInfo["photoFileId"] = video_info_for_upload.photoFileId;
+    videoInfo["videoTitle"] = video_info_for_upload.videoTitle;
+    videoInfo["videoDesc"] = video_info_for_upload.videoDesc;
+    videoInfo["duration"] = video_info_for_upload.duration;
+
+    // videoInfo["kind"] = video_info_for_upload.getKinds();
+    // videoInfo["tag"] = video_info_for_upload.getTag();
+
+    auto kindAndTag = dataCenter->getkatPtr();
+    if(!video_info_for_upload.kind.isEmpty())
+    {
+        //
+        videoInfo["videoType"] = kindAndTag->getKindId(video_info_for_upload.kind);
+
+        QJsonArray tagsArray;
+        for(auto &tag: video_info_for_upload.tags)
+        {
+            tagsArray.append(kindAndTag->getTagId(video_info_for_upload.kind,tag));
+        }
+
+        videoInfo["videoTags"] = tagsArray;
+    }
+
+    reqBody["videoInfo"] = videoInfo;
+
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/newVideo",reqBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+
+        bool ok = false;
+        QString reason; // 错误原因
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+
+        if(!ok)
+        {
+#ifdef DATACENTER_TEST
+            LOG()<<"请求出错了..." << reason;
+#endif
+            httpReply->deleteLater();
+            return;
+        }
+        else{
+#ifdef DATACENTER_TEST
+            LOG() <<"uploadVideo 请求发送成功";
+#endif
+        }
+
+        emit dataCenter->_uploadVideoInfoForUpload();
+        httpReply->deleteLater();
     });
 }
 ///////////////////////////////////////

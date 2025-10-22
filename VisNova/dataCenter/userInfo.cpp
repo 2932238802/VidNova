@@ -2,7 +2,10 @@
 
 void model::UserInfo::loadUserInfo(const QJsonObject &user_info)
 {
-
+#ifdef USERINFO_TEST
+    LOG()<< "model::UserInfo::loadUserInfo(const QJsonObject &user_info)";
+    LOG()<< "const QJsonObject &user_info:" << user_info;
+#endif
 
     // int userState; // 用户状态
     // int isFollowed; //是否被关注
@@ -95,12 +98,13 @@ bool model::UserInfo::isTempUser() const
 //////////////////
 
 
+
 //////////////////
 /// \brief model::UserInfo::buildTmpUserInfo
 ///
 void model::UserInfo::buildTmpUserInfo()
 {
-    userId = "";
+    userId = "-1";
     photoNumber = ""; // 手机号
     nickName = "Los"; // 用户昵称
     roleType.append(RoleType::TempUser) ;  // 角色类型
@@ -114,7 +118,6 @@ void model::UserInfo::buildTmpUserInfo()
     QString userMemo = "抓紧去登录哦~"; // 用户的备注信息
     QString userCreateTime = ""; //用户创建的时间
     QString avatarFileId = ""; // 用户头像id
-
 }
 //////////////////
 
