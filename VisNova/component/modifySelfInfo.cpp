@@ -10,7 +10,7 @@ ModifySelfInfo::ModifySelfInfo(QWidget *parent)
     setWindowFlag(Qt::FramelessWindowHint);
 
     auto dataCenter = model::DataCenter::getInstance();
-    auto myselfInfo = dataCenter->getMyselfUserInfo();
+    auto myselfInfo = dataCenter->getMyselfInfo();
 
     if(myselfInfo)
     {
@@ -83,7 +83,7 @@ void ModifySelfInfo::onSumbitBtnClicked()
     QString nickname = ui->nickNameEdit->text().trimmed();
 
     auto dataCenter = model::DataCenter::getInstance();
-    auto myselfInfo = dataCenter->getMyselfUserInfo();
+    auto myselfInfo = dataCenter->getMyselfInfo();
     if(myselfInfo)
     {
         if(nickname != myselfInfo->nickName)

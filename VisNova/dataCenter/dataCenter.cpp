@@ -13,7 +13,6 @@ void DataCenter::setMode(bool is_append)
     LOG() << "isAppend is "  << is_append;
 #endif
 
-
 }
 
 DataCenter::DataCenter(QObject *parent)
@@ -25,6 +24,7 @@ DataCenter::DataCenter(QObject *parent)
     videoList = std::make_unique<VideoList>();
     myselfInfo = std::make_unique<UserInfo>();
     otherInfo = std::make_unique<UserInfo>();
+    adminList = std::make_unique<AdminList>();
 
     // 初始化的时候 尝试从本地 读取到 sessionId
     // 所以 一开始 其实 就应该是有数据的
@@ -42,7 +42,6 @@ KindAndTags *DataCenter::getkatPtr()
 }
 
 
-
 DataCenter::~DataCenter()
 {
     saveDataFile();
@@ -56,6 +55,8 @@ void DataCenter::helloAsync()
     client->hello();
 }
 ///////////////////////////////////////
+
+
 
 ///////////////////////////////////////
 /// \brief DataCenter::tempLoginAsync
@@ -174,6 +175,29 @@ void DataCenter::loginBySessionAsync()
 
 
 
+///////////////////////////////////////
+/// \brief DataCenter::putOnVideoAsync
+/// \param videoId
+///
+void DataCenter::putOnVideoAsync(const QString &videoId)
+{
+    client->putOnVideo(videoId);
+}
+///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief DataCenter::putDownVideoAsync
+/// \param videoId
+///
+void DataCenter::putDownVideoAsync(const QString &videoId)
+{
+    client->putDownVideo(videoId);
+}
+///////////////////////////////////////
+
+
+
 
 
 ///////////////////////////////////////
@@ -278,11 +302,24 @@ void DataCenter::getVideoByTagAsync(int tagId)
 
 
 ///////////////////////////////////////
+/// \brief DataCenter::getVideoByStateAsync
+/// \param videoState
+/// \param page_count
+///
+void DataCenter::getVideoByStateAsync(model::VideoState videoState,int page_index)
+{
+    client->getVideoByState(videoState,page_index);
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
 /// \brief DataCenter::getVideoListForMyselfOrOtherAsync
 /// \param userId
 /// \param pageIndex
 /// 获取视频列表
-void DataCenter::getVideoListForMyselfOrOtherAsync(const QString &user_id, int pageIndex)
+void DataCenter::getVideoListForMyselfOrOtherAsync(const QString &user_id, int pageIndex,GetVideoPage page)
 {
 
 #ifdef DATACENTER_TEST
@@ -291,7 +328,7 @@ void DataCenter::getVideoListForMyselfOrOtherAsync(const QString &user_id, int p
           << "\npageIndex: " << pageIndex;
 #endif
 
-    client->getVideoListForMyselfOrOther(userId,pageIndex);
+    client->getVideoListForMyselfOrOther(userId,pageIndex,page);
 }
 ///////////////////////////////////////
 
@@ -392,6 +429,23 @@ void DataCenter::addAttentionAsync(const QString &userId)
 #endif
 
     client->addAttention(userId);
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::checkVideoAsync
+/// \param videoId
+/// \param result
+///
+void DataCenter::checkVideoAsync(const QString &videoId, bool result)
+{
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::checkVideoAsync(const QString &videoId, bool result)";
+#endif
+
+    client->checkVideo(videoId, result);
 }
 ///////////////////////////////////////
 
@@ -513,6 +567,31 @@ void DataCenter::getOtherInfoAsync(const QString &user_id)
 
 
 
+///////////////////////////////////////
+/// \brief DataCenter::getAdminInfoByPhoneAsync
+/// \param photoNumber
+///
+void DataCenter::getAdminInfoByEmailAsync(const QString &photoNumber)
+{
+    client->getAdminInfoByEmail(photoNumber);
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::getAdminInfoByStateAsync
+/// \param page
+/// \param state
+///
+void DataCenter::getAdminInfoByStateAsync(int page, AdminState state)
+{
+     client->getAdminInfoByState(page,state);
+}
+///////////////////////////////////////
+
+
+
 
 ///////////////////////////////////////
 /// \brief DataCenter::setSessionId
@@ -561,6 +640,43 @@ VideoList *DataCenter::getVideoList()
 
 
 
+//////////////////////////////////////
+/// \brief DataCenter::getManageSearchVideoList
+/// \return
+///
+VideoList *DataCenter::getManageSearchVideoList()
+{
+    if(manageSearchVideoList == nullptr)
+    {
+        // videoList = new VideoList();
+        manageSearchVideoList = std::make_unique<VideoList>();
+    }
+    return manageSearchVideoList.get();
+}
+//////////////////////////////////////
+
+
+
+//////////////////////////////////////
+/// \brief DataCenter::getAdminList
+/// \return
+/// 获取 管理员的指针
+AdminList *DataCenter::getAdminList()
+{
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::getAdminList()";
+#endif
+
+    if(!adminList)
+    {
+        adminList = std::make_unique<AdminList>();
+    }
+    return adminList.get();
+}
+//////////////////////////////////////
+
+
+
 
 
 //////////////////////////////////////
@@ -599,6 +715,51 @@ void DataCenter::setVideoList(const QJsonObject &videoListJsonObject)
     if(0 == videoListArray.size())
     {
         videoList->setPageIndex(videoList->getPageIndex()-1);
+    }
+}
+//////////////////////////////////////
+
+
+
+//////////////////////////////////////
+/// \brief DataCenter::setManageSearchVideoList
+/// \param videoListJsonObject
+/// 设置视频列表
+void DataCenter::setManageSearchVideoList(const QJsonObject &videoListJsonObject)
+{
+
+#ifdef DATACENTER_TEST
+    LOG()<<"DataCenter::setManageSearchVideoList(const QJsonObject &videoListJsonObject)";
+#endif
+
+    getManageSearchVideoList();
+
+    if(!isAppend)
+    {
+#ifdef DATACENTER_TEST
+        LOG()<<"不是追加模式 清理中...";
+#endif
+        manageSearchVideoList->clearVideoList();
+    }
+
+    manageSearchVideoList->setVideoTotalCount(videoListJsonObject["totalCount"].toInteger());
+
+    QJsonArray videoListArray = videoListJsonObject["videoList"].toArray();
+
+    // 解析出 视频信息 放到  DataCenter 的 videoList里面
+    for(int i = 0 ;i < videoListArray.size() ; i++)
+    {
+        QJsonObject videoInfoObj = videoListArray[i].toObject();
+        VideoInfoForLoad videoInfo;
+        videoInfo.loadVideoInfoFromJson(videoInfoObj);
+        manageSearchVideoList->addVideoInfo(videoInfo);
+    }
+
+    manageSearchVideoList->setVideoTotalCount(videoListJsonObject["totalCount"].toInteger());
+
+    if(0 == videoListArray.size())
+    {
+        manageSearchVideoList->setPageIndex(videoList->getPageIndex()-1);
     }
 }
 //////////////////////////////////////
@@ -719,6 +880,62 @@ void DataCenter::setUserVideoList(const QJsonObject &resultJson)
     }
 
 }
+
+
+//////////////////////////////////////
+/// \brief DataCenter::setAdminList
+/// \param adminListJson
+/// \param isAdminState
+/// 如果 isAdminState 是 false 那么就是 根据手机号 进行获取的
+/// 如果 是 true 那么就是 根据 状态进行获取的
+void DataCenter::setAdminList(const QJsonObject &resultJson, bool isAdminState)
+{
+#ifdef DATACENTER_TEST
+    LOG() << "设置管理员列表";
+#endif
+
+
+#ifdef DATACENTER_TEST
+    LOG() << "先调用 getAdminList() 避免 空指针";
+#endif
+    getAdminList();
+
+
+    if(isAdminState)
+    {
+        // 表示 通过 状态进行 获取
+#ifdef DATACENTER_TEST
+        LOG() << "通过管理员的状态 进行获取 管理员信息 可以一次性获取多个信息";
+#endif
+        int64_t totalAdminCount = resultJson["totalCount"].toInteger();
+
+        // 设置总数
+        adminList->totalCount = totalAdminCount;
+
+        // 解析出 各个 信息
+        QJsonArray adminInfoArray = resultJson["userList"].toArray();
+        for(int i = 0 ; i < adminInfoArray.size(); i ++)
+        {
+            QJsonObject adminInfoJson = adminInfoArray[i].toObject();
+            AdminInfo adminInfo;
+            adminInfo.LoadFromJson(adminInfoJson); // 从 json 转化
+            adminList->addAdmin(adminInfo);
+        }
+    }
+    else
+    {
+#ifdef DATACENTER_TEST
+        LOG() << "通过管理员的手机号码 进行获取 管理员的信息 只能获取 一个";
+#endif
+        AdminInfo adminInfo;
+        QJsonObject adminJson = resultJson["userInfo"].toObject();
+        adminInfo.LoadFromJson(adminJson);
+        adminList->addAdmin(adminInfo);
+        adminList->totalCount = 1; // 一个
+    }
+}
+//////////////////////////////////////
+
 
 
 //////////////////////////////////////
@@ -975,7 +1192,7 @@ DataCenter *DataCenter::getInstance()
 /// \brief DataCenter::getMyselfUserInfo
 /// \return
 ///
-UserInfo* DataCenter::getMyselfUserInfo() const
+UserInfo* DataCenter::getMyselfInfo() const
 {
     return myselfInfo.get();
 }
@@ -987,7 +1204,7 @@ UserInfo* DataCenter::getMyselfUserInfo() const
 /// \brief DataCenter::getOtherUserInfo
 /// \return
 ///
-UserInfo* DataCenter::getOtherUserInfo() const
+UserInfo* DataCenter::getOtherInfo() const
 {
     return otherInfo.get();
 }

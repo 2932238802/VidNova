@@ -17,7 +17,7 @@ void VideoInfoForLoad::loadVideoInfoFromJson(const QJsonObject &videoInfoJson)
     videoDuration= videoInfoJson["videoDuration"].toInteger();
     loadupTime= videoInfoJson["loadupTime"].toString();
 
-    videoStatus = videoInfoJson["videoStatus"].toInt(); // 视频状态
+    videoState = videoInfoJson["videoState"].toInt(); // 视频状态
 
     checkerId = videoInfoJson["checkerId"].toString(); // 审核管理员的Id
 

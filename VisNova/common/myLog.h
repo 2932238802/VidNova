@@ -12,6 +12,10 @@ inline static QString getFileName(const QString& path)
 #define TAG QString("[%1,%2]").arg(getFileName(__FILE__),QString::number(__LINE__))
 #define LOG() qDebug().noquote()<<TAG
 
+#define DEBUG
+
+#ifdef DEBUG
+
 #define NETCLIENT_TEST
 
 // #define MYPAGE_TEST
@@ -68,7 +72,11 @@ inline static QString getFileName(const QString& path)
 
 #define UPLOADVIDEOPAGE_TEST
 
+#define CHECKPAGEFORAP_TEST
 
+#define CHECKPAGEFORITEM_TEST
 
+#define ROLEPAGEFORAP_TEST
 
+#endif
 

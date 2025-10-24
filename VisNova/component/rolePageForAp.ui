@@ -142,12 +142,12 @@ padding-left : 18px;
                <string notr="true">color:black;</string>
               </property>
               <property name="text">
-               <string>用户手机号</string>
+               <string>用户邮箱</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="rolePhoneEdit">
+             <widget class="QLineEdit" name="roleEmailEdit">
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -179,7 +179,7 @@ padding-left : 18px;
                <string/>
               </property>
               <property name="placeholderText">
-               <string>大陆86:</string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -187,7 +187,7 @@ padding-left : 18px;
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="roleStatuBox" native="true">
+          <widget class="QWidget" name="roleStateBox" native="true">
            <property name="minimumSize">
             <size>
              <width>297</width>
@@ -220,7 +220,7 @@ padding-left : 18px;
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="roleStatuLabel">
+             <widget class="QLabel" name="roleStateLabel">
               <property name="minimumSize">
                <size>
                 <width>74</width>
@@ -242,7 +242,7 @@ padding-left : 18px;
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="roleStatusCombox">
+             <widget class="QComboBox" name="roleStateCombox">
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -256,7 +256,7 @@ padding-left : 18px;
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">#roleStatusCombox {
+               <string notr="true">#roleStateCombox {
 background-color: #FFFFFF;
 border: 1px solid #DCDEE0;
 border-radius: 4px;
@@ -264,25 +264,25 @@ color: #222222;
 padding-left: 16px;
 line-height: 40px;
 }
-#roleStatusCombox::drop-down {
+#roleStateCombox::drop-down {
 border: none;
 width: 33px;
 }
-#roleStatusCombox::down-arrow {
+#roleStateCombox::down-arrow {
 width: 15px;
 background-color: transparent;
 image: url(:/image/more.png);
 }
-#roleStatusCombox QAbstractItemView {
+#roleStateCombox QAbstractItemView {
 outline: 0px;
 }
-#roleStatusCombox QAbstractItemView::item {
+#roleStateCombox QAbstractItemView::item {
 color: #222222;
 padding-left:16px;
 background-color: #FFFFFF;
 height: 30px;
 }
-#roleStatusCombox QAbstractItemView::item:selected {
+#roleStateCombox QAbstractItemView::item:selected {
 background-color: #409CE1;
 color: #FFFFFF;
 }</string>
@@ -567,7 +567,7 @@ color:black ;</string>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="phoneLabel">
+          <widget class="QLabel" name="emailLabel">
            <property name="minimumSize">
             <size>
              <width>220</width>
@@ -581,7 +581,7 @@ color:black ;</string>
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">#phoneLabel{
+            <string notr="true">#emailLabel{
 	font-weight: bold;
 	color: #222222;
 	line-height: 20px;
@@ -629,7 +629,7 @@ color:black ;</string>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="statuLabel">
+          <widget class="QLabel" name="stateLabel">
            <property name="minimumSize">
             <size>
              <width>188</width>
@@ -643,7 +643,7 @@ color:black ;</string>
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">#statuLabel{
+            <string notr="true">#stateLabel{
 	font-weight: bold;
 	color: #222222;
 	line-height: 20px;
@@ -691,9 +691,9 @@ color:black ;</string>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="opeLabel">
+          <widget class="QLabel" name="opLabel">
            <property name="styleSheet">
-            <string notr="true">#opeLabel{
+            <string notr="true">#opLabel{
 	font-weight: bold;
 	color: #222222;
 	line-height: 20px;

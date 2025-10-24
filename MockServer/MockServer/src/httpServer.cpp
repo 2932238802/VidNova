@@ -448,7 +448,6 @@ QHttpServerResponse HttpServer::videoByKind(const QHttpServerRequest &request)
 
         videoJsonObject["nickname"] = "用户昵称";
 
-
         videoJsonObject["likeCount"] = 534;
         videoJsonObject["playCount"] = 5345;
         videoJsonObject["videoSize"] = 5435;
@@ -631,7 +630,88 @@ QHttpServerResponse HttpServer::videoByKey(const QHttpServerRequest &request)
     headers.append("Content-Type", "application/json; charset=utf-8");
     httpRes.setHeaders(headers);
     return httpRes;
+}
+////////////////////////////////////
 
+
+////////////////////////////////////
+/// \brief HttpServer::videoByState
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::videoByState(const QHttpServerRequest &request)
+{
+#ifdef TEST_VIDEOLIST
+    LOG() << "HttpServer::videoByState(const QHttpServerRequest &request)";
+#endif
+
+    // 获取 到 请求中数据
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+
+    const QJsonObject& jsonObject = docReq.object();
+    LOG()<<"getUserVideoInfo 收到请求"<<jsonObject["requestId"].toString();
+
+    QJsonObject jsonBody; // 总的
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+
+#ifdef TEST_VIDEOLIST
+    int videoId = 70000;
+    int userId = 70000;
+    int resourceId = 70000;
+    QJsonArray videoLists;
+    int page_count = jsonObject["pageCount"].toInt();
+    int video_state = jsonObject["videoState"].toInt();
+
+    for(int i = 0; i < page_count ;i ++)
+    {
+        QJsonObject videoJsonObject;
+        videoJsonObject["videoId"] = QString::number(videoId++);
+        videoJsonObject["userId"] = QString::number(userId++);
+
+        videoJsonObject["photoId"] = QString::number(resourceId++); // 视频封面
+        videoJsonObject["userAvatarId"] = QString::number(resourceId++);
+        videoJsonObject["videoFileId"] = QString::number(resourceId++);
+
+        videoJsonObject["nickname"] = "用户昵称";
+
+        videoJsonObject["likeCount"] = 534;
+        videoJsonObject["playCount"] = 5345;
+        videoJsonObject["videoSize"] = 5435;
+        videoJsonObject["nickname"] = "用户昵称";
+        videoJsonObject["videoDesc"] = "qwertyuiopasdfghjklzxcvbnm";
+        videoJsonObject["videoTitle"] = "qwertyuiop";
+        videoJsonObject["videoDuration"] = 10;
+
+        videoJsonObject["loadupTime"] = "9-16 12:28:58";
+
+        videoJsonObject["checkerId"] = "1235";
+        videoJsonObject["checkerName"] = "张三";
+        videoJsonObject["checkerAvatar"] = "50000";
+        videoJsonObject["videoState"] = video_state;
+
+        videoLists.append(videoJsonObject);
+    }
+#endif
+    QJsonObject resultObject;
+    resultObject["videoList"] = videoLists;
+    resultObject["totalCount"] = 121;
+    jsonBody["result"] = resultObject;
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+
+#ifdef HTTPSERVER_TEST
+    LOG() << "getUserVideoInfo 答复内容为" << docRes.toJson();
+#endif
+
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
 }
 ////////////////////////////////////
 
@@ -695,12 +775,135 @@ QHttpServerResponse HttpServer::getUserVideoInfo(const QHttpServerRequest &reque
         videoJsonObject["checkerId"] = "1234";
         videoJsonObject["checkerName"] = "张三";
         videoJsonObject["checkerAvatar"] = "50000";
-        videoJsonObject["videoStatus"] = 2;
+        videoJsonObject["videoState"] = rand()%4 + 1;
 
         videoLists.append(videoJsonObject);
     }
 #endif
     resultObject["videoList"] = videoLists;
+    jsonBody["result"] = resultObject;
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+
+#ifdef HTTPSERVER_TEST
+    LOG() << "getUserVideoInfo 答复内容为" << docRes.toJson();
+#endif
+
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+
+////////////////////////////////////
+/// \brief HttpServer::getAdminListByEmail
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::getAdminListByEmail(const QHttpServerRequest &request)
+{
+    // 获取 到 请求中数据
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+
+    //
+    const QJsonObject& jsonObject = docReq.object();
+    QJsonObject resultObject;
+    QString emailNumber = jsonObject["emailNumber"].toString();
+
+#ifdef TEST_VIDEOLIST
+    LOG() << "QHttpServerResponse HttpServer::getAdminListByPhone(const QHttpServerRequest &request)";
+    LOG() << " emailNumber: "
+          << emailNumber;
+#endif
+
+    QJsonObject jsonBody; // 总的
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+    // JsonBody 部分
+
+    QJsonObject adminInfo;
+    adminInfo["nickName"]= "LosAngelous!!@";
+    adminInfo["userId"] = QString::number(1234);
+    adminInfo["emailNumber"] = QString::number(12312341234);
+    adminInfo["userMemo"]  = "大厦的很多库";
+    adminInfo["roleType"] = 2;
+    adminInfo["state"] = rand()%2 + 1;
+
+    resultObject["userInfo"] = adminInfo;
+    jsonBody["result"] = resultObject;
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+
+#ifdef HTTPSERVER_TEST
+    LOG() << "getUserVideoInfo 答复内容为" << docRes.toJson();
+#endif
+
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+
+////////////////////////////////////
+/// \brief HttpServer::getAdminListByState
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::getAdminListByState(const QHttpServerRequest &request)
+{
+    // 获取 到 请求中数据
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+
+    //
+    const QJsonObject& jsonObject = docReq.object();
+    QJsonObject resultObject;
+    int userState = jsonObject["userState"].toInt();
+
+#ifdef TEST_VIDEOLIST
+    LOG() << "QHttpServerResponse HttpServer::getAdminListByPhone(const QHttpServerRequest &request)";
+    LOG() << " userState: "
+          << userState;
+#endif
+
+    QJsonObject jsonBody; // 总的
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+    // JsonBody 部分
+    int pageCount = jsonObject["pageCount"].toInt();
+    QJsonArray adminInfoList;
+    const QString p = "15011111111";
+    QStringList nickNames{"张三","赵四","王五","田七","李九"};
+    int id = 1234;
+    for(int i = 0; i < pageCount; i ++)
+    {
+        QJsonObject adminInfo;
+        adminInfo["nickName"]= nickNames[rand()%5];
+        adminInfo["userId"] = QString::number(id++);
+        adminInfo["emailNumber"] = p;
+        adminInfo["userMemo"]  = "个人简介信息";
+        adminInfo["roleType"] = 2;
+
+        adminInfo["state"]= userState == 0 ? rand() % 2 + 1: userState;
+
+        adminInfoList.append(adminInfo);
+    }
+
+    resultObject["userInfo"] = adminInfoList;
+    resultObject["totalCount"] = 87;
     jsonBody["result"] = resultObject;
 
     QJsonDocument docRes;
@@ -988,6 +1191,54 @@ QHttpServerResponse HttpServer::alterAttention(const QHttpServerRequest &request
 
 
 ////////////////////////////////////
+/// \brief HttpServer::checkVideo
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::checkVideo(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+    const QJsonObject& jsonObject = docReq.object();
+
+#ifdef HTTPSERVER_TEST
+    LOG() << "HttpServer::alterAttention(const QHttpServerRequest &request)";
+    LOG() << "更新用户 关注状态";
+#endif
+
+    // 总的 jsonBody 回复体
+    QJsonObject jsonBody;
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+    bool result = jsonObject["checkResult"].toBool();
+    QString videoId = jsonObject["videoId"].toString();
+
+    if(result)
+    {
+#ifdef HTTPSERVER_TEST
+        LOG() << "审核通过 " << "videoId: " << videoId ;
+#endif
+    }else{
+
+#ifdef HTTPSERVER_TEST
+        LOG() << "审核驳回";
+#endif
+    }
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+
+////////////////////////////////////
 /// \brief HttpServer::addLikeNumber
 /// \param request
 /// \return
@@ -1135,6 +1386,70 @@ QHttpServerResponse HttpServer::newVideo(const QHttpServerRequest &request)
 
 
 ////////////////////////////////////
+/// \brief HttpServer::putOnVideo
+/// \param request
+/// \return
+/// 视频上架
+QHttpServerResponse HttpServer::putOnVideo(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+    const QJsonObject& jsonObject = docReq.object();
+
+#ifdef HTTPSERVER_TEST
+    LOG()<<"HttpServer::putOnVideo(const QHttpServerRequest &request)";
+    LOG()<<"上架的视频id是 " << jsonObject["videoId"].toString();
+#endif
+
+    QJsonObject jsonBody;
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+
+////////////////////////////////////
+/// \brief HttpServer::putDownVideo
+/// \param request
+/// \return
+///
+QHttpServerResponse HttpServer::putDownVideo(const QHttpServerRequest &request)
+{
+    QJsonDocument docReq = QJsonDocument::fromJson(request.body());
+    const QJsonObject& jsonObject = docReq.object();
+
+#ifdef HTTPSERVER_TEST
+    LOG()<<"HttpServer::putDownVideo(const QHttpServerRequest &request)";
+    LOG()<<"下架的视频id是 " << jsonObject["videoId"].toString();
+#endif
+
+    QJsonObject jsonBody;
+    jsonBody["requestId"] = jsonObject["requestId"].toString();
+    jsonBody["errorCode"] = 0;
+    jsonBody["errorMsg"] = "";
+
+    QJsonDocument docRes;
+    docRes.setObject(jsonBody);
+    QHttpServerResponse httpRes(docRes.toJson(),QHttpServerResponse::StatusCode::Ok);
+    QHttpHeaders headers;
+    headers.append("Content-Type", "application/json; charset=utf-8");
+    httpRes.setHeaders(headers);
+    return httpRes;
+}
+////////////////////////////////////
+
+
+
+////////////////////////////////////
 /// \brief HttpServer::getUserInfo
 /// \param request
 /// \return
@@ -1184,16 +1499,17 @@ QHttpServerResponse HttpServer::getUserInfo(const QHttpServerRequest &request)
         userInfoJson["userCreateTime"] = "";
         userInfoJson["avatarFileId"] = "10001";
     }
-    else if(userId == "123"){
+    else if(userId == "123")
+    {
         userInfoJson["userId"] = "123";
         userInfoJson["photoNumber"] = "19857198709";
         userInfoJson["nickName"] = "lsj";
         QJsonArray userType;
-        userType.append(3);
+        userType.append(1); // 管理员
         userInfoJson["roleType"] = userType;
 
         QJsonArray identityType;
-        identityType.append(1);
+        identityType.append(2);
         userInfoJson["identityType"] = identityType;
 
         userInfoJson["likeCount"] = 3123;
@@ -1204,12 +1520,13 @@ QHttpServerResponse HttpServer::getUserInfo(const QHttpServerRequest &request)
 
         userInfoJson["followCount"] = 32;
 
-        userInfoJson["userState"] = 0;
+        userInfoJson["userState"] = 1;
         userInfoJson["isFollowed"] = 0;
         userInfoJson["userMemo"] = "其它用户";
         userInfoJson["userCreateTime"] = "";
         userInfoJson["avatarFileId"] = "20001";
-    }else{
+    }
+    else{
         userInfoJson["userId"] = "111";
         userInfoJson["photoNumber"] = "1111";
         userInfoJson["nickName"] = "11111";
@@ -1607,18 +1924,33 @@ void HttpServer::buildResponseData()
     for(int i = 0; i < 100; i ++)
     {
         idPathMap.insert(QString::number(resourceId++),"/image/videoImage3.png");
-        idPathMap.insert(QString::number(resourceId++),"/image/touXiang3.png");
+        idPathMap.insert(QString::number(resourceId++),"/image/touXiang2.png");
         idPathMap.insert(QString::number(resourceId++),"/video/output.m3u8");
     }
 
     resourceId = 50000;
-    for(int i = 0; i < 100; i ++)
+    for(int i = 0; i < 77; i ++)
     {
-        idPathMap.insert(QString::number(resourceId++),"/image/videoImage3.png");
+        idPathMap.insert(QString::number(resourceId++),"/image/videoImage2.png");
         idPathMap.insert(QString::number(resourceId++),"/image/touXiang3.png");
         idPathMap.insert(QString::number(resourceId++),"/video/output.m3u8");
     }
 
+    resourceId = 60000;
+    for(int i = 0; i < 98; i ++)
+    {
+        idPathMap.insert(QString::number(resourceId++),"/image/videoImage.png");
+        idPathMap.insert(QString::number(resourceId++),"/image/touXiang2.png");
+        idPathMap.insert(QString::number(resourceId++),"/video/output.m3u8");
+    }
+
+    resourceId = 70000;
+    for(int i = 0; i < 111; i ++)
+    {
+        idPathMap.insert(QString::number(resourceId++),"/image/videoImage3.png");
+        idPathMap.insert(QString::number(resourceId++),"/image/touXiang1.png");
+        idPathMap.insert(QString::number(resourceId++),"/video/output.m3u8");
+    }
 
     idPathMap.insert(QString::number(60000),"/video/");
 }
@@ -1763,6 +2095,32 @@ bool HttpServer::init()
     httpServer->route("/VidNova/data/newVideo",[=](const QHttpServerRequest& req){
         return this->newVideo(req);
     });
+
+    httpServer->route("/VidNova/data/get_video_by_state",[=](const QHttpServerRequest& req){
+        return this->videoByState(req);
+    });
+
+    httpServer->route("/VidNova/admin/checkVideo",[=](const QHttpServerRequest& req){
+        return this->checkVideo(req);
+    });
+
+
+    httpServer->route("/VidNova/admin/put_on_video",[=](const QHttpServerRequest& req){
+        return this->putOnVideo(req);
+    });
+
+    httpServer->route("/VidNova/admin/put_down_video",[=](const QHttpServerRequest& req){
+        return this->putDownVideo(req);
+    });
+
+    httpServer->route("/VidNova/admin/get_admin_by_email",[=](const QHttpServerRequest& req){
+        return this->getAdminListByEmail(req);
+    });
+
+    httpServer->route("/VidNova/admin/get_admin_by_state",[=](const QHttpServerRequest& req){
+        return this->getAdminListByState(req);
+    });
+
 
     httpServer->route("/<arg:.*>", [](const QHttpServerRequest &request) {
         LOG() << "URL:" << request.url().toString();

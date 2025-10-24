@@ -43,6 +43,9 @@ private:
     QHttpServerResponse addAttention(const QHttpServerRequest& request);
     QHttpServerResponse alterAttention(const QHttpServerRequest& request);
 
+    QHttpServerResponse checkVideo(const QHttpServerRequest& request);
+
+
     QHttpServerResponse downloadPhoto(const QHttpServerRequest& request);
     QHttpServerResponse downloadVideoM3u8File(const QHttpServerRequest& request);
     QHttpServerResponse downloadVideoSegmentation(const QString& request);
@@ -53,6 +56,8 @@ private:
     QHttpServerResponse getUserInfo(const QHttpServerRequest& request);
     QHttpServerResponse getCodeFromEmail(const QHttpServerRequest& request);
     QHttpServerResponse getUserVideoInfo(const QHttpServerRequest& request);
+    QHttpServerResponse getAdminListByEmail(const QHttpServerRequest& request);
+    QHttpServerResponse getAdminListByState(const QHttpServerRequest& request);
 
     QHttpServerResponse helloService(const QHttpServerRequest& request);
 
@@ -66,6 +71,10 @@ private:
     QHttpServerResponse newBullet(const QHttpServerRequest& request);
     QHttpServerResponse newVideo(const QHttpServerRequest& request);
 
+    QHttpServerResponse putOnVideo(const QHttpServerRequest& request);
+    QHttpServerResponse putDownVideo(const QHttpServerRequest& request);
+
+
     QHttpServerResponse setAvatar(const QHttpServerRequest& request);
     QHttpServerResponse setPassword(const QHttpServerRequest& request);
     QHttpServerResponse setNickname(const QHttpServerRequest& request);
@@ -76,6 +85,9 @@ private:
     QHttpServerResponse videoByKind(const QHttpServerRequest& request);
     QHttpServerResponse videoByTag(const QHttpServerRequest& request);
     QHttpServerResponse videoByKey(const QHttpServerRequest& request);
+    QHttpServerResponse videoByState(const QHttpServerRequest& request);
+
+
 
 private:
     static HttpServer* instance;

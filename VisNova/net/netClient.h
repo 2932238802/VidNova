@@ -14,6 +14,8 @@
 #include "dataCenter/bulletInfo.h"
 #include "dataCenter/videoList.h"
 #include "dataCenter/videoInfoForUpload.h"
+#include "dataCenter/getVideoPageType.h"
+#include "dataCenter/adminInfo.h"
 
 
 // 前向声明 告诉编译器 别担心 这里会有一个类
@@ -36,6 +38,9 @@ public:
     void addAttention(const QString& user_id);
     void addLikeNumber(const QString&videoId);
 
+    void checkVideo(const QString& videoId,bool result);
+
+
     void deleteVideo(const QString& video_id);
     void delAttention(const QString& user_id);
     void downloadPhoto(const QString&phote_id);
@@ -57,10 +62,17 @@ public:
     void getAllVidelList();
     void getVideoByKind(int kind_id);
     void getVideoByTag(int tagId);
+    void getVideoByState(model::VideoState video_state,int page_index);
     void getAllVideoListSearchText(const QString&str);
     void getBullets(const QString& video_id);
     void getUserInfo(const QString&user_id);
-    void getVideoListForMyselfOrOther(const QString& user_id,int page_index);
+    void getVideoListForMyselfOrOther(const QString& user_id,int page_index,model::GetVideoPage page);
+    void getAdminInfoByEmail(const QString& emailNumber);
+    void getAdminInfoByState(int page_ , model::AdminState state);
+
+    void putOnVideo(const QString& videoId);
+    void putDownVideo(const QString& videoId);
+
 
     void sendBullet(const QString&video_id,const model::BulletInfo&bullet_info);
 

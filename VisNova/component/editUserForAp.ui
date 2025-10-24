@@ -130,7 +130,7 @@ background-color: rgba(0,0,0,0.5);
           <string>*</string>
          </property>
         </widget>
-        <widget class="QLabel" name="phoneLabel">
+        <widget class="QLabel" name="emailLabel">
          <property name="geometry">
           <rect>
            <x>38</x>
@@ -140,17 +140,17 @@ background-color: rgba(0,0,0,0.5);
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">#phoneLabel{
+          <string notr="true">#emailLabel{
 	line-height: 19px;
 	color: black;
 	font-weight: 900；	
 }</string>
          </property>
          <property name="text">
-          <string>用户手机号</string>
+          <string>用户邮箱</string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="phoneEdit">
+        <widget class="QLineEdit" name="emailEdit">
          <property name="geometry">
           <rect>
            <x>112</x>
@@ -160,7 +160,7 @@ background-color: rgba(0,0,0,0.5);
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">#phoneEdit{
+          <string notr="true">#emailEdit{
 	background-color: #F7F7F7;
 	border: none;
 	border-radius: 8px;
@@ -171,7 +171,7 @@ background-color: rgba(0,0,0,0.5);
 }</string>
          </property>
          <property name="placeholderText">
-          <string>请输入用户的手机号</string>
+          <string>请输入用户的邮箱</string>
          </property>
         </widget>
         <widget class="QLabel" name="roleLabel">
@@ -282,7 +282,7 @@ background-color: rgba(0,0,0,0.5);
           <string>*</string>
          </property>
         </widget>
-        <widget class="QLabel" name="statusLabel">
+        <widget class="QLabel" name="stateLabel">
          <property name="geometry">
           <rect>
            <x>38</x>
@@ -292,7 +292,7 @@ background-color: rgba(0,0,0,0.5);
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">#statusLabel{
+          <string notr="true">#stateLabel{
 
 	line-height: 19px;
 	font-weight: 900;
@@ -351,7 +351,7 @@ background-color: rgba(0,0,0,0.5);
           <bool>true</bool>
          </property>
         </widget>
-        <widget class="QRadioButton" name="statusCloseBtn">
+        <widget class="QRadioButton" name="stateCloseBtn">
          <property name="geometry">
           <rect>
            <x>205</x>
@@ -361,31 +361,31 @@ background-color: rgba(0,0,0,0.5);
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">#statusCloseBtn{
+          <string notr="true">#stateCloseBtn{
 	 color: #222222;
 	
 
 }
 
 
-#statusCloseBtn::checked{
+#stateCloseBtn::checked{
 	color: #3ECEFF;
 	
 
 }
 
 
-#statusCloseBtn::indicator{
+#stateCloseBtn::indicator{
 	width: 16px;
 	height: 16px;
 }
 
-#statusCloseBtn::indicator::checked{
+#stateCloseBtn::indicator::checked{
 	image: url(&quot;:/image/selected.png&quot;);
 }
 
 
-#statusCloseBtn::indicator::unchecked{
+#stateCloseBtn::indicator::unchecked{
 	image: url(&quot;:/image/unselected.png&quot;);
 }</string>
          </property>
@@ -563,15 +563,15 @@ background-color: rgba(0,0,0,0.5);
         </widget>
         <zorder>titleLabel</zorder>
         <zorder>starPhone</zorder>
-        <zorder>phoneLabel</zorder>
-        <zorder>phoneEdit</zorder>
+        <zorder>emailLabel</zorder>
+        <zorder>emailEdit</zorder>
         <zorder>starRole</zorder>
         <zorder>roleLabel</zorder>
         <zorder>nickNameEdit</zorder>
         <zorder>starNick</zorder>
-        <zorder>statusLabel</zorder>
+        <zorder>stateLabel</zorder>
         <zorder>statusStartBtn</zorder>
-        <zorder>statusCloseBtn</zorder>
+        <zorder>stateCloseBtn</zorder>
         <zorder>bzLabel</zorder>
         <zorder>commentEdit</zorder>
         <zorder>wordCount</zorder>

@@ -21,7 +21,7 @@ EditUserForAp::EditUserForAp(QWidget *parent,const QString&titleName) :
     // 编辑框 里面的手机号 进行限制
     QRegularExpression regExp("^1\\d{10}$");
     QValidator* validator = new QRegularExpressionValidator(regExp,this);
-    ui->phoneEdit->setValidator(validator);
+    ui->emailEdit->setValidator(validator);
     ui->roleComboBox->addItem("平台管理员");
     ui->roleComboBox->setCurrentIndex(0);
 

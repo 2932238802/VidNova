@@ -199,7 +199,7 @@ background-color: #F7F8FA;
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="statusLabel">
+             <widget class="QLabel" name="stateLabel">
               <property name="minimumSize">
                <size>
                 <width>44</width>
@@ -233,7 +233,7 @@ background-color: #F7F8FA;
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="statusCombox">
+             <widget class="QComboBox" name="stateCombox">
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -248,7 +248,7 @@ background-color: #F7F8FA;
               </property>
               <property name="styleSheet">
                <string notr="true">
-#statusCombox {
+#stateCombox {
 background-color: #FFFFFF;
 border-radius: 4px;
 border: 1px solid #DCDEE0;
@@ -259,7 +259,7 @@ font-size: 14px;
 }
 
 
-#statusCombox::drop-down {
+#stateCombox::drop-down {
 border: none;
 width: 33px;
 background: transparent; 
@@ -267,14 +267,14 @@ subcontrol-position: center right;
 }
 
 
-#statusCombox::down-arrow {
+#stateCombox::down-arrow {
 width: 15px;
 height: 15px;
 image: url(&quot;:/image/select.png&quot;);
 background-color: transparent;
 }
 
-#statusCombox QAbstractItemView {
+#stateCombox QAbstractItemView {
 outline: 0px;
 border: 1px solid #DCDEE0;
 border-radius: 4px;

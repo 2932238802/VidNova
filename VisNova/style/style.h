@@ -303,8 +303,7 @@ QMenu::item:select{
 )";
 
 ////////////////////////////////////////////////////////////////////////////////////
-
-
+// 确认 面板的样式
 
 inline const QString BG_FOR_CONFIRMBACKGROUND = R"(
     background-color: rgba(0,0,0,0.3);
@@ -348,6 +347,144 @@ inline const QString CANCEL_BTN_FOR_CONFIRMBACKGROUND = R"(
 inline const QString UPLOADVIDEOPAGE_IMAGELABEL = R"(
     border-image: url(":/image/vedioFirstPage.png");
 )";
+
+////////////////////////////////////////////////////////////////////////////////////
+// NoStatus = 0,
+// WaitForChecking, // 待审核
+// PutAway, // 审核通过
+// Reject,
+// Discard, // 下架了 之前是上架的
+inline const QString WAITFORCHECKING_BTN_STYLE = R"(
+    #stateBtn
+    {
+        border: none;
+        background-color: #FFF0E6;
+        font-size: 12px;
+        color: #FE964A;
+        border-radius: 10px;
+    }
+)";
+
+// 已经审核
+inline const QString ALREADY_BTN_STYLE = R"(
+    #stateBtn
+    {
+        border: none;
+        background-color: #EBF3FF;
+        font-size: 12px;
+        color: #3686FF;
+        border-radius: 10px;
+    }
+)";
+
+inline const QString ALREADY_TAKEDOWN_BTN_STYLE = R"(
+    #stateBtn
+    {
+        border: none;
+        background-color: #FFF0F0;
+        font-size: 12px;
+        color: #FD6A6A;
+        border-radius: 10px;
+    }
+)";
+
+inline const QString ALREADY_REJECT_BTN_STYLE = R"(
+    #stateBtn
+    {
+        border: none;
+        background-color: #FFF0E6;
+        font-size: 12px;
+        color: #FE964A;
+        border-radius: 10px;
+    }
+)";
+
+
+
+inline const QString ACESS_BTN_STYLE = R"(
+    #opBtn1
+    {
+        border: none;
+        font-size: 14px;
+        color: #3686FF;
+    }
+)";
+
+inline const QString REJECT_BTN_STYLE = R"(
+    #opBtn2
+    {
+        border: none;
+        font-size: 14px;
+        color: #FD6A6A;
+    }
+)";
+
+inline const QString TAKEDOWN_BTN_STYLE = R"(
+    #opBtn1
+    {
+        border: none;
+        font-size: 14px;
+        color: #FD6A6A;
+    }
+)";
+
+inline const QString PUTON_BTN_STYLE = R"(
+    #opBtn1
+    {
+        border: none;
+        font-size: 14px;
+        color: #3ECEFF;
+    }
+)";
+
+inline const QString GANGGANG_BTN_STYLE = R"(
+    #opBtn1
+    {
+        border: none;
+        font-size: 14px;
+        color: #222222;
+    }
+)";
+
+////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+// 超级管理员 查询管理员信息的时候的启用和禁用按钮
+inline const QString STATEBTN_ABLE = R"(
+    #stateBtn{
+        border: none;
+        background-color: #EBF3FF;
+        border-radius: 10px;
+        border: 1px solid #EBEDF0;
+        font-size: 12px;
+        color: #3686FF;
+    }
+)";
+
+inline const QString STATEBTN_DISABLE = R"(
+    #stateBtn{
+        border: none;
+        background-color: #FFF0F0;
+        border-radius: 10px;
+        border: 1px solid #EBEDF0;
+        font-size: 12px;
+        color: #FD6A6A;
+    }
+)";
+
+inline const QString EDITBTN = R"(
+    #editBtn{
+        border: none;
+        background-color: #FFFFFF;
+        border-radius: 10px;
+        font-size: 12px;
+        color: #222222;
+    }
+)";
+
 
 
 
