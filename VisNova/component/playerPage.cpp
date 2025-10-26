@@ -5,7 +5,7 @@
 /// \brief PlayerPage::PlayerPage
 /// \param parent
 ///
-PlayerPage::PlayerPage(const model::VideoInfoForLoad& video_info,QWidget *parent)
+PlayerPage::PlayerPage(const model::VideoInfoForLoad& video_info,QWidget *parent,PlayerMode mode)
     : QWidget(parent),
     videoInfo(video_info)
     , ui(new Ui::PlayerPage)
@@ -15,6 +15,8 @@ PlayerPage::PlayerPage(const model::VideoInfoForLoad& video_info,QWidget *parent
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowFlag(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_ShowModal);
+
+    l_mode = mode;
 
     isPlaying = false;
     playTime = 0.0;
@@ -40,10 +42,15 @@ PlayerPage::PlayerPage(const model::VideoInfoForLoad& video_info,QWidget *parent
 
     QKeySequence keySequence(" ");
     shortCut->setKey(keySequence);
-    initBullet();
-    initConnect();
 
-    bm->buildBulletItems(videoInfo.videoId); // 初始化弹幕
+    setupForMode();
+    // if(needBullet)
+    // {
+    //     initBullet();
+    // }
+    // initConnect();
+
+    // bm->buildBulletItems(videoInfo.videoId); // 初始化弹幕
 }
 /////////////////////////////////////////////////////////
 
@@ -63,6 +70,35 @@ void PlayerPage::initBullet()
 /////////////////////////////////////////////////////////
 
 
+/////////////////////////////////////////////////////////
+/// \brief PlayerPage::setupForMode
+/// 根据模式 初始化 ui
+void PlayerPage::setupForMode()
+{
+    auto dataCenter = model::DataCenter::getInstance();
+    if (l_mode == PlayerMode::InView)
+    {
+        // 1. 隐藏不需要的UI元素
+        ui->likeImageBtn->hide();
+        ui->likeNum->hide();
+        ui->bulletScreenBtn->hide();
+        ui->bulletScreenText->hide();
+        ui->userAvator->setText("审核员"); // 或者直接隐藏
+        ui->userAvator->setEnabled(false); // 禁用点击
+        ui->userNickName->setText("（审核模式）");
+    }
+    else
+    {
+        initBullet();
+        bm->buildBulletItems(videoInfo.videoId);
+        dataCenter->isLikeBtnClickedAsync(videoInfo.videoId);
+    }
+
+    initConnect();
+}
+/////////////////////////////////////////////////////////
+
+
 
 /////////////////////////////////////////////////////////
 /// \brief PlayerPage::loginCheck
@@ -70,7 +106,7 @@ void PlayerPage::initBullet()
 bool PlayerPage::loginCheck()
 {
     auto dataCenter = model::DataCenter::getInstance();
-    auto myselfInfo = dataCenter->getMyselfUserInfo();
+    auto myselfInfo = dataCenter->getMyselfInfo();
 
     if(myselfInfo && myselfInfo->isTempUser())
     {
@@ -129,7 +165,7 @@ void PlayerPage::mouseMoveEvent(QMouseEvent *event)
             // 移动弹幕的相关位置
             QPoint point = geometry().topLeft();
             point.setY(point.ry()+ui->playerHead->height());
-            bm->move(point);
+            if(bm) bm->move(point);
         }
     }
     QWidget::mouseMoveEvent(event);
@@ -185,7 +221,7 @@ void PlayerPage::onPlayBtnClicked()
         startPlay();
         mpvPlayer->setTimePos(0.0);
         mpvPlayer->play();
-        bm->setBulletStateForHide(false);
+        if(bm) bm->setBulletStateForHide(false);
         ui->playBtn->setStyleSheet(PLAYER_BEGIN_STYLE);
     }
     else{
@@ -193,12 +229,12 @@ void PlayerPage::onPlayBtnClicked()
         if(isPlaying)
         {
             mpvPlayer->play();
-            bm->setBulletStateForHide(false); // 表示不隐藏
+            if(bm) bm->setBulletStateForHide(false); // 表示不隐藏
             ui->playBtn->setStyleSheet(PLAYER_BEGIN_STYLE);
         }
         else{
             mpvPlayer->pause();
-            bm->setBulletStateForHide(true); // 表示不隐藏
+            if(bm) bm->setBulletStateForHide(true); // 表示不隐藏
             ui->playBtn->setStyleSheet(PLAYER_STOP_STYLE);
         }
     }
@@ -250,7 +286,7 @@ void PlayerPage::onPlayPositionChanged(double play_time)
     int curTimeSecond = static_cast<int>(play_time);
     if(curTimeSecond > lastSecondsForBullet)
     {
-        bm->showBulletBySecond(curTimeSecond);
+        if(bm) bm->showBulletBySecond(curTimeSecond);
         lastSecondsForBullet = curTimeSecond;
     }
 
@@ -315,14 +351,14 @@ void PlayerPage::onBulletScreenBtnClicked()
     {
         // 打开弹幕
         ui->bulletScreenBtn->setStyleSheet(BULLETBTN_SHOW);
-        bm->setBulletStateForHide(false);
-        bm->show();
+        if(bm) bm->setBulletStateForHide(false);
+        if(bm) bm->show();
     }
     else{
         // 关闭弹幕
         ui->bulletScreenBtn->setStyleSheet(BULLETBTN_CLOSE);
-        bm->setBulletStateForHide(true);
-        bm->hide();
+        if(bm) bm->setBulletStateForHide(true);
+        if(bm) bm->hide();
     }
 }
 ////////////////////////////////////////////////
@@ -522,7 +558,7 @@ void PlayerPage::updataPlayNumber()
 
 
 ////////////////////////////////////////////////
-void PlayerPage::setUserAvatar(QPixmap &&avatar)
+void PlayerPage::setUserAvatar(QPixmap avatar)
 {
     userAvatar = avatar;
 }
@@ -545,7 +581,6 @@ void PlayerPage::startPlay()
     m3u8FileUrl += videoInfo.videoFileId;
 
 #ifdef PLAYERPAGE_TEST
-
     LOG()<<"PlayerPage::startPlay m3u8FileUrl:" << m3u8FileUrl;
 #endif
 
@@ -573,13 +608,6 @@ void PlayerPage::initConnect()
 
     connect(ui->playBtn,&QPushButton::clicked,this,&PlayerPage::onPlayBtnClicked);
 
-    connect(ui->bulletScreenBtn,&QPushButton::clicked,this,&PlayerPage::onBulletScreenBtnClicked);
-    connect(ui->likeImageBtn,&QPushButton::clicked,this,&PlayerPage::onLikeBtnClicked);
-    connect(ui->userAvator,&QPushButton::clicked,this,&PlayerPage::onAvatarClicked);
-
-    // 发送弹幕 信息
-    connect(ui->bulletScreenText,&BulletEdit::sendBullet,this,&PlayerPage::onAcceptSignalsByBulletEdit);
-
     connect(speedCtl,&PlaySpeed::speedSignals,this,&PlayerPage::onPlaySpeedChanged);
     connect(volume,&Volume::volumeSignals,this,&PlayerPage::onVolumeChanged);
     connect(mpvPlayer,&MpvPlayer::playPositionSignals,this,&PlayerPage::onPlayPositionChanged);
@@ -590,6 +618,19 @@ void PlayerPage::initConnect()
 
     connect(dataCenter,&model::DataCenter::_getBulletsDone,bm.get(),&BulletManage::getVideoBulletSuccess);
     connect(dataCenter,&model::DataCenter::_isLikeBtnClicked,this,&PlayerPage::isLikeBtnClicked);
+
+    if(l_mode == PlayerMode::Shelve)
+    {
+        connect(ui->bulletScreenBtn,&QPushButton::clicked,this,&PlayerPage::onBulletScreenBtnClicked);
+        connect(ui->likeImageBtn,&QPushButton::clicked,this,&PlayerPage::onLikeBtnClicked);
+        connect(ui->userAvator,&QPushButton::clicked,this,&PlayerPage::onAvatarClicked);
+
+        // 发送弹幕 信息
+        connect(ui->bulletScreenText,&BulletEdit::sendBullet,this,&PlayerPage::onAcceptSignalsByBulletEdit);
+    }
+
+
+
 }
 ////////////////////////////////////////////////
 

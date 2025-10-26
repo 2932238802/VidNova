@@ -100,32 +100,6 @@
        <set>Qt::AlignmentFlag::AlignCenter</set>
       </property>
      </widget>
-     <widget class="QLineEdit" name="phoneEdit">
-      <property name="geometry">
-       <rect>
-        <x>348</x>
-        <y>0</y>
-        <width>225</width>
-        <height>66</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">#phoneEdit{
-	color: black;
-	border: none;
-	border: 1px solid #EBEDF0;
-}</string>
-      </property>
-      <property name="text">
-       <string>12312345678</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignCenter</set>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
      <widget class="QLabel" name="nameLabel">
       <property name="geometry">
        <rect>
@@ -145,7 +119,7 @@
        <set>Qt::AlignmentFlag::AlignCenter</set>
       </property>
      </widget>
-     <widget class="QPushButton" name="statusBtn">
+     <widget class="QPushButton" name="stateBtn">
       <property name="geometry">
        <rect>
         <x>777</x>
@@ -226,6 +200,26 @@
       </property>
       <property name="text">
        <string>编辑</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="emailLabel">
+      <property name="geometry">
+       <rect>
+        <x>348</x>
+        <y>0</y>
+        <width>225</width>
+        <height>66</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">#emailLabel{
+	color: black;
+	border: none;
+	border: 1px solid #EBEDF0;
+}</string>
+      </property>
+      <property name="text">
+       <string>12312341234</string>
       </property>
      </widget>
     </widget>

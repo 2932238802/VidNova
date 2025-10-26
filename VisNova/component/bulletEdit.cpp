@@ -21,7 +21,7 @@ void BulletEdit::mousePressEvent(QMouseEvent *event)
 #endif
 
     auto dataCenter = model::DataCenter::getInstance();
-    auto myselfInfo = dataCenter->getMyselfUserInfo();
+    auto myselfInfo = dataCenter->getMyselfInfo();
 
     if(myselfInfo && myselfInfo->isTempUser())
     {

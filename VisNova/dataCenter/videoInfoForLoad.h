@@ -11,10 +11,10 @@
 
 namespace model{
 
-enum VideoStatus{
+enum VideoState{
     NoStatus = 0,
     WaitForChecking, // 待审核
-    Accessed, // 审核通过
+    PutOn, // 审核通过
     Reject,
     Discard, // 下架了 之前是上架的
 };
@@ -38,7 +38,7 @@ public:
     int64_t videoDuration;
     QString loadupTime; // 上传时间
 
-    int videoStatus; // 视频状态
+    int videoState; // 视频状态
     QString checkerId; // 审核管理员的Id
     QString checkerName; // 审核管理员的名字
     QString checkAvatarId; // 审核管理员的图像Id

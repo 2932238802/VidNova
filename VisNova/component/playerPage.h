@@ -24,20 +24,30 @@ namespace Ui {
 class PlayerPage;
 }
 
+
+enum PlayerMode{
+    InView = 1,
+    Shelve = 2
+};
+
+
 class PlayerPage : public QWidget
 {
     Q_OBJECT
 
 // 外部函数
 public:
-    explicit PlayerPage(const model::VideoInfoForLoad& info,QWidget *parent = nullptr);
-    void setUserAvatar(QPixmap &&avatar);
+    explicit PlayerPage(const model::VideoInfoForLoad& info,QWidget *parent = nullptr,PlayerMode needBullet = PlayerMode::Shelve );
+    void setUserAvatar(QPixmap avatar);
     void startPlay();
+    // 析构
+    ~PlayerPage();
 
 // 内置函数
 private:
     void initConnect();
     void initBullet();
+    void setupForMode();
 
     bool loginCheck();
 
@@ -56,9 +66,6 @@ private:
     // 屏幕拖拽逻辑的重写
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
-
-    // 析构
-    ~PlayerPage();
 
 protected:
     void closeEvent(QCloseEvent* event) override;
@@ -121,6 +128,8 @@ private:
     double totalTime;
     std::unique_ptr<BulletManage> bm;
 
+
+    PlayerMode l_mode;
     Volume* volume;
     model::VideoInfoForLoad videoInfo;
     MpvPlayer* mpvPlayer = nullptr;

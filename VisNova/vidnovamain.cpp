@@ -69,7 +69,7 @@ void VidNovaMain::initUi()
 
 
     auto dataCenter = model::DataCenter::getInstance();
-    auto myselfInfo = dataCenter->getMyselfUserInfo();
+    auto myselfInfo = dataCenter->getMyselfInfo();
 
     if(myselfInfo && !myselfInfo->isB())
     {
@@ -80,7 +80,7 @@ void VidNovaMain::initUi()
     }
 }
 
-///
+///////////////////////////
 /// \brief VidNovaMain::connectSignalAndSlot
 /// 1. 绑定信号槽
 void VidNovaMain::connectSignalAndSlot()
@@ -103,10 +103,10 @@ void VidNovaMain::connectSignalAndSlot()
     //
     connect(ui->uploadVedioPage,&UploadVideoPage::returnMyPage,this,&VidNovaMain::onlySwitchPage);
 }
+///////////////////////////
 
 
-
-///
+///////////////////////////
 /// \brief VidNovaMain::resetSwitchButton
 /// \param getPageId
 /// 重置按钮颜色
@@ -145,8 +145,12 @@ void VidNovaMain::resetSwitchButton(int page_id)
         ui->sysPageBtn->setImage(":/image/sysPagexuan.png");
     }
 }
+///////////////////////////
 
-///
+
+
+
+///////////////////////////
 /// \brief VidNovaMain::mousePressEvent
 /// \param event
 /// 用于窗口拖拽
@@ -166,8 +170,11 @@ void VidNovaMain::mousePressEvent(QMouseEvent *event)
     }
     isDragging = false;
 }
+///////////////////////////
 
-///
+
+
+///////////////////////////
 /// \brief VidNovaMain::mouseMoveEvent
 /// \param event
 /// 用于窗口拖拽
@@ -180,8 +187,11 @@ void VidNovaMain::mouseMoveEvent(QMouseEvent *event)
         return;
     }
 }
+///////////////////////////
 
-///
+
+
+///////////////////////////
 /// \brief VidNovaMain::mouseReleaseEvent
 /// \param event
 /// 鼠标松开
@@ -204,10 +214,8 @@ void VidNovaMain::onSwitchPageAndUpdataUiForMyPage(int page_id)
 #ifdef VIDNOVAMAIN_TEST
     LOG() << "进入VidNovaMain::onSwitchPageAndUpdataUi(int page_id)函数... " << "page_id是:" << page_id;
 #endif
-
     ui->stackedWidget->setCurrentIndex(page_id);
     resetSwitchButton(page_id);
-
     ui->myPage->loadMyselfInfoAndVideo();
 }
 ////////////////////////
@@ -259,10 +267,10 @@ void VidNovaMain::showSystemBtn(bool is_show)
 {
     if(is_show)
     {
-        ui->sysBtn->show();
+        ui->sysPageBtn->show();
     }
     else{
-        ui->sysBtn->hide();
+        ui->sysPageBtn->hide();
     }
 }
 ////////////////////////

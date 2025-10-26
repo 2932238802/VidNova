@@ -26,6 +26,9 @@ private slots:
     void onNextPageClick();
     void onInnerBtnClick();
 
+signals:
+
+    void _pageChanged(int page);
 
 private:
     size_t pageCount = 7; // 默认给 7 页码

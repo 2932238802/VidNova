@@ -29,7 +29,10 @@ void net::NetClient::hello()
         QJsonObject userData = replyObj["data"].toObject();
         LOG() << userData["msg"].toString();
 
+
         emit dataCenter->_helloDone();
+
+        reply->deleteLater();
     });
 
 
@@ -62,6 +65,7 @@ void net::NetClient::setAvatar(const QString &fileId)
 
     QJsonObject replyBody ; // 构造请求体
     replyBody["sessionId"] = dataCenter->getSessionId(); //登录之后 获得的
+    replyBody["requestId"] = makeRequestUuid();
     replyBody["fileId"] = fileId;
 
     // 发送请求
@@ -88,9 +92,58 @@ void net::NetClient::setAvatar(const QString &fileId)
         QJsonObject resultObject = replyObject["result"].toObject();
         QJsonObject userInfo = resultObject["userInfo"].toObject();
 
-
+        httpReply->deleteLater();
     });
 
+}
+///////////////////////////////////////
+
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::setAdmin
+/// \param userInfo
+///
+void net::NetClient::setAdmin(const model::AdminInfo &userInfo)
+{
+#ifdef NETCLIENT_TEST
+    LOG()<<"net::NetClient::setAdmin(const model::AdminInfo &userInfo)";
+#endif
+
+    QJsonObject replyBody ; // 构造请求体
+    replyBody["sessionId"] = dataCenter->getSessionId(); //登录之后 获得的
+    replyBody["requestId"] = makeRequestUuid();
+
+    QJsonObject adminUserInfo;
+
+    adminUserInfo["userId"] = userInfo.userId;
+    adminUserInfo["userMemo"] = userInfo.userMemo;
+    adminUserInfo["nickName"] = userInfo.nickName;
+    adminUserInfo["userState"] = userInfo.state;
+
+    replyBody["userInfo"] = adminUserInfo;
+
+    // 发送请求
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/admin/set_admin",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        // handHttpResponse 会处理这个 ok 到底 不ok
+        // 还有就是这个消息
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        emit dataCenter->_setAdminDone();
+
+        httpReply->deleteLater();
+    });
 }
 ///////////////////////////////////////
 
@@ -132,6 +185,7 @@ void net::NetClient::setNewPassword(const QString &password)
 #ifdef NETCLIENT_TEST
         LOG()<<"修改密码 发送成功..." ;
 #endif
+        httpReply->deleteLater();
     });
 
 }
@@ -141,20 +195,20 @@ void net::NetClient::setNewPassword(const QString &password)
 
 ///////////////////////////////////////
 /// \brief net::NetClient::setNickname
-/// \param nickname
+/// \param
 /// 设置昵称
-void net::NetClient::setNickname(const QString &nickname)
+void net::NetClient::setNickname(const QString &nickName)
 {
 #ifdef NETCLIENT_TEST
-    LOG()<<"net::NetClient::setNickname(const QString &nickname)" ;
+    LOG()<<"net::NetClient::setNickname(const QString &nickName)" ;
 #endif
 
     QJsonObject replyBody ; // 构造请求体
     replyBody["sessionId"] = dataCenter->getSessionId(); //登录之后 获得的
-    replyBody["nickname"] = nickname; //登录之后 获得的
+    replyBody["nickName"] = nickName; //登录之后 获得的
 
     // 发送请求
-    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/set_nickname",replyBody);
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/set_nickName",replyBody);
 
     connect(httpReply,&QNetworkReply::finished,this,[=](){
         bool ok = false;
@@ -170,11 +224,53 @@ void net::NetClient::setNickname(const QString &nickname)
         }
 
         // 发送 密码修改成功 的信号
-        emit dataCenter->_setNicknameDone(nickname);
+        emit dataCenter->_setNicknameDone(nickName);
 
 #ifdef NETCLIENT_TEST
         LOG()<<"设置昵称 发送成功..." ;
 #endif
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::setAdminState
+/// \param userId
+/// \param state
+///
+void net::NetClient::setAdminState(const QString &userId, model::AdminState state)
+{
+#ifdef NETCLIENT_TEST
+    LOG()<<"net::NetClient::setAdminState(const QString &userId, model::AdminState state)" ;
+#endif
+
+    QJsonObject replyBody ;                                 // 构造请求体
+    replyBody["sessionId"] = dataCenter->getSessionId();    // 登录之后 获得的
+    replyBody["requestId"] = makeRequestUuid();              // 登录之后 获得的
+    replyBody["userId"] = userId;
+    replyBody["userState"] = state;
+
+    // 发送请求
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/admin/set_admin_state",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        // handHttpResponse 会处理这个 ok 到底 不ok
+        // 还有就是这个消息
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        // 发送 状态设置 的信号
+        emit dataCenter->_setAdminStateDone();
+
     });
 }
 ///////////////////////////////////////
@@ -683,6 +779,57 @@ void net::NetClient::getVideoByTag(int tagId)
 
 
 ///////////////////////////////////////
+/// \brief net::NetClient::getVideoByState
+/// \param video_state
+/// \param page_count
+/// 获取视频列表
+void net::NetClient::getVideoByState(model::VideoState video_state, int page_index)
+{
+#ifdef NETCLIENT_TEST
+    LOG()<<"net::NetClient::getVideoByState(model::VideoState video_state, int page_count)" ;
+#endif
+
+    QJsonObject replyBody ; // 构造请求体
+    auto videoList = dataCenter->getVideoList();
+    int curPageIndex = videoList->getPageIndex();
+    replyBody["requestId"] = makeRequestUuid();
+    replyBody["sessionId"] = dataCenter->getSessionId(); //登录之后 获得的
+    replyBody["pageCount"] = model::VideoList::PAGE_COUNT; // 每次请求 20 个
+    replyBody["pageIndex"] = page_index;
+    replyBody["videoState"] = video_state;
+
+    // 为了下次能够获取下一页
+    videoList->setPageIndex(curPageIndex+1);
+
+
+    // 发送请求
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/data/get_video_by_state",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        // handHttpResponse 会处理这个 ok 到底 不ok
+        // 还有就是这个消息
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        // resultObject 是服务器的 新
+        QJsonObject resultObject = replyObject["result"].toObject();
+        dataCenter->setManageSearchVideoList(resultObject);
+        emit dataCenter->_getVideoByStateDone(); // 发送登录 成功信号/
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
 /// \brief net::NetClient::getAllVideoListSearchText
 /// \param str
 /// 通过搜索 找到标签
@@ -808,6 +955,46 @@ void net::NetClient::downloadPhoto(const QString &photeId)
 
 
 ///////////////////////////////////////
+/// \brief net::NetClient::delAdmin
+/// \param user_id
+///
+void net::NetClient::delAdmin(const QString &user_id)
+{
+#ifdef NETCLIENT_TEST
+    LOG()<<"net::NetClient::delAdmin(const QString &user_id)";
+    LOG() << "user_id: " << user_id;
+#endif
+
+    QJsonObject replyBody ; // 构造请求体
+    replyBody["requestId"] = makeRequestUuid();
+    replyBody["sessionId"] = dataCenter->getSessionId();
+    replyBody["userId"] = user_id;
+
+    // 发送请求
+    QNetworkReply* httpReply = sendHttpRequest("/VidNova/admin/del_admin",replyBody);
+
+    connect(httpReply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+
+        // handHttpResponse 会处理这个 ok 到底 不ok
+        // 还有就是这个消息
+        QJsonObject replyObject = handHttpResponse(httpReply,ok,reason);
+
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        emit dataCenter->_delAdminDone(); // 发送登录 成功信号/
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
 /// \brief net::NetClient::getBullets
 /// \param videoId
 ///
@@ -925,8 +1112,13 @@ void net::NetClient::getUserInfo(const QString &userId)
 /// \param userId
 /// \param pageIndex
 ///
-void net::NetClient::getVideoListForMyselfOrOther(const QString &userId, int page_index)
+void net::NetClient::getVideoListForMyselfOrOther(const QString &userId, int page_index,model::GetVideoPage page)
 {
+
+#ifdef NETCLIENT_TEST
+    LOG() << "net::NetClient::getVideoListForMyselfOrOther(const QString &userId, int page_index,model::GetVideoPage page)";
+#endif
+
     QJsonObject request;
     request["sessionId"] = dataCenter->getSessionId();
     request["requestId"] = makeRequestUuid();
@@ -949,9 +1141,172 @@ void net::NetClient::getVideoListForMyselfOrOther(const QString &userId, int pag
 
         QJsonObject resultJson = replyObject["result"].toObject();
 
-        dataCenter->setUserVideoList(resultJson);
+        if(page == model::GetVideoPage::ManagePage)
+        {
 
-        emit dataCenter->_getVideoListForMyselfOrOtherDone(userId);
+#ifdef NETCLIENT_TEST
+            LOG() << "获取个人他人的信息";
+#endif
+            dataCenter->setManageSearchVideoList(resultJson);
+        }
+        else if(page  == model::GetVideoPage::MyPage)
+        {
+
+#ifdef NETCLIENT_TEST
+            LOG() << "获取指定用户的信息";
+#endif
+            dataCenter->setUserVideoList(resultJson);
+        }
+
+        emit dataCenter->_getVideoListForMyselfOrOtherDone(userId,page);
+
+    });
+}
+///////////////////////////////////////
+
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::getAdminInfoByEmail
+/// \param emailNumber
+/// 通过 手机号 查询的方式 获取管理员信息
+void net::NetClient::getAdminInfoByEmail(const QString &emailNumber)
+{
+#ifdef NETCLIENT_TEST
+    LOG() << "net::NetClient::getAdminInfoByPhone(const QString &emailNumber)";
+#endif
+
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["requestId"] = makeRequestUuid();
+    request["emailNumber"] = emailNumber;
+
+    QNetworkReply* reply = sendHttpRequest("/VidNova/admin/get_admin_by_email",request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        QJsonObject resultJson = replyObject["result"].toObject();
+        dataCenter->setAdminList(resultJson,false);
+
+        emit dataCenter->_getAdminInfoByEmailDone();
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::getAdminInfoByState
+/// \param page_index
+/// \param state
+///
+void net::NetClient::getAdminInfoByState(int page_index, model::AdminState state)
+{
+#ifdef NETCLIENT_TEST
+    LOG() << "net::NetClient::getAdminInfoByPhone(const QString &emailNumber)";
+#endif
+
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["requestId"] = makeRequestUuid();
+    request["pageCount"] = model::AdminList::PAGE_COUNT;
+    request["pageIndex"] = page_index;
+    request["userState"] = state;
+
+    QNetworkReply* reply = sendHttpRequest("/VidNova/admin/get_admin_by_state",request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        QJsonObject resultJson = replyObject["result"].toObject();
+        dataCenter->setAdminList(resultJson,true); // 状态进行获取
+
+        emit dataCenter->_getAdminInfoByStateDone();
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::putOnVideo
+/// \param videoId
+/// 上架视频
+void net::NetClient::putOnVideo(const QString &videoId)
+{
+#ifdef NETCLIENT_TEST
+    LOG() << "net::NetClient::putOnVideo(const QString &videoId)";
+#endif
+
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["requestId"] = makeRequestUuid();
+    request["videoId"] = videoId;
+
+    QNetworkReply* reply = sendHttpRequest("/VidNova/admin/put_on_video",request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        emit dataCenter->_putOnVideoDone();
+
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::putDownVideo
+/// \param videoId
+///
+void net::NetClient::putDownVideo(const QString &videoId)
+{
+#ifdef NETCLIENT_TEST
+    LOG() << "net::NetClient::putDownVideo(const QString &videoId)";
+#endif
+
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["requestId"] = makeRequestUuid();
+    request["videoId"] = videoId;
+
+    QNetworkReply* reply = sendHttpRequest("/VidNova/admin/put_down_video",request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+
+        emit dataCenter->_putDownVideoDone();
 
     });
 }
@@ -1123,6 +1478,96 @@ void net::NetClient::addLikeNumber(const QString &videoId)
         else{
             LOG() <<"addLikeNumber请求发送成功";
         }
+
+        reply->deleteLater();
+    });
+}
+///////////////////////////////////////
+
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::addAdmin
+/// \param adminInfo
+/// 新增用户的信息
+void net::NetClient::addAdmin(const model::AdminInfo &adminInfo)
+{
+
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["requestId"] = makeRequestUuid();
+
+    QJsonObject userInfo;
+
+    userInfo["nickName"] = adminInfo.nickName;
+    userInfo["roleType"] = adminInfo.roleType;
+    userInfo["userState"] = adminInfo.state;
+    userInfo["userMemo"] = adminInfo.userMemo;
+    userInfo["emailNumber"] = adminInfo.emailNumber;
+
+    request["userInfo"] = userInfo;
+
+    QNetworkReply* reply = sendHttpRequest("/VidNova/admin/new_admin",request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+        else{
+            LOG() <<"addLikeNumber请求发送成功";
+        }
+
+        QJsonObject resultJson = replyObject["result"].toObject();
+        QString userId = resultJson["userId"].toString();
+
+#ifdef NETCLIENT_TEST
+        LOG() << "userId 是" << userId;
+#endif
+
+
+        emit dataCenter->_addAdminDone();
+        reply->deleteLater();
+    });
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief net::NetClient::checkVideo
+/// \param videoId
+/// \param result
+///
+void net::NetClient::checkVideo(const QString &videoId, bool result)
+{
+    QJsonObject request;
+    request["sessionId"] = dataCenter->getSessionId();
+    request["videoId"] = videoId;
+    request["requestId"] = makeRequestUuid();
+    request["checkResult"] = result; // 审查结果
+
+    QNetworkReply* reply = sendHttpRequest("/VidNova/admin/checkVideo",request);
+
+    connect(reply,&QNetworkReply::finished,this,[=](){
+        bool ok = false;
+        QString reason;
+        QJsonObject replyObject = handHttpResponse(reply,ok,reason);
+        if(!ok)
+        {
+            LOG()<<"请求出错了..." << reason;
+            return;
+        }
+        else{
+            LOG() <<"checkVideo 请求发送成功";
+        }
+
+        emit dataCenter->_checkVideoDone();
 
         reply->deleteLater();
     });

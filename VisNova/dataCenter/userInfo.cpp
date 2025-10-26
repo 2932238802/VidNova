@@ -100,6 +100,18 @@ bool model::UserInfo::isTempUser() const
 
 
 //////////////////
+/// \brief model::UserInfo::isAble
+/// \return
+///
+bool model::UserInfo::isAble()
+{
+    return AdminState::Eable == userState;
+}
+//////////////////
+
+
+
+//////////////////
 /// \brief model::UserInfo::buildTmpUserInfo
 ///
 void model::UserInfo::buildTmpUserInfo()

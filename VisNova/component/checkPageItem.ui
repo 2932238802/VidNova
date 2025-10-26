@@ -93,7 +93,7 @@
        <string notr="true"/>
       </property>
       <property name="text">
-       <string>1234</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -173,29 +173,7 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QPushButton" name="videoBtn">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>0</y>
-        <width>200</width>
-        <height>118</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">#videoBtn{
-	background-color: transparent;
-	border: none;
-	border-image: url(':/image/vedioFirstPage.png');
-	border-bottom: 1px solid #EBEDF0;
-
-} </string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="statusBtn">
+     <widget class="QPushButton" name="stateBtn">
       <property name="geometry">
        <rect>
         <x>840</x>
@@ -215,7 +193,7 @@
 }</string>
       </property>
       <property name="text">
-       <string>已审核</string>
+       <string/>
       </property>
      </widget>
      <widget class="QLabel" name="checkerLabel">
@@ -237,13 +215,13 @@
        <set>Qt::AlignmentFlag::AlignCenter</set>
       </property>
      </widget>
-     <widget class="QPushButton" name="accessBtn">
+     <widget class="QPushButton" name="opBtn1">
       <property name="geometry">
        <rect>
-        <x>1156</x>
+        <x>1133</x>
         <y>50</y>
-        <width>29</width>
-        <height>18</height>
+        <width>40</width>
+        <height>28</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -258,13 +236,13 @@
        <string>通过</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="rejectBtn">
+     <widget class="QPushButton" name="opBtn2">
       <property name="geometry">
        <rect>
-        <x>1215</x>
+        <x>1191</x>
         <y>50</y>
-        <width>29</width>
-        <height>18</height>
+        <width>40</width>
+        <height>28</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -277,6 +255,19 @@
       </property>
       <property name="text">
        <string>驳回</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="videoBtn">
+      <property name="geometry">
+       <rect>
+        <x>556</x>
+        <y>8</y>
+        <width>203</width>
+        <height>107</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </widget>

@@ -9,11 +9,9 @@ MyPage::MyPage(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MyPage)
 {
-
-
     login = std::make_unique<Login>();
-
-    ui->setupUi(this);initConnect();
+    ui->setupUi(this);
+    initConnect();
 
     ui->titleBar->setStyleSheet("background-color: rgb(172, 172, 172);");
 }
@@ -183,7 +181,7 @@ void MyPage::getUserVideoList(const QString &user_id, int page_index)
 
     auto dataCenter = model::DataCenter::getInstance();
 
-    if(dataCenter->getMyselfUserInfo()->isTempUser())
+    if(dataCenter->getMyselfInfo()->isTempUser())
     {
 #ifdef MYPAGE_TEST
         LOG() << "MyPage::getUserVideoList(const QString &user_id, int page_index)...";
@@ -202,7 +200,7 @@ void MyPage::getUserVideoList(const QString &user_id, int page_index)
         LOG() << "MyPage::getUserVideoList(const QString &user_id, int page_index)...";
         LOG() << "userVideoList 空指针" ;
 #endif
-        dataCenter->getVideoListForMyselfOrOtherAsync(user_id,1);
+        dataCenter->getVideoListForMyselfOrOtherAsync(user_id,1,model::GetVideoPage::MyPage);
 
         return;
     }
@@ -218,7 +216,7 @@ void MyPage::getUserVideoList(const QString &user_id, int page_index)
 #endif
     }
 
-    dataCenter->getVideoListForMyselfOrOtherAsync(user_id,1);
+    dataCenter->getVideoListForMyselfOrOtherAsync(user_id,1,model::GetVideoPage::MyPage);
     userVideoList->setPageIndex(page_index+1);
 
 }
@@ -266,7 +264,7 @@ void MyPage::loadMyselfInfoAndVideo()
         return;
     }
 
-    dataCenter->getVideoListForMyselfOrOtherAsync(dataCenter->getUserId(),1);
+    dataCenter->getVideoListForMyselfOrOtherAsync(dataCenter->getUserId(),1,model::GetVideoPage::MyPage);
     dataCenter->getMyselfInfoAsync();
 
     ui->avatarBtn->setMaskState(true);
@@ -284,7 +282,7 @@ void MyPage::onAvatarBtnClicked()
     auto dataCenter = model::DataCenter::getInstance();
 
     // 检测是不是临时用户
-    if(dataCenter->getMyselfUserInfo()->isTempUser())
+    if(dataCenter->getMyselfInfo()->isTempUser())
     {
         Toast::showMsg("请先登录...");
         return;
@@ -368,7 +366,7 @@ void MyPage::onUploadVideoBtnClicked()
 void MyPage::onAttentionBtnClicked()
 {
     auto dataCenter = model::DataCenter::getInstance();
-    auto myselfInfo = dataCenter->getMyselfUserInfo();
+    auto myselfInfo = dataCenter->getMyselfInfo();
 
     if(nullptr == myselfInfo)
     {
@@ -399,13 +397,13 @@ void MyPage::onAttentionBtnClicked()
 #ifdef MYPAGE_TEST
     LOG() << "onAttentionBtnClicked()";
     LOG() << "跟新关注状态...";
-    LOG() << "更新的用户id是" << dataCenter->getOtherUserInfo()->userId;
+    LOG() << "更新的用户id是" << dataCenter->getOtherInfo()->userId;
 #endif
 
     bool isAttentionStatus = ui->attentionBtn->isAttention();
     isAttentionStatus = !isAttentionStatus;
 
-    auto otherUserInfo = dataCenter->getOtherUserInfo();
+    auto otherUserInfo = dataCenter->getOtherInfo();
 
     if(otherUserInfo == nullptr)
     {
@@ -420,7 +418,7 @@ void MyPage::onAttentionBtnClicked()
 #ifdef MYPAGE_TEST
         LOG() << "onAttentionBtnClicked()";
         LOG() << "新增关注 关注状态...";
-        LOG() << "更新的用户id是" << dataCenter->getOtherUserInfo()->userId;
+        LOG() << "更新的用户id是" << dataCenter->getOtherInfo()->userId;
 #endif
 
     }
@@ -430,14 +428,14 @@ void MyPage::onAttentionBtnClicked()
 #ifdef MYPAGE_TEST
         LOG() << "onAttentionBtnClicked()";
         LOG() << "取消关注 关注状态...";
-        LOG() << "更新的用户id是" << dataCenter->getOtherUserInfo()->userId;
+        LOG() << "更新的用户id是" << dataCenter->getOtherInfo()->userId;
 #endif
     }
 
     ui->attentionBtn->setAttention(isAttentionStatus);
 
     // 通知 服务器 修改 关注信息
-    dataCenter->alterAttentionAsync(dataCenter->getOtherUserInfo()->userId);
+    dataCenter->alterAttentionAsync(dataCenter->getOtherInfo()->userId);
 }
 ////////////////////////
 
@@ -453,7 +451,7 @@ void MyPage::onNickNameBtnClicked()
 #endif
 
     auto dataCenter = model::DataCenter::getInstance();
-    auto userInfo = dataCenter->getMyselfUserInfo();
+    auto userInfo = dataCenter->getMyselfInfo();
 
     if(userInfo == nullptr)
     {
@@ -487,14 +485,14 @@ void MyPage::onNickNameBtnClicked()
 ////////////////////////
 /// \brief MyPage::onSetNicknameDone
 ///
-void MyPage::onSetNicknameDone(const QString& nickname)
+void MyPage::onSetNicknameDone(const QString& nickName)
 {
 #ifdef MYPAGE_TEST
-    LOG() << "MyPage::onSetNicknameDone(const QString& nickname)" ;
+    LOG() << "MyPage::onSetNicknameDone(const QString& nickName)" ;
 #endif
 
     // 修改我的界面中的昵称
-    ui->nickNameBtn->setText(nickname);
+    ui->nickNameBtn->setText(nickName);
     ui->nickNameBtn->adjustSize();
 
     QRect rect = ui->nickNameBtn->geometry();
@@ -502,10 +500,10 @@ void MyPage::onSetNicknameDone(const QString& nickname)
 
     //
     auto dataCenter = model::DataCenter::getInstance();
-    auto myselfInfo = dataCenter->getMyselfUserInfo();
+    auto myselfInfo = dataCenter->getMyselfInfo();
     if(myselfInfo)
     {
-        myselfInfo->nickName = nickname;
+        myselfInfo->nickName = nickName;
     }
 }
 ////////////////////////
@@ -549,7 +547,7 @@ void MyPage::onLogoutDone()
 #endif
 
     auto dataCenter = model::DataCenter::getInstance();
-    auto myselfInfo = dataCenter->getMyselfUserInfo();
+    auto myselfInfo = dataCenter->getMyselfInfo();
 
     dataCenter->clear();
     dataCenter->saveDataFile();
@@ -620,7 +618,7 @@ void MyPage::onGetMyselfInfoDoneOrResetMypage()
     }
 
     auto dataCenter = model::DataCenter::getInstance();
-    auto myselfInfo = dataCenter->getMyselfUserInfo();
+    auto myselfInfo = dataCenter->getMyselfInfo();
 
     if(myselfInfo == nullptr)
     {
@@ -711,14 +709,14 @@ void MyPage::onGetMyselfInfoDoneOrResetMypage()
 ///
 void MyPage::onGetAvatarDone(const QString &file_id,const QByteArray& avatar_data)
 {
-    auto myselfInfo = model::DataCenter::getInstance()->getMyselfUserInfo();
+    auto myselfInfo = model::DataCenter::getInstance()->getMyselfInfo();
     if(myselfInfo!=nullptr && file_id == myselfInfo->avatarFileId)
     {
         ui->avatarBtn->setIcon(makeIcon(avatar_data,ui->avatarBtn->width()/2,ui->avatarBtn->width()/2));
     }
 
     // 设置其它用户的头像
-    auto otherUserInfo = model::DataCenter::getInstance()->getOtherUserInfo();
+    auto otherUserInfo = model::DataCenter::getInstance()->getOtherInfo();
 
     if(otherUserInfo!=nullptr && file_id == otherUserInfo->avatarFileId)
     {
@@ -778,7 +776,7 @@ void MyPage::onUploadAvatarFileId2()
 #endif
 
     auto dataCenter = model::DataCenter::getInstance();
-    auto myselfInfo = dataCenter->getMyselfUserInfo();
+    auto myselfInfo = dataCenter->getMyselfInfo();
     dataCenter->downloadPhotoAsync(myselfInfo->avatarFileId);
 }
 ////////////////////////
@@ -858,7 +856,7 @@ void MyPage::onScrollAreaValueChanged(int value)
         LOG()<<"pageIndex:" << pageIndex;
 #endif
 
-        dataCenter->getVideoListForMyselfOrOtherAsync(user_id_cur,pageIndex);
+        dataCenter->getVideoListForMyselfOrOtherAsync(user_id_cur,pageIndex,model::GetVideoPage::MyPage);
         userVideoList->setPageIndex(pageIndex+1);
     }
 }
@@ -871,8 +869,8 @@ void MyPage::onScrollAreaValueChanged(int value)
 void MyPage::onAddAttentionSuc()
 {
     auto dataCenter = model::DataCenter::getInstance();
-    auto otherUserInfo = dataCenter->getOtherUserInfo();
-    auto myUserInfo = dataCenter->getMyselfUserInfo();
+    auto otherUserInfo = dataCenter->getOtherInfo();
+    auto myUserInfo = dataCenter->getMyselfInfo();
 
     otherUserInfo->fansCount++;
     myUserInfo->followCount++;
@@ -888,8 +886,8 @@ void MyPage::onAddAttentionSuc()
 void MyPage::onDelAttentionSuc()
 {
     auto dataCenter = model::DataCenter::getInstance();
-    auto otherUserInfo = dataCenter->getOtherUserInfo();
-    auto myUserInfo = dataCenter->getMyselfUserInfo();
+    auto otherUserInfo = dataCenter->getOtherInfo();
+    auto myUserInfo = dataCenter->getMyselfInfo();
 
     otherUserInfo->fansCount--;
     myUserInfo->followCount--;
@@ -913,7 +911,7 @@ void MyPage::onLoginSuc()
     auto dataCenter = model::DataCenter::getInstance();
 
     dataCenter->getMyselfInfoAsync();
-    dataCenter->getVideoListForMyselfOrOtherAsync(dataCenter->getUserId(),1);
+    dataCenter->getVideoListForMyselfOrOtherAsync(dataCenter->getUserId(),1,model::GetVideoPage::MyPage);
 }
 ////////////////////////
 
@@ -965,7 +963,7 @@ void MyPage::loadOtherUserInfoAndVideo(const QString &user_id)
     user_id_cur = user_id;
     // 获取视频列表
     auto dataCenter = model::DataCenter::getInstance();
-    dataCenter->getVideoListForMyselfOrOtherAsync(user_id,1);
+    dataCenter->getVideoListForMyselfOrOtherAsync(user_id,1,model::GetVideoPage::MyPage);
     dataCenter->getOtherInfoAsync(user_id);
 
     ui->avatarBtn->setMaskState(false);
@@ -997,7 +995,7 @@ void MyPage::onGetOtherUserInfoDone()
     ui->nickNameBtn->setEnabled(false);
 
     auto dataCenter = model::DataCenter::getInstance();
-    auto otherUserInfo = dataCenter->getOtherUserInfo();
+    auto otherUserInfo = dataCenter->getOtherInfo();
 
     ui->nickNameBtn->setText(otherUserInfo->nickName);
     ui->attentionCtLabel->setText(intToString_2(otherUserInfo->followCount));

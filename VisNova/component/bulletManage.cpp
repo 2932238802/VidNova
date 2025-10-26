@@ -126,23 +126,45 @@ void BulletManage::resumeBullet()
 ///////////////////////////////////////
 
 
+///////////////////////////////////////
+/// \brief BulletManage::openOrCloseBullet
+///
 void BulletManage::openOrCloseBullet()
 {
 
 }
+///////////////////////////////////////
 
+
+
+///////////////////////////////////////
+/// \brief BulletManage::getTopWidth
+/// \return
+///
 int BulletManage::getTopWidth() const
 {
     return topBlt->width();
 }
+///////////////////////////////////////
 
+
+
+///////////////////////////////////////
+/// \brief BulletManage::getDefaultDuration
+/// \return
+///
 int64_t BulletManage::getDefaultDuration()
 {
     return 10000* topBlt->width() / (double)(topBlt->width() + 30 * 18);
 }
+///////////////////////////////////////
 
 
-
+///////////////////////////////////////
+/// \brief BulletManage::buildBullet
+/// \param position
+/// \return
+///
 BulletItem *BulletManage::buildBullet(BulletPosition position)
 {
     BulletItem* item = nullptr;
@@ -167,15 +189,20 @@ BulletItem *BulletManage::buildBullet(BulletPosition position)
 
     return item;
 }
+///////////////////////////////////////
 
+
+
+///////////////////////////////////////
+/// \brief BulletManage::getVideoBulletSuccess
+/// \param videoId
+///
 void BulletManage::getVideoBulletSuccess(const QString &videoId)
 {
     auto dataCenter = model::DataCenter::getInstance();
     bulletItemInfoMap = dataCenter->getBullets();
-
-
 }
-
+///////////////////////////////////////
 
 
 

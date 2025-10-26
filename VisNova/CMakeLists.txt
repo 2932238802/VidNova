@@ -177,6 +177,8 @@ qt_add_executable(VisNova
     ${SOURCES}
     ${HEADERS}
     ${UI_FILES}
+    dataCenter/getVideoPageType.h
+    dataCenter/adminInfo.h dataCenter/adminInfo.cpp
 
 
 )

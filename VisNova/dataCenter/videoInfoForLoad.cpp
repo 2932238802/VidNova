@@ -8,7 +8,7 @@ void VideoInfoForLoad::loadVideoInfoFromJson(const QJsonObject &videoInfoJson)
     userAvatarId= videoInfoJson["userAvatarId"].toString();
     videoFileId= videoInfoJson["videoFileId"].toString();
     photoId= videoInfoJson["photoId"].toString();
-    nickName= videoInfoJson["nickname"].toString();
+    nickName= videoInfoJson["nickName"].toString();
     likeCount= videoInfoJson["likeCount"].toInteger();
     playCount= videoInfoJson["playCount"].toInteger();
     videoSize= videoInfoJson["videoSize"].toInteger();
@@ -17,7 +17,7 @@ void VideoInfoForLoad::loadVideoInfoFromJson(const QJsonObject &videoInfoJson)
     videoDuration= videoInfoJson["videoDuration"].toInteger();
     loadupTime= videoInfoJson["loadupTime"].toString();
 
-    videoStatus = videoInfoJson["videoStatus"].toInt(); // 视频状态
+    videoState = videoInfoJson["videoState"].toInt(); // 视频状态
 
     checkerId = videoInfoJson["checkerId"].toString(); // 审核管理员的Id
 

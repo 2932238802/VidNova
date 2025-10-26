@@ -23,6 +23,13 @@ enum IdentityType{
 };
 
 
+enum AdminState{
+    Eable = 1,
+    Disable,
+    NoState
+};
+
+
 
 class UserInfo
 {
@@ -48,6 +55,8 @@ public:
     bool isB() const; // 检测是不是B端用户
 
     bool isTempUser() const; // 检测是不是临时用户
+
+    bool isAble();
 
 public:
     void buildTmpUserInfo();

@@ -77,11 +77,12 @@ void StartPage::initConnect()
         if (isTempUser) {
 
 #ifdef STARTPAGE_TEST
-            LOG() << "是临时用户，直接完成。";
+            LOG() << "是临时用户，直接完成";
 #endif
 
             isLoadCompleted = true;
             dataCenter->loadTempUserInfo();
+
 
             emit dataCenter->_getMyselfInfoDone();
 
