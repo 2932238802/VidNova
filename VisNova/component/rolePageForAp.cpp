@@ -84,6 +84,15 @@ void RolePageForAp::initConnect()
     connect(ui->addRoleBtn,&QPushButton::clicked,this,&RolePageForAp::onAddRoleBtnClicked);
     connect(dataCenter,&model::DataCenter::_getAdminInfoByEmailDone,this,&RolePageForAp::updataRolePage);
     connect(dataCenter,&model::DataCenter::_getAdminInfoByStateDone,this,&RolePageForAp::updataRolePage);
+    connect(dataCenter,&model::DataCenter::_addAdminDone,this,&RolePageForAp::onAddAdminDone);
+    // connect(dataCenter,&model::DataCenter::_setAdminStateDone,[=](){
+    //     getAdminList(l_page);
+    // });
+
+    // TODO 这个是要修改的
+    connect(dataCenter,&model::DataCenter::_delAdminDone,[=](){
+        getAdminList(1);
+    });
 }
 ///////////////////////////////////
 
@@ -252,11 +261,29 @@ void RolePageForAp::onQueryBtnClicked()
 ///
 void RolePageForAp::onAddRoleBtnClicked()
 {
-    EditUserForAp* editUserForAp = new EditUserForAp(nullptr,"新增用户");
+    model::AdminInfo userInfo;
+    EditUserForAp* editUserForAp = new EditUserForAp(EditOrAdd::Add,userInfo,nullptr,"新增用户");
+    editUserForAp->setEmailEditReadOnly(false);
+
+    if(editUserForAp->isCommited())
+    {
+        // 新增管理员的请求
+        model::DataCenter::getInstance()->addAdminAsync(userInfo);
+    }
+
     editUserForAp->exec();
-
     delete editUserForAp;
+}
+///////////////////////////////////
 
+
+
+///////////////////////////////////
+/// \brief RolePageForAp::onAddAdminDone
+///
+void RolePageForAp::onAddAdminDone()
+{
+    getAdminList(1);
 }
 ///////////////////////////////////
 

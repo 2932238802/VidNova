@@ -1,4 +1,4 @@
-#include "dataCenter.h"
+ #include "dataCenter.h"
 
 namespace model
 {
@@ -211,6 +211,19 @@ void DataCenter::setAvatarAsync(const QString &fileId)
 ///////////////////////////////////////
 
 
+
+///////////////////////////////////////
+/// \brief DataCenter::serAdminAsync
+/// \param adminUserInfo
+///
+void DataCenter::setAdminAsync(const AdminInfo &adminUserInfo)
+{
+    client->setAdmin(adminUserInfo);
+}
+///////////////////////////////////////
+
+
+
 ///////////////////////////////////////
 /// \brief DataCenter::setUserIdOnce
 /// \param userId
@@ -244,11 +257,23 @@ void DataCenter::setNewPasswordAsync(const QString &password)
 
 ///////////////////////////////////////
 /// \brief DataCenter::setNicknameAsync
-/// \param nickname
+/// \param nickName
 /// 修改昵称
-void DataCenter::setNicknameAsync(const QString &nickname)
+void DataCenter::setNicknameAsync(const QString &nickName)
 {
-    client->setNickname(nickname);
+    client->setNickname(nickName);
+}
+///////////////////////////////////////
+
+
+///////////////////////////////////////
+/// \brief DataCenter::setAdminState
+/// \param userId
+/// \param state
+///
+void DataCenter::setAdminStateAsync(const QString &userId, AdminState state)
+{
+     client->setAdminState(userId,state);
 }
 ///////////////////////////////////////
 
@@ -433,6 +458,20 @@ void DataCenter::addAttentionAsync(const QString &userId)
 ///////////////////////////////////////
 
 
+///////////////////////////////////////
+/// \brief DataCenter::addAdminAsync
+/// \param userInfo
+///
+void DataCenter::addAdminAsync(const AdminInfo &userInfo)
+{
+#ifdef DATACENTER_TEST
+    LOG() << " DataCenter::addAdminAsync(const AdminInfo &userInfo) ";
+#endif
+    client->addAdmin(userInfo);
+}
+///////////////////////////////////////
+
+
 
 ///////////////////////////////////////
 /// \brief DataCenter::checkVideoAsync
@@ -527,6 +566,21 @@ void DataCenter::delAttentionAsync(const QString &userId)
     LOG() << "DataCenter::delAttention(const QString &userId)";
 #endif
     client->delAttention(userId);
+}
+///////////////////////////////////////
+
+
+
+///////////////////////////////////////
+/// \brief DataCenter::delAdminAsync
+/// \param userId
+///
+void DataCenter::delAdminAsync(const QString &userId)
+{
+#ifdef DATACENTER_TEST
+    LOG() << "DataCenter::delAdminAsync(const QString &userId)";
+#endif
+    client->delAdmin(userId);
 }
 ///////////////////////////////////////
 

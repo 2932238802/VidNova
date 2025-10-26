@@ -485,14 +485,14 @@ void MyPage::onNickNameBtnClicked()
 ////////////////////////
 /// \brief MyPage::onSetNicknameDone
 ///
-void MyPage::onSetNicknameDone(const QString& nickname)
+void MyPage::onSetNicknameDone(const QString& nickName)
 {
 #ifdef MYPAGE_TEST
-    LOG() << "MyPage::onSetNicknameDone(const QString& nickname)" ;
+    LOG() << "MyPage::onSetNicknameDone(const QString& nickName)" ;
 #endif
 
     // 修改我的界面中的昵称
-    ui->nickNameBtn->setText(nickname);
+    ui->nickNameBtn->setText(nickName);
     ui->nickNameBtn->adjustSize();
 
     QRect rect = ui->nickNameBtn->geometry();
@@ -503,7 +503,7 @@ void MyPage::onSetNicknameDone(const QString& nickname)
     auto myselfInfo = dataCenter->getMyselfInfo();
     if(myselfInfo)
     {
-        myselfInfo->nickName = nickname;
+        myselfInfo->nickName = nickName;
     }
 }
 ////////////////////////

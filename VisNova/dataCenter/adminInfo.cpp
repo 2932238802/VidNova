@@ -30,8 +30,24 @@ void AdminList::addAdmin(const AdminInfo &adminInfo)
 {
     adminList.append(adminInfo);
 }
-//////////////////////////////
 
+//////////////////////////////
+/// \brief AdminList::setAddStatus
+/// \param userId
+/// \param state
+///
+void AdminList::setAddStatus(const QString &userId, AdminState state)
+{
+    for(auto& a: adminList )
+    {
+        if(a.userId == userId)
+        {
+            a.state = state;
+            return;
+        }
+    }
+}
+//////////////////////////////
 
 }
 

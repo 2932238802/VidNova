@@ -31,6 +31,7 @@ namespace model
         DataCenter &operator=(const DataCenter &) = delete;
         DataCenter &operator=(DataCenter &&) = delete;
 
+        void setAdminList(const QJsonObject& adminListJson,bool isAdminState = true);
         void setMode(bool is_append);
         void setSessionId(const QString& sessionId); // 设置sessionid;
         void setVideoList(const QJsonObject& videoListJsonObject);
@@ -38,11 +39,8 @@ namespace model
         void setBulletArray(const QJsonArray& bulletArray); // 封面的视频列表
         void setMyselfInfo(const QJsonObject& myself_json); // 用户信息
         void setOtherInfo(const QJsonObject& other_json); // 他人的用户信息
-
         void setAvatar(const QString& fileId); // 设置头像 个人的
         void setUserVideoList(const QJsonObject& videoList); // 设置用户的视频列表
-        void setAdminList(const QJsonObject& adminListJson,bool isAdminState = true);
-
 
         void initDataFile();
         void saveDataFile();
@@ -70,12 +68,15 @@ namespace model
         void addPlayNumberAsync(const QString& videoId); // 增加播放量
         void addLikeNumberAsync(const QString& videoId);
         void addAttentionAsync(const QString& userId); // 新增关注
+        void addAdminAsync(const model::AdminInfo& userInfo);
 
         void checkVideoAsync(const QString& videoId,bool result);
 
         void downloadPhotoAsync(const QString& photeId); // 下载图片
         void deleteVideoAsync(const QString& video);
         void delAttentionAsync(const QString&userId); // 取消关注
+        void delAdminAsync(const QString& userId);
+
 
         void getCodeFromEmailAsync(const QString& email);
         void getAllVideoListAsync();
@@ -104,10 +105,13 @@ namespace model
         void putDownVideoAsync(const QString& videoId);
 
         void setAvatarAsync(const QString& fileId);
+        void setAdminAsync(const model::AdminInfo& adminUserInfo);
         void setUserIdOnce(const QString& userId);
         void setNewPasswordAsync(const QString& password);
-        void setNicknameAsync(const QString& nickname);
+        void setNicknameAsync(const QString& nickName);
+        void setAdminStateAsync(const QString& userId,AdminState state);
         void sendBulletAsync(const QString& videoId,const BulletInfo& bulletInfo);
+
 
         void tempLoginAsync();
 
@@ -117,6 +121,7 @@ namespace model
 
     signals:
         void _addAttention();
+        void _addAdminDone();
 
         void _checkVideoDone(); // 视频审核的接口
 
@@ -124,6 +129,7 @@ namespace model
         void _downloadVideoDone(const QString&  m3u8Path,const QString& videoId);
         void _deleteVideoDone(const QString& userId);
         void _delAttention();
+        void _delAdminDone();
 
         void _getVideoBySearchTextDone(const QString& searchText);
         void _getBulletsDone(const QString& videoId);
@@ -157,7 +163,10 @@ namespace model
 
         void _setAvatarDone();                              // 这个表示用户头像设置成功
         void _setPasswordDone();                            // 设置密码
-        void _setNicknameDone(const QString& nickname);                            // 设置昵称成功
+        void _setNicknameDone(const QString& nickName);                            // 设置昵称成功
+        void _setAdminDone();
+        void _setAdminStateDone();
+
         void _uploadPhotoDone(const QString& file_id,PhotoUploadPurpose pup);
         void _uploadVideoDone(const QString& video_path);
         void _uploadVideoInfoForUpload();

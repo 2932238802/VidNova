@@ -42,6 +42,7 @@ private:
     QHttpServerResponse addLikeNumber(const QHttpServerRequest& request);
     QHttpServerResponse addAttention(const QHttpServerRequest& request);
     QHttpServerResponse alterAttention(const QHttpServerRequest& request);
+    QHttpServerResponse addAdmin(const QHttpServerRequest& request);
 
     QHttpServerResponse checkVideo(const QHttpServerRequest& request);
 
@@ -51,6 +52,7 @@ private:
     QHttpServerResponse downloadVideoSegmentation(const QString& request);
     QHttpServerResponse deleteVideo(const QHttpServerRequest& request);
     QHttpServerResponse delAttention(const QHttpServerRequest& request);
+    QHttpServerResponse delAdmin(const QHttpServerRequest& request);
 
     QHttpServerResponse getBullets(const QHttpServerRequest& request);
     QHttpServerResponse getUserInfo(const QHttpServerRequest& request);
@@ -76,8 +78,10 @@ private:
 
 
     QHttpServerResponse setAvatar(const QHttpServerRequest& request);
+    QHttpServerResponse setAdmin(const QHttpServerRequest& request);
     QHttpServerResponse setPassword(const QHttpServerRequest& request);
     QHttpServerResponse setNickname(const QHttpServerRequest& request);
+    QHttpServerResponse setAdminState(const QHttpServerRequest& request);
 
     QHttpServerResponse uploadPhoto(const QHttpServerRequest& request);
     QHttpServerResponse uploadVideo(const QHttpServerRequest& request);

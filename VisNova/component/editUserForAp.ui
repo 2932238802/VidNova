@@ -303,7 +303,7 @@ background-color: rgba(0,0,0,0.5);
           <string>用户状态</string>
          </property>
         </widget>
-        <widget class="QRadioButton" name="statusStartBtn">
+        <widget class="QRadioButton" name="stateStartBtn">
          <property name="geometry">
           <rect>
            <x>122</x>
@@ -316,31 +316,31 @@ background-color: rgba(0,0,0,0.5);
           <bool>false</bool>
          </property>
          <property name="styleSheet">
-          <string notr="true">#statusStartBtn{
+          <string notr="true">#stateStartBtn{
 	 color: #222222;
 	
 
 }
 
 
-#statusStartBtn::checked{
+#stateStartBtn::checked{
 	color: #3ECEFF;
 	
 
 }
 
 
-#statusStartBtn::indicator{
+#stateStartBtn::indicator{
 	width: 16px;
 	height: 16px;
 }
 
-#statusStartBtn::indicator::checked{
+#stateStartBtn::indicator::checked{
 	image: url(&quot;:/image/selected.png&quot;);
 }
 
 
-#statusStartBtn::indicator::unchecked{
+#stateStartBtn::indicator::unchecked{
 	image: url(&quot;:/image/unselected.png&quot;);
 }</string>
          </property>
@@ -570,7 +570,7 @@ background-color: rgba(0,0,0,0.5);
         <zorder>nickNameEdit</zorder>
         <zorder>starNick</zorder>
         <zorder>stateLabel</zorder>
-        <zorder>statusStartBtn</zorder>
+        <zorder>stateStartBtn</zorder>
         <zorder>stateCloseBtn</zorder>
         <zorder>bzLabel</zorder>
         <zorder>commentEdit</zorder>

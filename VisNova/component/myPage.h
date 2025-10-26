@@ -63,7 +63,7 @@ private slots:
     void onLoginSuc();
     void onModifyBtnClicked();
     void onNickNameBtnClicked();
-    void onSetNicknameDone(const QString& nickname);
+    void onSetNicknameDone(const QString& nickName);
     void onScrollAreaValueChanged(int value);
     void onUploadVideoBtnClicked();
     void onUploadAvatarFileId(const QString& user_id,PhotoUploadPurpose pup);

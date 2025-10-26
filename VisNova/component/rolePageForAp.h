@@ -24,6 +24,7 @@ private slots:
     void onResetBtnClicked();
     void onQueryBtnClicked();
     void onAddRoleBtnClicked();
+    void onAddAdminDone();
 
 private:
     void initStyle();

@@ -78,5 +78,7 @@ inline static QString getFileName(const QString& path)
 
 #define ROLEPAGEFORAP_TEST
 
+#define EDITUSERFORAP_TEST
+
 #endif
 

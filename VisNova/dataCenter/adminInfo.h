@@ -41,6 +41,7 @@ public:
 
 public:
     void addAdmin(const AdminInfo& adminInfo);
+    void setAddStatus(const QString& userId,AdminState state);
 
 
 };

@@ -37,13 +37,14 @@ public:
     void alterAttention(const QString& user_id);
     void addAttention(const QString& user_id);
     void addLikeNumber(const QString&videoId);
+    void addAdmin(const model::AdminInfo& adminInfo);
 
     void checkVideo(const QString& videoId,bool result);
-
 
     void deleteVideo(const QString& video_id);
     void delAttention(const QString& user_id);
     void downloadPhoto(const QString&phote_id);
+    void delAdmin(const QString& user_id);
 
     void hello();
     void isLikeBtnClicked(const QString&video_id);
@@ -55,8 +56,10 @@ public:
     void logout();
 
     void setAvatar(const QString& file_id);
+    void setAdmin(const model::AdminInfo& userInfo);
     void setNewPassword(const QString& password);
-    void setNickname(const QString& nickname);
+    void setNickname(const QString& nickName);
+    void setAdminState(const QString& userId, model::AdminState state);
 
     void getCodeFromEmail(const QString& email);
     void getAllVidelList();
