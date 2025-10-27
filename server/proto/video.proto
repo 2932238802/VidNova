@@ -1,0 +1,63 @@
+
+syntax = "proto3";
+package video;
+option cc_generic_services = true;
+import "base"
+
+// 新增视频信息
+message NewVideoInfoRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  base.VideoInfo videoInfo = 3;
+}
+
+message NewVideoInfoResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+
+// 删除视频
+message DelVideoRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional videoId = 3;
+}
+message DelVideoResponse {
+  optioanl string requestId = 1;
+  optioanl int32 errorCode = 2;
+  optioanl string errorMsg = 3;
+}
+
+// 点赞判断
+message isLikedRequest {
+  optioanl string requestId = 1;
+  optioanl string sessionId = 2;
+  optioanl string videoId = 3;
+}
+message isLikeResult { optional bool isLiked = 1; }
+message isLiledResponse {
+  optioanl string requestId = 1;
+  optioanl int32 errorCode = 2;
+  optioanl string errorMsg = 3;
+  isLikeResult result = 4;
+}
+
+// 点赞设置 可能是点了 也可能是没有
+message SetLikeRequest {
+  optioanl string requestId = 1;
+  optioanl string sessionId = 2;
+  optioanl string videoId = 3;
+}
+message SetLikeResponse {
+  optioanl string requestId = 1;
+  optioanl int32 errorCode = 2;
+  optioanl string errorMsg = 3;
+}
+
+service VideoService {
+  rpc new_video_info(NewAdminRequest) returns (NewAdminResponse);
+  rpc remove_video(DelVideoRequest) returns (DelVideoResponse);
+  rpc is_liked(isLikedRequest) returns (isLiledResponse);
+  rpc set_like(SetLikeRequest) returns (SetLikeResponse);
+}

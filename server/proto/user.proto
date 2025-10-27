@@ -1,0 +1,341 @@
+
+syntax = "proto3";
+
+package user;
+
+import "base";
+
+option cc_generic_services = true;
+
+//////////////////////
+// 临时登录
+message TempLoginRequest { optional string requestId = 1; };
+message TempLoginResponseResult { string sessionId = 1; }
+message TempLoginResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  TempLoginResponseResult result = 4;
+}
+//////////////////////
+
+//////////////////////
+// session 登录请求
+message SessionLoginRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+}
+message SessionLoginResult { optional bool isVisitor = 1; }
+message SessionLoginResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  SessionLoginResult result = 4;
+}
+//////////////////////
+
+//////////////////////
+// 获取邮箱验证码
+message GetCodeRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string email = 3;
+}
+message GetCodeResult { optional string code = 1; }
+message GetCodeResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  GetCodeResult result = 4;
+}
+//////////////////////
+
+//////////////////////
+// 验证码登录 lr_by_authcode
+message LoginByAuthCodeRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string email = 3;
+  optional string authCode = 4;
+  optional string codeId = 5;
+}
+message LoginByAuthcodeResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+//////////////////////
+
+//////////////////////
+// 密码登录 lr_by_pd
+message LoginByPasswordRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string acccount = 3; // 账号
+  optional string password = 4; // 密码
+}
+message LoginByPasswordResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+//////////////////////
+
+//////////////////////
+// logout 退出登录
+message LogoutRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+}
+message LogoutResult { optional string sessionId = 1; }
+message LogoutResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  LogoutResult result = 4;
+}
+//////////////////////
+
+//////////////////////
+// 设置用户头像
+message SetAvatarRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string fileId = 3;
+}
+message SetAvatarResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+//////////////////////
+
+//////////////////////
+// 设置用户昵称 set_nickname
+message SetNickNameRequest {
+  optional string sessionId = 1;
+  optional string requestId = 2;
+  optional string nickname = 3;
+}
+
+message SetNickNameResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+//////////////////////
+
+//////////////////////
+// 设置登录密码
+message SetPasswordRequest {
+  optional string sessionId = 1;
+  optional string requestId = 2;
+  optional string password = 3;
+}
+message SetPasswordResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+//////////////////////
+
+//////////////////////
+// 设置用户状态
+message SetAdminStateRequest {
+  optional string sessionId = 1;
+  optional string requestId = 2;
+  optional string userId = 3;
+  optional base.UserStatus userStatus = 4;
+}
+message SetAdminStateResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+//////////////////////
+
+//////////////////////
+// get_user_info 获取用户的详细信息
+message GetUserInfoRequest {
+  optional string sessionId = 1;
+  optional string requestId = 2;
+  optional string userId = 3;
+}
+message GetUserInfoResult { base.UserInfo userInfo = 1; }
+message GetUserInfoResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  GetUserInfoResult userInfo = 4;
+}
+//////////////////////
+
+//////////////////////
+message AddAttentionResquest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string userId = 3;
+}
+
+message AddAttentionResponse {
+  optional string requestId = 1;
+  optional string errorCode = 2;
+  optional string errorMsg = 3;
+}
+//////////////////////
+
+//////////////////////
+// 取消关注
+message DelAttentionRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string userId = 3;
+}
+
+message DelAttentionResponse {
+  optional string requestId = 1;
+  optional string errorCode = 2;
+  optional string errorMsg = 3;
+}
+//////////////////////
+
+//////////////////////
+// 新增管理员
+message NewAdminRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  base.AdminInfo adminInfo = 3;
+}
+message NewAdminResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+//////////////////////
+
+//////////////////////
+// 删除管理员 del_admin
+message DelAdminRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string userId = 3;
+}
+message DelAdminResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+//////////////////////
+
+//////////////////////
+// 编辑管理员 set_admin
+message SetAdminRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  base.AdminInfo adminInfo = 3;
+}
+message SetAdminResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+//////////////////////
+
+//////////////////////
+// 通过查询手机号码 获取管理员信息 get_admin_by_email
+message GetAdminByEmailRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string emailNumber = 3;
+}
+message GetAdminByEmailResult { base.AdminInfo adminInfo = 1; }
+message GetAdminByEmailResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  GetAdminByEmailResult userInfo = 4;
+}
+//////////////////////
+
+//////////////////////
+// 通过 状态获取管理员 列表 get_admin_by_state
+message GetAdminByStateRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional base.UserStatus userStatus = 3;
+}
+message GetAdminByStateResult {
+  repeated base.AdminInfo adminInfo = 1;
+  optional int32 totalCount = 2;
+}
+message GetAdminByStateResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  GetAdminByStateResult adminInfo = 4;
+}
+//////////////////////
+
+//////////////////////
+
+//////////////////////
+
+//////////////////////
+// 临时用户登录的 rpc 请求
+service UserService {
+  // 1临时用户登录
+  rpc temp_login(TempLoginRequest) returns (TempLoginResponse);
+
+  // 2session 登录
+  rpc lr_by_session(SessionLoginRequest) returns (SessionLoginResponse);
+
+  // 3获取邮箱验证码
+  rpc get_code_from_email(GetCodeRequest) returns (GetCodeResponse);
+
+  // 4验证码登录
+  rpc lr_by_authcode(LoginByAuthCodeRequest) returns (LoginByAuthcodeResponse);
+
+  // 5密码登录 lr_by_pd
+  rpc lr_by_pd(LoginByPasswordRequest) returns (LoginByPasswordResponse);
+
+  // 6退出登录
+  rpc logout(LogoutRequest) returns (LogoutResponse);
+
+  // 7设置用户头像
+  rpc set_avatar(SetAvatarRequest) returns (SetAvatarResponse);
+
+  // 8设置用户昵称 set_nickname
+  rpc set_nickname(SetNickNameRequest) returns (SetNickNameResponse);
+
+  // 9设置新的密码
+  rpc set_password(SetPasswordRequest) returns (SetPasswordResponse);
+
+  // 10设置相应的信息
+  rpc set_admin_state(SetAdminStateRequest) returns (SetAdminStateResponse);
+
+  // 11获取用户的详细信息
+  rpc get_user_info(GetUserInfoRequest) returns (GetUserInfoResponse);
+
+  // 12点赞
+  rpc add_attention(AddAttentionResquest) returns (AddAttentionResponse);
+
+  // 13取消关注
+  rpc del_attention(DelAttentionRequest) returns (DelAttentionResponse);
+
+  // 14新增管理员
+  rpc new_admin(NewAdminRequest) returns (NewAdminResponse);
+
+  // 15删除管理员 del_admin
+  rpc del_admin(DelAdminRequest) returns (DelAdminResponse);
+
+  // 16编辑管理员 set_admin
+  rpc set_admin(SetAdminRequest) returns (SetAdminResponse);
+
+  // 17通过查询手机号码 获取管理员信息 get_admin_by_email
+  rpc get_admin_by_email(GetAdminByEmailRequest)
+      returns (GetAdminByEmailResponse);
+
+  // 18通过 状态获取 管理员列表get_admin_by_state
+  rpc get_admin_by_state(GetAdminByStateRequest)
+      returns (GetAdminByStateResponse);
+}

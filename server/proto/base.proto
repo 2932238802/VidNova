@@ -1,0 +1,142 @@
+// 声明语法
+syntax = "proto3";
+
+// 基础包
+package base;
+
+// C++ 生成服务代码
+option cc_generic_services = true;
+
+// 身份类型
+// 0 - 未知
+// 1 - C端用户
+// 2 - B端用户
+
+enum IdentityType {
+  IDENTITY_UNKNOWN = 0;
+  IDENTITY_NORMAL = 1;
+  IDENTITY_ADMIN = 2;
+}
+
+// 角色类型
+// 0 - 未知
+// 1 - 超级管理员
+// 2 - 管理员
+// 3 - 普通用户
+// 4 - 临时用户
+
+enum RoleType {
+  ROLE_UNKNOWN = 0;
+  ROLE_ADMIN_SUPER = 1;
+  ROLE_ADMIN_NORMAL = 2;
+  ROLE_USER_NORMAL = 3;
+  ROLE_USER_TEMP = 4;
+}
+
+// 用户状态
+// 0 - 未知
+// 1 - 启用
+// 2 - 禁用
+enum UserState {
+  USER_STATUS_UNKNOWN = 0;
+  USER_STATUS_ENABLE = 1;
+  USER_STATUS_DISABLE = 2;
+}
+
+// 关注状态
+// 0 - 未知状态
+// 1 - 关注
+// 2 - 取消关注
+enum FollowStatus {
+  FOLLOW_STATUS_UNKNOWN = 0;
+  FOLLOW_STATUS_FOLLOW = 1;
+  FOLLOW_STATUS_UNFOLLOW = 2;
+}
+
+//  是否是访客
+// 0 - 否
+// 1 - 是
+enum UserType {
+  USER_TYPE_NORMAL = 0;
+  USER_TYPE_VISITOR = 1;
+}
+
+// 视频状态
+// 0 - 未知状态
+// 1 - 待审核
+// 2 - 审核通过
+// 3 - 审核驳回
+// 4 - 已下架
+enum VideoState {
+  VIDEO_STATUS_UNKNOWN = 0;
+  VIDEO_STATUS_WAITINGFORCHECK = 1;
+  VIDEO_STATUS_ACCESS = 2;
+  VIDEO_STATUS_REJECTED = 3;
+  VIDEO_STATUS_DISABLED = 4;
+}
+
+// 用户信息
+message UserInfo {
+  optional string userId = 1;
+  optional string emailNumber = 2;
+  optional string nickname = 3;
+  repeated RoleType roleTypes = 4;
+  repeated IdentityType identityType = 5;
+  optional int32 likeCount = 6;
+  optional int32 playCount = 7;
+  optional int32 followCount = 8; // 关注数量
+  optional int32 fansCount = 9;   // 粉丝数量
+  UserState userState = 10;
+  optional FollowStatus isFollowed = 11;
+  optional string userMemo = 12;
+  optional string userCreateTime = 13;
+  optional string avatarFileId = 14;
+}
+
+// 管理员信息
+message AdminInfo {
+  optional string nickName = 1;
+  optional RoleType roleType = 2;
+  optional string userId = 3;
+  optional UserState userState = 4;
+  optional string emailNumber = 5;
+  optional string userMemo = 6; // 用户备注
+}
+
+// 文件信息结构
+message FileInfo {
+  optional string fileId = 1;
+  optional string uploader = 2;
+  optional string fileMemo = 3;
+  optional bytes fileData = 4;
+}
+
+// videoInfo
+message VideoInfo {
+  optional int32 videoId = 1;
+  optional int32 userId = 2;
+  optional int32 userAvatarId = 3;
+  optional string nickName = 4;
+
+  optional int32 videoType = 5;
+  repeated int32 videoTag = 6;
+
+  optional int32 videoFileId = 7;
+  optional int32 imageFileId = 8;
+
+  optional int32 likeCount = 9;
+  optional int32 playCount = 10;
+  optional int32 videoSize = 11;
+  optional string videoDesc = 12;
+
+  optional string videoTitle = 13;
+  optional string duration = 14;
+
+  optional string videoUptime = 15;
+
+  optional string checkerId = 16;
+  optional string checkName = 17;
+  optional string checkerAvatar = 18;
+
+  optional VideoState videoState = 19;
+}

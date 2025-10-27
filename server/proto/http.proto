@@ -1,0 +1,76 @@
+syntax = ”proto3“ package http;
+
+option cc_generic_services = true;
+
+import "base.proto"
+import "video.proto"
+import "file.proto"
+import "user.proto"
+
+service HttpService {
+  // 从 user.proto 导入
+  // 1临时用户登录
+  rpc temp_login(TempLoginRequest) returns (TempLoginResponse);
+
+  // 2session 登录
+  rpc lr_by_session(SessionLoginRequest) returns (SessionLoginResponse);
+
+  // 3获取邮箱验证码
+  rpc get_code_from_email(GetCodeRequest) returns (GetCodeResponse);
+
+  // 4验证码登录
+  rpc lr_by_authcode(LoginByAuthCodeRequest) returns (LoginByAuthcodeResponse);
+
+  // 5密码登录 lr_by_pd
+  rpc lr_by_pd(LoginByPasswordRequest) returns (LoginByPasswordResponse);
+
+  // 6退出登录
+  rpc logout(LogoutRequest) returns (LogoutResponse);
+
+  // 7设置用户头像
+  rpc set_avatar(SetAvatarRequest) returns (SetAvatarResponse);
+
+  // 8设置用户昵称 set_nickname
+  rpc set_nickname(SetNickNameRequest) returns (SetNickNameResponse);
+
+  // 9设置新的密码
+  rpc set_password(SetPasswordRequest) returns (SetPasswordResponse);
+
+  // 10设置相应的信息
+  rpc set_admin_state(SetAdminStateRequest) returns (SetAdminStateResponse);
+
+  // 11获取用户的详细信息
+  rpc get_user_info(GetUserInfoRequest) returns (GetUserInfoResponse);
+
+  // 12点赞
+  rpc add_attention(AddAttentionResquest) returns (AddAttentionResponse);
+
+  // 13取消关注
+  rpc del_attention(DelAttentionRequest) returns (DelAttentionResponse);
+
+  // 14新增管理员
+  rpc new_admin(NewAdminRequest) returns (NewAdminResponse);
+
+  // 15删除管理员 del_admin
+  rpc del_admin(DelAdminRequest) returns (DelAdminResponse);
+
+  // 16编辑管理员 set_admin
+  rpc set_admin(SetAdminRequest) returns (SetAdminResponse);
+
+  // 17通过查询手机号码 获取管理员信息 get_admin_by_email
+  rpc get_admin_by_email(GetAdminByEmailRequest)
+      returns (GetAdminByEmailResponse);
+
+  // 18通过 状态获取 管理员列表get_admin_by_state
+  rpc get_admin_by_state(GetAdminByStateRequest)
+      returns (GetAdminByStateResponse);
+
+  //////////////////
+  // 上传
+  rpc upload_image(HttpUploadImageRequest) returns (HttpUploadImageResponse);
+  rpc download_image(HttpDownloadImageRequest)
+      returns (HttpDownloadImageResponse);
+  rpc upload_video(HttpUploadVideoRequest) returns (HttpUploadVideoResponse);
+  rpc download_video(HttpDownloadVideoRequest)
+      returns (HttpDownloadVideoResponse);
+}

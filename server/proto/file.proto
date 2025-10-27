@@ -1,0 +1,81 @@
+syntax = "proto3";
+package file;
+option cc_generic_services = true;
+import "base";
+
+////////////////
+// 图片文件上传 upload_photo
+message HttpUploadImageRequest {}
+message HttpUploadImageResponse {}
+message UploadImageRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  base.FileInfo fileInfo = 3;
+}
+message UploadImageResult { optional string fileId = 1; }
+message UploadImageResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorCode = 3;
+  UploadImageResult result = 4;
+}
+////////////////
+
+////////////////
+// 图片文件下载 因为 是 get 请求
+message HttpDownloadImageRequest {}
+message HttpDownloadImageResponse {}
+message DownloadImageRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string fileId = 3;
+}
+message DownloadImageResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  base.FileInfo result = 4;
+}
+////////////////
+
+////////////////
+// 上传视频 upload_video
+message HttpUploadVideoRequest {}
+message HttpUploadVideoResponse {}
+message UploadVideoRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  base.FileInfo fileInfo = 3;
+}
+message UploadImageResult { optioanl string fileId = 1; }
+message UploadVideoResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  UploadImageResult result = 4;
+}
+////////////////
+
+////////////////
+// 视频下载
+message HttpDownloadVideoRequest {}
+message HttpDownloadVideoResponse {}
+message DownloadVideoRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string fileId = 3;
+}
+message DownloadVideoResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  base.FileInfo result = 4;
+}
+////////////////
+
+service FileService {
+  rpc upload_image(UploadImageRequest) returns (UploadImageResponse);
+  rpc download_image(DownloadImageRequest) returns (DownloadImageResponse);
+  rpc upload_video(UploadVideoRequest) returns (UploadVideoResponse);
+  rpc download_video(DownloadVideoRequest) returns (DownloadVideoResponse);
+}
