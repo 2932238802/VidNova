@@ -1,0 +1,7 @@
+.clang-format
+.vscode
+.clangd
+test.*
+run
+
+makefile

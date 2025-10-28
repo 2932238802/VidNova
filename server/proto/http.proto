@@ -1,76 +1,113 @@
-syntax = ”proto3“ package http;
+syntax = "proto3";
+
+package http;
 
 option cc_generic_services = true;
 
-import "base.proto"
-import "video.proto"
-import "file.proto"
-import "user.proto"
+import "base.proto";
+import "video.proto";
+import "file.proto";
+import "user.proto";
 
 service HttpService {
   // 从 user.proto 导入
   // 1临时用户登录
-  rpc temp_login(TempLoginRequest) returns (TempLoginResponse);
+  rpc temp_login(user.TempLoginRequest) returns (user.TempLoginResponse);
 
   // 2session 登录
-  rpc lr_by_session(SessionLoginRequest) returns (SessionLoginResponse);
+  rpc lr_by_session(user.SessionLoginRequest)
+      returns (user.SessionLoginResponse);
 
   // 3获取邮箱验证码
-  rpc get_code_from_email(GetCodeRequest) returns (GetCodeResponse);
+  rpc get_code_from_email(user.GetCodeRequest) returns (user.GetCodeResponse);
 
   // 4验证码登录
-  rpc lr_by_authcode(LoginByAuthCodeRequest) returns (LoginByAuthcodeResponse);
+  rpc lr_by_authcode(user.LoginByAuthCodeRequest)
+      returns (user.LoginByAuthcodeResponse);
 
   // 5密码登录 lr_by_pd
-  rpc lr_by_pd(LoginByPasswordRequest) returns (LoginByPasswordResponse);
+  rpc lr_by_pd(user.LoginByPasswordRequest)
+      returns (user.LoginByPasswordResponse);
 
   // 6退出登录
-  rpc logout(LogoutRequest) returns (LogoutResponse);
+  rpc logout(user.LogoutRequest) returns (user.LogoutResponse);
 
   // 7设置用户头像
-  rpc set_avatar(SetAvatarRequest) returns (SetAvatarResponse);
+  rpc set_avatar(user.SetAvatarRequest) returns (user.SetAvatarResponse);
 
   // 8设置用户昵称 set_nickname
-  rpc set_nickname(SetNickNameRequest) returns (SetNickNameResponse);
+  rpc set_nickname(user.SetNickNameRequest) returns (user.SetNickNameResponse);
 
   // 9设置新的密码
-  rpc set_password(SetPasswordRequest) returns (SetPasswordResponse);
+  rpc set_password(user.SetPasswordRequest) returns (user.SetPasswordResponse);
 
   // 10设置相应的信息
-  rpc set_admin_state(SetAdminStateRequest) returns (SetAdminStateResponse);
+  rpc set_admin_state(user.SetAdminStateRequest)
+      returns (user.SetAdminStateResponse);
 
   // 11获取用户的详细信息
-  rpc get_user_info(GetUserInfoRequest) returns (GetUserInfoResponse);
+  rpc get_user_info(user.GetUserInfoRequest) returns (user.GetUserInfoResponse);
 
   // 12点赞
-  rpc add_attention(AddAttentionResquest) returns (AddAttentionResponse);
+  rpc add_attention(user.AddAttentionResquest)
+      returns (user.AddAttentionResponse);
 
   // 13取消关注
-  rpc del_attention(DelAttentionRequest) returns (DelAttentionResponse);
+  rpc del_attention(user.DelAttentionRequest)
+      returns (user.DelAttentionResponse);
 
   // 14新增管理员
-  rpc new_admin(NewAdminRequest) returns (NewAdminResponse);
+  rpc new_admin(user.NewAdminRequest) returns (user.NewAdminResponse);
 
   // 15删除管理员 del_admin
-  rpc del_admin(DelAdminRequest) returns (DelAdminResponse);
+  rpc del_admin(user.DelAdminRequest) returns (user.DelAdminResponse);
 
   // 16编辑管理员 set_admin
-  rpc set_admin(SetAdminRequest) returns (SetAdminResponse);
+  rpc set_admin(user.SetAdminRequest) returns (user.SetAdminResponse);
 
   // 17通过查询手机号码 获取管理员信息 get_admin_by_email
-  rpc get_admin_by_email(GetAdminByEmailRequest)
-      returns (GetAdminByEmailResponse);
+  rpc get_admin_by_email(user.GetAdminByEmailRequest)
+      returns (user.GetAdminByEmailResponse);
 
   // 18通过 状态获取 管理员列表get_admin_by_state
-  rpc get_admin_by_state(GetAdminByStateRequest)
-      returns (GetAdminByStateResponse);
+  rpc get_admin_by_state(user.GetAdminByStateRequest)
+      returns (user.GetAdminByStateResponse);
 
   //////////////////
   // 上传
-  rpc upload_image(HttpUploadImageRequest) returns (HttpUploadImageResponse);
-  rpc download_image(HttpDownloadImageRequest)
-      returns (HttpDownloadImageResponse);
-  rpc upload_video(HttpUploadVideoRequest) returns (HttpUploadVideoResponse);
-  rpc download_video(HttpDownloadVideoRequest)
-      returns (HttpDownloadVideoResponse);
+  rpc upload_image(file.HttpUploadImageRequest)
+      returns (file.HttpUploadImageResponse);
+  rpc download_image(file.HttpDownloadImageRequest)
+      returns (file.HttpDownloadImageResponse);
+  rpc upload_video(file.HttpUploadVideoRequest)
+      returns (file.HttpUploadVideoResponse);
+  rpc download_video(file.HttpDownloadVideoRequest)
+      returns (file.HttpDownloadVideoResponse);
+
+  rpc new_video_info(video.NewVideoInfoRequest)
+      returns (video.NewVideoInfoResponse);
+  rpc remove_video(video.DelVideoRequest) returns (video.DelVideoResponse);
+  rpc is_liked(video.isLikedRequest) returns (video.isLiledResponse);
+  rpc set_like(video.SetLikeRequest) returns (video.SetLikeResponse);
+  rpc add_play(video.AddPlayNumberRequest)
+      returns (video.AddPlayNumberResponse);
+  rpc new_bullet(video.NewBulletRequest) returns (video.NewBulletResponse);
+  rpc get_bullet_list(video.GetBulletListRequest)
+      returns (video.GetBulletListResponse);
+  rpc check_video(video.CheckVideoRequest) returns (video.CheckVideoResponse);
+  rpc put_up_video(video.PutUpVideoRequest) returns (video.PutUpVideoResponse);
+  rpc put_down_video(video.PutDownVideoRequest)
+      returns (video.PutDownVideoResponse);
+  rpc get_user_video_list(video.GetUserVideoListRequest)
+      returns (video.GetUserVideoListResponse);
+  rpc get_admin_video_list(video.GetAdminVideoListRequest)
+      returns (video.GetAdminVideoListResponse);
+  rpc get_all_video_list(video.GetAllVideoListRequest)
+      returns (video.GetAllVideoListResponse);
+  rpc get_video_by_kind(video.GetVideoListByKindRequest)
+      returns (video.GetVideoListByKindResponse);
+  rpc get_video_by_tag(video.GetVideoListByTagRequest)
+      returns (video.GetVideoListByTagResponse);
+  rpc get_video_by_search(video.GetVideoBySearchRequest)
+      returns (video.GetVideoBySearchResponse);
 }

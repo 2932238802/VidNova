@@ -140,3 +140,12 @@ message VideoInfo {
 
   optional VideoState videoState = 19;
 }
+
+// 弹幕信息
+message BulletInfo {
+  optional string bulletId = 1;
+  optional string userId = 2;
+  optional string videoId = 3;
+  optional string bulletContent = 4;
+  optional int64 bulletTime = 5;
+}

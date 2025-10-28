@@ -1,7 +1,8 @@
 syntax = "proto3";
+
 package file;
 option cc_generic_services = true;
-import "base";
+import "base.proto";
 
 ////////////////
 // 图片文件上传 upload_photo
@@ -16,7 +17,7 @@ message UploadImageResult { optional string fileId = 1; }
 message UploadImageResponse {
   optional string requestId = 1;
   optional int32 errorCode = 2;
-  optional string errorCode = 3;
+  optional string errorMsg = 3;
   UploadImageResult result = 4;
 }
 ////////////////
@@ -47,7 +48,7 @@ message UploadVideoRequest {
   optional string sessionId = 2;
   base.FileInfo fileInfo = 3;
 }
-message UploadImageResult { optioanl string fileId = 1; }
+message UploadVideoResult { optional string fileId = 1; }
 message UploadVideoResponse {
   optional string requestId = 1;
   optional int32 errorCode = 2;

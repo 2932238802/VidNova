@@ -2,7 +2,7 @@
 syntax = "proto3";
 package video;
 option cc_generic_services = true;
-import "base"
+import "base.proto";
 
 // 新增视频信息
 message NewVideoInfoRequest {
@@ -21,43 +21,236 @@ message NewVideoInfoResponse {
 message DelVideoRequest {
   optional string requestId = 1;
   optional string sessionId = 2;
-  optional videoId = 3;
+  optional string videoId = 3;
 }
 message DelVideoResponse {
-  optioanl string requestId = 1;
-  optioanl int32 errorCode = 2;
-  optioanl string errorMsg = 3;
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
 }
 
 // 点赞判断
 message isLikedRequest {
-  optioanl string requestId = 1;
-  optioanl string sessionId = 2;
-  optioanl string videoId = 3;
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string videoId = 3;
 }
 message isLikeResult { optional bool isLiked = 1; }
 message isLiledResponse {
-  optioanl string requestId = 1;
-  optioanl int32 errorCode = 2;
-  optioanl string errorMsg = 3;
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
   isLikeResult result = 4;
 }
 
 // 点赞设置 可能是点了 也可能是没有
 message SetLikeRequest {
-  optioanl string requestId = 1;
-  optioanl string sessionId = 2;
-  optioanl string videoId = 3;
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string videoId = 3;
 }
 message SetLikeResponse {
-  optioanl string requestId = 1;
-  optioanl int32 errorCode = 2;
-  optioanl string errorMsg = 3;
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+
+// 播放操作 增加播放量 不会下降
+message AddPlayNumberRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string videoId = 3;
+}
+message AddPlayNumberResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+
+// 新增弹幕
+message NewBulletRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string videoId = 3;
+  optional base.BulletInfo bulletInfo = 4;
+}
+message NewBulletResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+
+//  获取视频弹幕列表
+message GetBulletListRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string videoId = 3;
+}
+message GetBulletListResult { repeated base.BulletInfo bulletList = 1; }
+message GetBulletListResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  GetBulletListResult result = 4;
+}
+
+// 视频审核
+message CheckVideoRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string videoId = 3;
+  optional bool checkResult = 4;
+}
+message CheckVideoResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+
+// 视频上架
+message PutUpVideoRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string videoId = 3;
+}
+message PutUpVideoResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+
+// 视频下架
+message PutDownVideoRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string videoId = 3;
+}
+message PutDownVideoResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+}
+
+// 获取视频列表
+message GetUserVideoListRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string userId = 3;
+  optional int32 pageIndex = 4;
+  optional int32 pageCount = 5;
+}
+message GetUserVideoListResult { repeated base.VideoInfo videoList = 1; }
+message GetUserVideoListResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  GetUserVideoListResult result = 4;
+}
+
+// 获取视频列表
+// 获取管理员界面的视频列表
+message GetAdminVideoListRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional int32 pageIndex = 3;
+  optional int32 pageCount = 4;
+}
+message GetAdminVideoListResult {
+  repeated base.VideoInfo videoList = 1;
+  optional int32 totalCount = 2;
+}
+message GetAdminVideoListResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  GetAdminVideoListResult result = 4;
+}
+
+// 获取主页视频列表
+message GetAllVideoListRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional int32 pageIndex = 3;
+  optional int32 pageCount = 4;
+}
+message GetAllVideoListResult { repeated base.VideoInfo videoList = 1; }
+message GetAllVideoListResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  GetAllVideoListResult result = 4;
+}
+
+// 获取分类视频列表 kind
+message GetVideoListByKindRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional int32 videoType = 3;
+  optional int32 pageIndex = 4;
+  optional int32 pageCount = 5;
+}
+message GetVideoListByKindResult { repeated base.VideoInfo videoList = 1; }
+message GetVideoListByKindResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  GetAllVideoListResult result = 4;
+}
+
+// 获取标签视频列表
+message GetVideoListByTagRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional int32 videoTag = 3;
+  optional int32 pageIndex = 4;
+  optional int32 pageCount = 5;
+}
+message GetVideoListByTagResult { repeated base.VideoInfo VideoList = 1; }
+message GetVideoListByTagResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  GetAllVideoListResult result = 4;
+}
+
+// 获取搜索视频列表
+message GetVideoBySearchRequest {
+  optional string requestId = 1;
+  optional string sessionId = 2;
+  optional string searchKey = 3;
+  optional int32 pageIndex = 4;
+  optional int32 pageCount = 5;
+}
+message GetVideoBySearchResult { repeated base.VideoInfo VideoList = 1; }
+
+message GetVideoBySearchResponse {
+  optional string requestId = 1;
+  optional int32 errorCode = 2;
+  optional string errorMsg = 3;
+  GetAllVideoListResult result = 4;
 }
 
 service VideoService {
-  rpc new_video_info(NewAdminRequest) returns (NewAdminResponse);
+  rpc new_video_info(NewVideoInfoRequest) returns (NewVideoInfoResponse);
   rpc remove_video(DelVideoRequest) returns (DelVideoResponse);
   rpc is_liked(isLikedRequest) returns (isLiledResponse);
   rpc set_like(SetLikeRequest) returns (SetLikeResponse);
+  rpc add_play(AddPlayNumberRequest) returns (AddPlayNumberResponse);
+  rpc new_bullet(NewBulletRequest) returns (NewBulletResponse);
+  rpc get_bullet_list(GetBulletListRequest) returns (GetBulletListResponse);
+  rpc check_video(CheckVideoRequest) returns (CheckVideoResponse);
+  rpc put_up_video(PutUpVideoRequest) returns (PutUpVideoResponse);
+  rpc put_down_video(PutDownVideoRequest) returns (PutDownVideoResponse);
+  rpc get_user_video_list(GetUserVideoListRequest)
+      returns (GetUserVideoListResponse);
+  rpc get_admin_video_list(GetAdminVideoListRequest)
+      returns (GetAdminVideoListResponse);
+  rpc get_all_video_list(GetAllVideoListRequest)
+      returns (GetAllVideoListResponse);
+  rpc get_video_by_kind(GetVideoListByKindRequest)
+      returns (GetVideoListByKindResponse);
+  rpc get_video_by_tag(GetVideoListByTagRequest)
+      returns (GetVideoListByTagResponse);
+  rpc get_video_by_search(GetVideoBySearchRequest)
+      returns (GetVideoBySearchResponse);
 }

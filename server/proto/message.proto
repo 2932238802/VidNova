@@ -1,0 +1,7 @@
+syntax = "proto3";
+package message;
+option cc_generic_services = true;
+
+message DeleteFileMsg {
+  string file_id = 1;
+}

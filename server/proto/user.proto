@@ -3,7 +3,7 @@ syntax = "proto3";
 
 package user;
 
-import "base";
+import "base.proto";
 
 option cc_generic_services = true;
 
@@ -145,7 +145,7 @@ message SetAdminStateRequest {
   optional string sessionId = 1;
   optional string requestId = 2;
   optional string userId = 3;
-  optional base.UserStatus userStatus = 4;
+  optional base.UserState userState = 4;
 }
 message SetAdminStateResponse {
   optional string requestId = 1;
@@ -262,7 +262,7 @@ message GetAdminByEmailResponse {
 message GetAdminByStateRequest {
   optional string requestId = 1;
   optional string sessionId = 2;
-  optional base.UserStatus userStatus = 3;
+  optional base.UserState userState = 3;
 }
 message GetAdminByStateResult {
   repeated base.AdminInfo adminInfo = 1;
